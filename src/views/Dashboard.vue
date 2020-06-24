@@ -11,7 +11,7 @@
 import { METHODS } from "http";
 import clients from "../components/clients";
 
-const API_URL = "https://localhost:5000/auth/";
+const API_URL = `${process.env.VUE_APP_API_URL}/auth`;
 export default {
   data: () => ({
     user: null
