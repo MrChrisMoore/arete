@@ -8,7 +8,7 @@
 </template>
 
 <script>
-const url = "https://localhost:5000/auth/clients";
+const url = `${process.env.VUE_APP_API_URL}/auth/clients`;
 export default {
   name: "clients",
   data: () => ({

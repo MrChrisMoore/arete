@@ -43,9 +43,9 @@
 
 <script lang="ts">
 import Vue from "vue";
-const googleLoginURL: string = "https://localhost:5000/auth/google";
-const loginURL: string = "https://localhost:5000/auth/login";
-const authCheckURL: string = "https://localhost:5000/";
+const googleLoginURL: string = `${process.env.VUE_APP_API_URL}/auth/google`;
+const loginURL: string = `${process.env.VUE_APP_API_URL}/auth/login`;
+const authCheckURL: string = `${process.env.VUE_APP_API_URL}`;
 export default Vue.extend({
   name: "login",
   data: () => ({
