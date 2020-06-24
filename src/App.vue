@@ -106,6 +106,10 @@
       right: false,
       left: false,
     }),
+    mounted(){
+      this.$router.push('/login');
+
+    }
   }
 </script>
 
