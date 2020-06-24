@@ -32,7 +32,7 @@ export default {
   },
   methods: {
     logout() {
-      fetch(`${API_URL}logout`, {
+      fetch(`${API_URL}/logout`, {
       method: "GET",
       credentials: "include"
     })
