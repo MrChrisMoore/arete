@@ -9,10 +9,11 @@
 
 <script>
 import { METHODS } from "http";
-import clients from "../components/clients";
+import clients from "../components/clients.vue";
 
 const API_URL = `${process.env.VUE_APP_API_URL}/auth`;
 export default {
+  components:{clients},
   data: () => ({
     user: null
   }),

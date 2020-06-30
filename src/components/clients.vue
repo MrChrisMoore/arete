@@ -8,7 +8,7 @@
 </template>
 
 <script>
-const url = `${process.env.VUE_APP_API_URL}/auth/clients`;
+const url = `${process.env.VUE_APP_API_URL}/clients`;
 export default {
   name: "clients",
   data: () => ({
@@ -22,12 +22,12 @@ export default {
     getClients() {
       fetch(url, { method: "GET", credentials: "include" })
         //.then(res => res.json())
-        .then(async res => {
-          const result = await res.json();
-          if (!result.ok) {
+        .then(async res => {          
+          if (!res.ok) {
             const error = (result && result.message) || res.statusText;
             return Promise.reject(error);
           }
+          const result = await res.json();
           Object.keys(result[0]).forEach((key, val) => {
             this.headers.push({ text: `${key}`, value: `${key}` });
           });
@@ -45,6 +45,6 @@ export default {
 
 <style lang="scss" scoped>
 section {
-  width: 100%;
+  width: 50%;
 }
 </style>

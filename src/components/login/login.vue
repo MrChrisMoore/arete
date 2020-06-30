@@ -57,7 +57,7 @@ export default Vue.extend({
       .then(response => response.json())
       .then(result => {
         if(result && result.authenticated){
-          this.$router.push('/dashboard');
+          this.$router.push('/');
         }
       });
   },
@@ -86,7 +86,7 @@ export default Vue.extend({
         })
         .then(user => {
           localStorage.user = user;
-          this.$router.push("/dashboard");
+          this.$router.push("/");
         })
         .catch(error => {
           console.log(error);
