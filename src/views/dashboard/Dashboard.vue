@@ -234,21 +234,24 @@
   </v-container>
 </template>
 
-<script>
+<script lang='ts'>
+import {AuthApi} from '../../api/apis/AuthApi';
+import Vue from 'vue';
+import Component from 'vue-class-component'
 
 const API_URL = `${process.env.VUE_APP_API_URL}/auth`;
-export default {
-  name: "DashboardDashboard",
+@Component
+export default class Dash extends Vue {
+  name="DashboardDashboard"
 
-  data() {
-    return {
-      dailySalesChart: {
+
+      dailySalesChart={
         data: {
           labels: ["M", "T", "W", "T", "F", "S", "S"],
           series: [[12, 17, 7, 17, 23, 18, 38]]
         },
         options: {
-          lineSmooth: this.$chartist.Interpolation.cardinal({
+          lineSmooth: (this as any).$chartist.Interpolation.cardinal({
             tension: 0
           }),
           low: 0,
@@ -260,14 +263,14 @@ export default {
             left: 0
           }
         }
-      },
-      dataCompletedTasksChart: {
+      }
+      dataCompletedTasksChart= {
         data: {
           labels: ["12am", "3pm", "6pm", "9pm", "12pm", "3am", "6am", "9am"],
           series: [[230, 750, 450, 300, 280, 240, 200, 190]]
         },
         options: {
-          lineSmooth: this.$chartist.Interpolation.cardinal({
+          lineSmooth: (this as any).$chartist.Interpolation.cardinal({
             tension: 0
           }),
           low: 0,
@@ -279,8 +282,8 @@ export default {
             left: 0
           }
         }
-      },
-      emailsSubscriptionChart: {
+      }
+      emailsSubscriptionChart= {
         data: {
           labels: [
             "Ja",
@@ -324,8 +327,8 @@ export default {
             }
           ]
         ]
-      },
-      headers: [
+      }
+      headers=[
         {
           sortable: false,
           text: "ID",
@@ -354,8 +357,8 @@ export default {
           value: "city",
           align: "right"
         }
-      ],
-      items: [
+      ]
+      items=[
         {
           id: 1,
           name: "Tony Stark",
@@ -391,9 +394,9 @@ export default {
           city: "Dublin",
           sales: "$63,542"
         }
-      ],
-      tabs: 0,
-      tasks: {
+      ]
+      tabs= 0
+      tasks={
         0: [
           {
             text: "Text of some example task",
@@ -436,32 +439,33 @@ export default {
             value: true
           }
         ]
-      },
-      list: {
+      }
+      list= {
         0: false,
         1: false,
         2: false
       }
-    };
-  },
-  mounted() {
-    fetch(API_URL, {
-      method: "GET",
-      credentials: "include"
-    })
-      .then(res => res.json())
-      .then(result => {
-        if (result.user) {
-          this.user = result.user;
-        } else {
-          this.logout();
-        }
-      });
-  },
-  methods: {
+  
+
+  async mounted() {
+    
+    let auth: AuthApi =(this as any).auth;
+  
+    let creds = await auth.getAuth().catch((err) => {
+     if(process.env.LOG_ERROR !== 'false')  console.log(err);
+    });
+    if (creds) {
+      localStorage.user = JSON.stringify(creds);      
+    }
+    else{
+      this.$router.push('/login');
+    }
+  }
+  
     complete(index) {
       this.list[index] = !this.list[index];
-    },
+    }
+
     logout() {
       fetch(`${API_URL}/logout`, {
         method: "GET",
@@ -472,6 +476,6 @@ export default {
           this.$router.push("/login");
         });
     }
-  }
+  
 };
 </script>

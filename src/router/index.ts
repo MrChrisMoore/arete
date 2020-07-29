@@ -4,72 +4,8 @@ import Login from '../views/Login.vue';
 
 
 Vue.use(VueRouter);
-
-// function loggedInRedirectDashboard(to: Route, from: Route, next: NavigationGuardNext<Vue>){
- 
-//   fetch(authCheckURL, { method: "GET" , credentials:'include'})
-//   .then(response => response.json())
-//   .then(result => {
-//     if(result && result.authenticated){
-//       this.$router.push('/dashboard');
-//     }
-//   });  
-  
-//   if(localStorage.token){
-//     next('/dashboard');
-//   } else {
-//     next();
-//   }
-// };
-
-
-
-
-
-//   const routes: Array<RouteConfig> = [
-//   {
-//     path: '/login',
-//     name: 'login',
-//     component: Login,
-//    // beforeEnter:loggedInRedirectDashboard
-//   },
-//   {
-//     path: '/about',
-//     name: 'About',
-//     // route level code-splitting
-//     // this generates a separate chunk (about.[hash].js) for this route
-//     // which is lazy-loaded when the route is visited.
-//     component: () => import(/* webpackChunkName: "about" */ '../views/About.vue'),  
-//   },
-//   {
-//     path: '/dashboard',
-//     name: 'dashboard',
-//     // route level code-splitting
-//     // this generates a separate chunk (about.[hash].js) for this route
-//     // which is lazy-loaded when the route is visited.
-//     component: () => import(/* webpackChunkName: "about" */ '../views/Dashboard.vue'),
-//     //beforeEnter:isLoggedIn
-//   },
-//   {
-//     path: '/clients',
-//     name: 'clients',
-//     // route level code-splitting
-//     // this generates a separate chunk (about.[hash].js) for this route
-//     // which is lazy-loaded when the route is visited.
-//     component: () => import(/* webpackChunkName: "about" */ '../components/clients.vue'),
-//     //beforeEnter:isLoggedIn
-//   }
-// ];
-
-// const router = new VueRouter({
-//   mode: 'history',
-//   base: process.env.BASE_URL,
-//   routes
-// });
-
-// export default router
-export default new VueRouter({
-  mode: 'hash',
+const router = new VueRouter({
+  mode: 'history',
   base: process.env.BASE_URL,
   routes: [
     {
@@ -80,13 +16,19 @@ export default new VueRouter({
         
         {
           name: 'Dashboard',
-          path: '',
+          path: 'dashboard',
           component: () => import('@/views/dashboard/Dashboard.vue'),
+          meta: {
+            requiresAuth: true
+        }
         },
         {
           path: '/login',
           name: 'login',
           component: Login,
+          meta:{
+            guest:true
+          }
          // beforeEnter:loggedInRedirectDashboard
         },
         // Pages
@@ -94,41 +36,103 @@ export default new VueRouter({
           name: 'User Profile',
           path: 'pages/user',
           component: () => import('@/views/dashboard/pages/UserProfile.vue'),
+          meta: {
+            requiresAuth: true
+        }
         },
         {
           name: 'Notifications',
           path: 'components/notifications',
           component: () => import('@/views/dashboard/component/Notifications.vue'),
+          meta: {
+            requiresAuth: true
+        }
         },
         {
           name: 'Icons',
           path: 'components/icons',
           component: () => import('@/views/dashboard/component/Icons.vue'),
+          meta: {
+            requiresAuth: true
+        }
         },
         {
           name: 'Typography',
           path: 'components/typography',
           component: () => import('@/views/dashboard/component/Typography.vue'),
+          meta: {
+            requiresAuth: true
+        }
         },
         // Tables
         {
           name: 'Regular Tables',
           path: 'tables/regular-tables',
           component: () => import('@/views/dashboard/tables/RegularTables.vue'),
+          meta: {
+            requiresAuth: true
+        }
         },
         // Maps
         {
           name: 'Google Maps',
           path: 'maps/google-maps',
           component: () => import('@/views/dashboard/maps/GoogleMaps.vue'),
+          meta: {
+            requiresAuth: true
+        }
         },
         {
           name:'Warehouse Overview',
           path:'/sisense/wh-overview',
-          component:() => import('@/views/dashboard/pages/WarehouseOverview.vue')
+          component:() => import('@/views/dashboard/pages/WarehouseOverview.vue'),
+          meta: {
+            requiresAuth: true
+        }
         }
        
       ],
     },
   ],
+  
+});
+
+router.beforeEach((to, from, next) => {
+  if(to.matched.some(record => record.meta.requiresAuth)) {
+    if(process.env.LOG_VERBOSE !== 'false')console.log('Checking for token.');    
+      if (!localStorage.getItem('token')) {
+          next({
+              path: '/login',
+              params: { nextUrl: to.fullPath }
+          })
+      } else {
+        if(process.env.LOG_VERBOSE !== 'false')console.log('Checking for User.');
+          let user = JSON.parse(localStorage.getItem('user'))
+          if(to.matched.some(record => record.meta.is_admin)) {
+              if(user.is_admin == 1){
+                  next()
+              }
+              else{
+                  next({ name: 'Dashboard'})
+              }
+          }else {
+              next()
+          }
+      }
+  } else if(to.matched.some(record => record.meta.guest)) {
+    if(process.env.LOG_VERBOSE !== 'false')console.log('Checking for token on guest.');
+      if(localStorage.getItem('jwt') == null){
+          next()
+      }
+      else{
+          next({ name: 'Dashboard'})
+      }
+  }else {
+      next()
+  }
 })
+
+
+
+ export default router
+

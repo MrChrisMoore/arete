@@ -8,14 +8,16 @@ import router from './router';
 import store from './store';
 import vuetify from './plugins/vuetify';
 import '@mdi/font/css/materialdesignicons.css';
+import api from './providers/apiProvider';
 
-Vue.config.productionTip = false
+Vue.config.productionTip = false;
+Vue.use(api);
 
-
-new Vue({
+const app = new Vue({
   router,
   store,
-  i18n,
+  i18n,  
   vuetify,
   render: h => h(App)
 }).$mount('#app')
+

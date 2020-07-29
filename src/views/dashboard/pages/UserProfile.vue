@@ -22,7 +22,7 @@
 
           <v-form>
             <v-container class="py-0">
-              <v-row>
+              <v-row v-if="user">
                 <v-col
                   cols="12"
                   md="4"
@@ -40,6 +40,8 @@
                   <v-text-field
                     class="purple-input"
                     label="User Name"
+                    v-model="user.cadenceProfile.LoginID"
+                 
                   />
                 </v-col>
 
@@ -50,6 +52,7 @@
                   <v-text-field
                     label="Email Address"
                     class="purple-input"
+                    v-model="user.email"
                   />
                 </v-col>
 
@@ -60,6 +63,7 @@
                   <v-text-field
                     label="First Name"
                     class="purple-input"
+                    v-model="user.cadenceProfile.FirstName"
                   />
                 </v-col>
 
@@ -70,6 +74,7 @@
                   <v-text-field
                     label="Last Name"
                     class="purple-input"
+                    v-model="user.cadenceProfile.LastName"
                   />
                 </v-col>
 
@@ -136,43 +141,68 @@
         </base-material-card>
       </v-col>
 
-      <!-- <v-col
+      <v-col
         cols="12"
         md="4"
       >
         <base-material-card
-          class="v-card-profile"
-          avatar="https://demos.creative-tim.com/vue-material-dashboard/img/marc.aba54d65.jpg"
+          class="v-card-profile"          
         >
+         <template v-slot:heading>
+            <div class="display-2 font-weight-light">
+              Link 3rd Party Logins
+            </div>            
+          </template>
           <v-card-text class="text-center">
-            <h6 class="display-1 mb-1 grey--text">
-              CEO / CO-FOUNDER
-            </h6>
-
-            <h4 class="display-2 font-weight-light mb-3 black--text">
-              Alec Thompson
-            </h4>
-
-            <p class="font-weight-light grey--text">
-              Don't be scared of the truth because we need to restart the human foundation in truth And I love you like Kanye loves Kanye I love Rick Owens’ bed design but the back is...
-            </p>
-
-            <v-btn
-              color="success"
-              rounded
-              class="mr-0"
-            >
-              Follow
-            </v-btn>
+            
+     <v-btn color="primary" @click="loginGoogle()">Google Login</v-btn>
+                <v-btn color="primary" @click="loginFacebook()">Facebook Login</v-btn>
+          
           </v-card-text>
         </base-material-card>
-      </v-col> -->
+      </v-col>
     </v-row>
   </v-container>
 </template>
 
 <script>
-  export default {
-    //
-  }
+const API_URL = `${process.env.VUE_APP_API_URL}/auth`;
+import Vue from 'vue';
+  export default Vue.extend({
+    data:()=>({
+      user:''
+    }),
+    mounted(){
+
+       if(!localStorage.user){
+        fetch(API_URL, {
+            method: "GET",
+      credentials: "include"
+    })
+      .then(res => res.json())
+      .then(result => {
+          if (result.user) {
+              if(result.user){           
+                     this.$data
+                  localStorage.user = JSON.stringify(result.user);
+                  this.user = result.user;
+          }
+        } else {
+            this.logout();
+        }
+      });
+    }else{
+      this.user = JSON.parse(localStorage.user);
+      
+     if(process.env.LOG_VERBOSE !== 'false')  console.log(this.user.cadenceProfile.LoginID)
+    }
+},
+  
+    methods:{
+      getUser(){
+
+
+      }
+    }
+  })
 </script>

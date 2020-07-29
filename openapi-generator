@@ -1,0 +1,18 @@
+[main] INFO  o.o.codegen.DefaultGenerator - Generating with dryRun=false
+[main] INFO  o.o.codegen.DefaultGenerator - OpenAPI Generator: typescript-fetch (client)
+[main] INFO  o.o.codegen.DefaultGenerator - Generator 'typescript-fetch' is considered stable.
+[main] INFO  o.o.c.l.AbstractTypeScriptClientCodegen - Hint: Environment variable 'TS_POST_PROCESS_FILE' (optional) not defined. E.g. to format the source code, please try 'export TS_POST_PROCESS_FILE="/usr/local/bin/prettier --write"' (Linux/Mac)
+[main] INFO  o.o.c.l.AbstractTypeScriptClientCodegen - Note: To enable file post-processing, 'enablePostProcessFile' must be set to `true` (--enable-post-process-file for CLI).
+[main] INFO  o.o.codegen.DefaultGenerator - Model verification not generated since it's a free-form object
+[main] INFO  o.o.codegen.AbstractGenerator - writing file /Users/chris/dev/advance/./src/api/models/LoginModel.ts
+[main] INFO  o.o.codegen.AbstractGenerator - writing file /Users/chris/dev/advance/./src/api/models/LoginSuccessResponse.ts
+[main] INFO  o.o.codegen.AbstractGenerator - writing file /Users/chris/dev/advance/./src/api/models/NotFoundResponse.ts
+[main] INFO  o.o.codegen.AbstractGenerator - writing file /Users/chris/dev/advance/./src/api/models/SignUpModel.ts
+[main] INFO  o.o.codegen.AbstractGenerator - writing file /Users/chris/dev/advance/./src/api/models/VerificationCodeModel.ts
+[main] INFO  o.o.codegen.AbstractGenerator - writing file /Users/chris/dev/advance/./src/api/apis/DefaultApi.ts
+[main] INFO  o.o.codegen.AbstractGenerator - writing file /Users/chris/dev/advance/./src/api/apis/AuthApi.ts
+[main] INFO  o.o.codegen.AbstractGenerator - writing file /Users/chris/dev/advance/./src/api/index.ts
+[main] INFO  o.o.codegen.AbstractGenerator - writing file /Users/chris/dev/advance/./src/api/runtime.ts
+[main] INFO  o.o.codegen.AbstractGenerator - writing file /Users/chris/dev/advance/./src/api/apis/index.ts
+[main] INFO  o.o.codegen.AbstractGenerator - writing file /Users/chris/dev/advance/./src/api/models/index.ts
+[main] INFO  o.o.codegen.AbstractGenerator - writing file /Users/chris/dev/advance/./src/api/.openapi-generator/VERSION

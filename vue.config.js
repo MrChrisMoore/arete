@@ -2,7 +2,7 @@ module.exports = {
   "transpileDependencies": [
     "vuetify"
   ],
-  'publicPath':'/arete',
+  'publicPath':'/',
   pwa: {
     name: 'Arete',
     themeColor: '#114474',

@@ -11,8 +11,26 @@
 </template>
 
 <script>
+const API_URL = `${process.env.VUE_APP_API_URL}/auth`;
 export default {
-
+mounted(){
+    if(!localStorage.user){
+        fetch(API_URL, {
+            method: "GET",
+      credentials: "include"
+    })
+      .then(res => res.json())
+      .then(result => {
+          if (result.user) {
+              if(result.user){
+                  localStorage.user = JSON.stringify(result.user);
+          }
+        } else {
+            this.$router.push('/login')
+        }
+      });
+    }
+}
 }
 </script>
 

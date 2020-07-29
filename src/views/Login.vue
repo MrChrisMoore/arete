@@ -1,31 +1,12 @@
 <template>
-<v-container
-    id="user-profile"
-    fluid
-    tag="section"
-  >
+  <v-container id="user-login" fluid tag="section">
     <v-row justify="center">
-      <v-col
-        cols="12"
-        md="8"
-      >
-        <base-material-card>
-          <template v-slot:heading>
-            <div class="display-2 font-weight-light">
-              Login Form
-            </div>            
-          </template>
-
-     
-    <v-img src="../assets/logo-1.svg" height="100%" width="100%" contain></v-img>
-    <login></login>
-
-        </base-material-card>
+      <v-col cols="12" md="8">
+        <v-img id="login-logo" src="../assets/logo.svg" height="50%" width="50%" contain></v-img>
+        <login></login>
       </v-col>
-
     </v-row>
   </v-container>
-  
 </template>
 
 <script lang="ts">
@@ -38,3 +19,9 @@ export default {
   components: { Login }
 };
 </script>
+
+<style lang="scss" scoped>
+#login-logo {
+  margin: auto;
+}
+</style>

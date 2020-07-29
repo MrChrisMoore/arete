@@ -57,7 +57,7 @@
       class="ml-2"
       min-width="0"
       text
-      to="/"
+      to="/dashboard"
     >
       <v-icon>mdi-view-dashboard</v-icon>
     </v-btn>
@@ -114,13 +114,21 @@
     >
       <v-icon>mdi-account</v-icon>
     </v-btn>
+     <v-btn
+      class="ml-2"
+      min-width="0"
+      text
+      @click="logout()"
+    >
+      <v-icon>mdi-logout</v-icon>
+    </v-btn>
   </v-app-bar>
 </template>
 
 <script>
   // Components
   import { VHover, VListItem } from 'vuetify/lib'
-
+const API_URL = `${process.env.VUE_APP_API_URL}/auth`;
   // Utilities
   import { mapState, mapMutations } from 'vuex'
 
@@ -177,6 +185,23 @@
       ...mapMutations({
         setDrawer: 'SET_DRAWER',
       }),
+      logout(){        
+        localStorage.removeItem('user');
+         fetch(`${API_URL}/logout`, {
+            method: "GET",
+      credentials: "include"
+    });
+    this.$router.push('/login');
+      // .then(res => res.json())
+      // .then(result => {
+      //    debugger
+      //    if (result.user) {
+      //         if(result.user){
+      //             localStorage.user = JSON.stringify(result.user);
+      //     }
+      //   }
+      // });
+      }
     },
   }
 </script>
