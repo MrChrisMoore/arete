@@ -447,35 +447,26 @@ export default class Dash extends Vue {
       }
   
 
-  async mounted() {
+  // async mounted() {
     
-    let auth: AuthApi =(this as any).auth;
+  //   let auth: AuthApi =(this as any).auth;
   
-    let creds = await auth.getAuth().catch((err) => {
-     if(process.env.LOG_ERROR !== 'false')  console.log(err);
-    });
-    if (creds) {
-      localStorage.user = JSON.stringify(creds);      
-    }
-    else{
-      this.$router.push('/login');
-    }
-  }
+  //   let creds = await auth.getAuth().catch((err) => {
+  //    if(process.env.LOG_ERROR !== 'false')  console.log(err);
+  //   });
+  //   if (creds) {
+  //     localStorage.user = JSON.stringify(creds);      
+  //   }
+  //   else{
+  //     this.$router.push('/login');
+  //   }
+  // }
   
     complete(index) {
       this.list[index] = !this.list[index];
     }
 
-    logout() {
-      fetch(`${API_URL}/logout`, {
-        method: "GET",
-        credentials: "include"
-      })
-        .then(res => res.json())
-        .then(result => {
-          this.$router.push("/login");
-        });
-    }
+ 
   
 };
 </script>

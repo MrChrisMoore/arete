@@ -24,9 +24,6 @@ import {
     NotFoundResponse,
     NotFoundResponseFromJSON,
     NotFoundResponseToJSON,
-    SignUpModel,
-    SignUpModelFromJSON,
-    SignUpModelToJSON,
     VerificationCodeModel,
     VerificationCodeModelFromJSON,
     VerificationCodeModelToJSON,
@@ -42,10 +39,6 @@ export interface GetAuthVerificationsRequest {
 
 export interface PostAuthLoginRequest {
     body?: LoginModel;
-}
-
-export interface PostAuthSignupRequest {
-    body?: SignUpModel;
 }
 
 export interface PostAuthSmsRequest {
@@ -199,41 +192,6 @@ export class AuthApi extends runtime.BaseAPI {
      */
     async postAuthLogin(requestParameters: PostAuthLoginRequest): Promise<LoginSuccessResponse> {
         const response = await this.postAuthLoginRaw(requestParameters);
-        return await response.value();
-    }
-
-    /**
-     * Adds a user to the database if not already in database
-     * Sign a user up
-     */
-    async postAuthSignupRaw(requestParameters: PostAuthSignupRequest): Promise<runtime.ApiResponse<string>> {
-        const queryParameters: runtime.HTTPQuery = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        headerParameters['Content-Type'] = 'application/json';
-
-        if (this.configuration && this.configuration.apiKey) {
-            headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // jwt authentication
-        }
-
-        const response = await this.request({
-            path: `/auth/signup`,
-            method: 'POST',
-            headers: headerParameters,
-            query: queryParameters,
-            body: SignUpModelToJSON(requestParameters.body),
-        });
-
-        return new runtime.TextApiResponse(response) as any;
-    }
-
-    /**
-     * Adds a user to the database if not already in database
-     * Sign a user up
-     */
-    async postAuthSignup(requestParameters: PostAuthSignupRequest): Promise<string> {
-        const response = await this.postAuthSignupRaw(requestParameters);
         return await response.value();
     }
 

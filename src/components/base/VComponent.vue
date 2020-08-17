@@ -2,10 +2,10 @@
   <section class="mb-12 text-center">
     <h1
       class="font-weight-light mb-2 headline"
-      v-text="`Vuetify ${heading}`"
+      v-text="`${heading}`"
     />
 
-    <span
+    <!-- <span
       class="font-weight-light subtitle-1"
     >
       Please checkout the
@@ -18,7 +18,7 @@
       >
         full documentation
       </a>
-    </span>
+    </span> -->
   </section>
 </template>
 

@@ -61,7 +61,7 @@ export default {
     items: [
       {
         icon: "mdi-view-dashboard",
-        title: "dashboard",
+        title: "Warehouse",
         to: "/sisense/wh-overview"
       },     
       {
@@ -89,16 +89,31 @@ export default {
         icon: "mdi-map-marker",
         to: "/maps/google-maps"
       },
+        {
+         icon: "mdi-view-dashboard-variant",
+         title: "Examples",
+         to: "/examples"
+       },
       {
         icon: "mdi-view-dashboard-variant",
-        title: "Example Widgets",
-        to: "/dashboard"
+        title: "Inventory",
+        to: "/reports/inventory"
       },
-      {
-        icon: "mdi-file-table-box-multiple",
-        title: "My Reports",
-        children: []
-      }
+       {
+        icon: "mdi-view-dashboard-variant",
+        title: "Orders",
+        to: "/reports/orders"
+      },
+       {
+        icon: "mdi-view-dashboard-variant",
+        title: "SKU Activity",
+        to: "/reports/sku"
+      },
+      // {
+      //   icon: "mdi-file-table-box-multiple",
+      //   title: "My Reports",
+      //   children: []
+      // }
       //  {
       //   title: 'Warehouse',
       //   icon: 'mdi-view-dashboard-variant',

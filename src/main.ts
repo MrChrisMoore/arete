@@ -6,10 +6,17 @@ import './registerServiceWorker';
 import i18n from './i18n'
 import router from './router';
 import store from './store';
+import Vuelidate from 'vuelidate';
 import vuetify from './plugins/vuetify';
 import '@mdi/font/css/materialdesignicons.css';
 import api from './providers/apiProvider';
+import VueColumnsResizable from 'vue-columns-resizable';
 
+Vue.use(VueColumnsResizable);
+
+
+
+Vue.use(Vuelidate);
 Vue.config.productionTip = false;
 Vue.use(api);
 
@@ -18,6 +25,7 @@ const app = new Vue({
   store,
   i18n,  
   vuetify,
+  validations: {},
   render: h => h(App)
 }).$mount('#app')
 

@@ -13,6 +13,13 @@
  */
 
 import { exists, mapValues } from '../runtime';
+import {
+    UserJson,
+    UserJsonFromJSON,
+    UserJsonFromJSONTyped,
+    UserJsonToJSON,
+} from './';
+
 /**
  * 
  * @export
@@ -27,10 +34,10 @@ export interface LoginSuccessResponse {
     token?: string;
     /**
      * 
-     * @type {object}
+     * @type {UserJson}
      * @memberof LoginSuccessResponse
      */
-    verification?: object;
+    userJson?: UserJson;
 }
 
 export function LoginSuccessResponseFromJSON(json: any): LoginSuccessResponse {
@@ -44,7 +51,7 @@ export function LoginSuccessResponseFromJSONTyped(json: any, ignoreDiscriminator
     return {
         
         'token': !exists(json, 'token') ? undefined : json['token'],
-        'verification': !exists(json, 'verification') ? undefined : json['verification'],
+        'userJson': !exists(json, 'userJson') ? undefined : UserJsonFromJSON(json['userJson']),
     };
 }
 
@@ -58,7 +65,7 @@ export function LoginSuccessResponseToJSON(value?: LoginSuccessResponse | null):
     return {
         
         'token': value.token,
-        'verification': value.verification,
+        'userJson': UserJsonToJSON(value.userJson),
     };
 }
 

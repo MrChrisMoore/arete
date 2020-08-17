@@ -1,0 +1,22 @@
+
+<v-container fluid tag="section">
+
+  <section id="orders" class="page">
+    <v-row>
+      
+      <v-col cols="12" md="12">
+        <base-material-card color="success" class="px-5 py-3">
+        <template v-slot:heading>
+          <div class="display-2 font-weight-light">Orders</div>
+          
+          <div class="subtitle-1 font-weight-light">Current as of 8-7-2020</div>
+        </template>
+        <v-card-text>
+          <v-data-table :headers="headers" :items="items"  :loading="loading" loading-text="Loading... Please wait" show-group-by/>
+        </v-card-text>
+      </base-material-card>
+    </v-col>
+  </v-row>
+</section>
+</v-container>
+

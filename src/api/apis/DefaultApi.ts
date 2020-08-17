@@ -22,7 +22,7 @@ export class DefaultApi extends runtime.BaseAPI {
 
     /**
      * Just a route sitting all the way at the front
-     * I don\'t really do anything.
+     * Say hello
      */
     async getRaw(): Promise<runtime.ApiResponse<string>> {
         const queryParameters: runtime.HTTPQuery = {};
@@ -45,7 +45,7 @@ export class DefaultApi extends runtime.BaseAPI {
 
     /**
      * Just a route sitting all the way at the front
-     * I don\'t really do anything.
+     * Say hello
      */
     async get(): Promise<string> {
         const response = await this.getRaw();

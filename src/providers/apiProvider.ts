@@ -1,6 +1,8 @@
 import { Configuration } from "../api/runtime";
 import { VueConstructor } from "vue/types/umd";
 import { AuthApi } from "../api/apis/AuthApi";
+import { UserApi } from '@/api';
+import { ReportsApi } from '@/api/apis/ReportsApi';
 
 const getApiKey = (name: string) => {
   if(process.env.LOG_VERBOSE !== 'false')  console.log("Getting token");
@@ -17,5 +19,9 @@ export default {
     if(process.env.LOG_VERBOSE !== 'false') console.log("Installing API Plugin");
     vue.prototype.auth = new AuthApi(apiConfig);
     vue.component.prototype.$auth = new AuthApi();
+    vue.prototype.userApi = new UserApi(apiConfig);
+    vue.component.prototype.$userApi = new UserApi();
+    vue.prototype.reportsApi = new ReportsApi(apiConfig);
+    vue.component.prototype.$reportsApi = new ReportsApi();
   },
 };

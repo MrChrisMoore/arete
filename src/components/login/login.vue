@@ -7,7 +7,7 @@
             </div>
 
             <div class="subtitle-1 font-weight-light">
-             Enter Username and password or choose a login provider
+             Enter username and password.
             </div>
           </template>
               <v-card-text>
@@ -45,56 +45,49 @@
 <script lang="ts">
 import Vue from "vue";
 import { AuthApi, PostAuthLoginRequest } from "../../api/apis/AuthApi";
-const googleLoginURL: string = `${process.env.VUE_APP_API_URL}/auth/google`;
-const facebookLoginURL: string = `${process.env.VUE_APP_API_URL}/auth/facebook`;
-const loginURL: string = `${process.env.VUE_APP_API_URL}/auth/login`;
-const authCheckURL: string = `${process.env.VUE_APP_API_URL}`;
+import Component from 'vue-class-component';
+// const googleLoginURL: string = `${process.env.VUE_APP_API_URL}/auth/google`;
+// const facebookLoginURL: string = `${process.env.VUE_APP_API_URL}/auth/facebook`;
+// const loginURL: string = `${process.env.VUE_APP_API_URL}/auth/login`;
+// const authCheckURL: string = `${process.env.VUE_APP_API_URL}`;
 //import { AuthApi } from "../../api/apis/AuthApi";
+@Component
+export default class Login extends Vue {
+  name: "login";
 
-export default Vue.extend({
-  name: "login",
-  data: () => ({
-    username: "",
-    password: "",
-  }),
-  // async mounted() {
-  //   let auth: AuthApi = (this as any).auth;
-  //   let creds = await auth.getAuth().catch((err) => {
-  //     console.log(err);
-  //   });
-  //   if (creds) {
-  //     localStorage.user = JSON.stringify(creds);
-  //     this.$router.push('/dashboard');
-  //   }
-  // },
+  username: string = "";
+  password: string = "";
 
-  methods: {
-    loginGoogle() {
-      window.location.href = googleLoginURL;
-    },
-    loginFacebook() {
-      window.location.href = facebookLoginURL;
-    },
-    login: async function () {
-      let auth: AuthApi = (this as any).auth;
-      try {
-        let authResponse = await auth
-          .postAuthLogin({
-            body: { username: this.username, password: this.password },
-          })
-          .catch((err) => {
-            if(process.env.LOG_ERROR !== 'false') console.log(err);
-          });
-        if  (authResponse) {
-          localStorage.token = authResponse.token;
+  // loginGoogle() {
+  //   window.location.href = googleLoginURL;
+  // }
+  // loginFacebook() {
+  //   window.location.href = facebookLoginURL;
+  // }
+  async login() {
+    let auth: AuthApi = this.auth;
+    try {
+      let authResponse = await auth
+        .postAuthLogin({
+          body: { username: this.username, password: this.password },
+        })
+        .catch((err) => {
+          if (process.env.LOG_ERROR !== "false") console.log(err);
+        });
+      if (authResponse) {
+        localStorage.token = authResponse.token;
+        localStorage.user = JSON.stringify(authResponse.userJson);
+        if (!authResponse.userJson.verified) {
+          this.$router.push("/verify");
+        } else {
           this.$router.push("/sisense/wh-overview");
         }
-      } catch (error) {
-       if(process.env.LOG_ERROR !== 'false')  console.log(error);
       }
-    },
-  },
-});
+    } catch (error) {
+      if (process.env.LOG_ERROR !== "false") console.log(error);
+    }
+  }
+}
 </script>
 
 <style scoped lang="scss">

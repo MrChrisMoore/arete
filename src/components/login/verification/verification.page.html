@@ -1,0 +1,43 @@
+
+<section id="verification" class="page">
+  <base-material-card class="elevation-12">
+  <template v-slot:heading>
+          <div class="display-2 font-weight-light">
+            Verify
+          </div>
+
+          <div class="subtitle-1 font-weight-light">
+           Additional verification needed
+          </div>
+        </template>
+            <v-card-text>
+              <v-form @submit.prevent="submit" @keyup.native.enter="callFunc">
+                <v-text-field
+                v-model="phone"
+                  label="Phone"
+                  name="phone"
+                  prepend-icon="mdi-phone"
+                  type="phone"
+                ></v-text-field>
+
+                <v-text-field v-if="codeSent"
+                v-model="code"
+                  id="code"
+                  label="Verification"
+                  name="code"
+                  prepend-icon="mdi-lock"
+                  autocomplete="false"
+                  ></v-text-field>
+                  <!-- type="password" -->
+              </v-form>
+            </v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn v-if="!codeSent" type="submit" color="primary"  @click="verifyGetCode()">Submit</v-btn>
+              <v-btn v-if="codeSent" type="submit" color="primary"  @click="verifySendCode()">Submit</v-btn>
+              <!-- <v-btn color="primary" @click="loginGoogle()">Google Login</v-btn>
+              <v-btn color="primary" @click="loginFacebook()">Facebook Login</v-btn> -->
+            </v-card-actions>
+          </base-material-card>
+</section>
+
