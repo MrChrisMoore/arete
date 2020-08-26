@@ -10,9 +10,9 @@ import Vuelidate from 'vuelidate';
 import vuetify from './plugins/vuetify';
 import '@mdi/font/css/materialdesignicons.css';
 import api from './providers/apiProvider';
-import VueColumnsResizable from 'vue-columns-resizable';
 
-Vue.use(VueColumnsResizable);
+
+//Vue.use(VueColumnsResizable);
 
 
 
