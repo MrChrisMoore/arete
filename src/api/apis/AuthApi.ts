@@ -27,6 +27,9 @@ import {
     VerificationCodeModel,
     VerificationCodeModelFromJSON,
     VerificationCodeModelToJSON,
+    VoiceVerificationRequestModel,
+    VoiceVerificationRequestModelFromJSON,
+    VoiceVerificationRequestModelToJSON,
 } from '../models';
 
 export interface GetAuthSmsRequest {
@@ -43,6 +46,10 @@ export interface PostAuthLoginRequest {
 
 export interface PostAuthSmsRequest {
     body?: VerificationCodeModel;
+}
+
+export interface PostAuthVoiceRequest {
+    body?: VoiceVerificationRequestModel;
 }
 
 /**
@@ -227,6 +234,41 @@ export class AuthApi extends runtime.BaseAPI {
      */
     async postAuthSms(requestParameters: PostAuthSmsRequest): Promise<string> {
         const response = await this.postAuthSmsRaw(requestParameters);
+        return await response.value();
+    }
+
+    /**
+     * Calls twilio to send the code to the user via a voice call
+     * Make the request to twilio to send the verification code to the user using a voice call
+     */
+    async postAuthVoiceRaw(requestParameters: PostAuthVoiceRequest): Promise<runtime.ApiResponse<string>> {
+        const queryParameters: runtime.HTTPQuery = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        if (this.configuration && this.configuration.apiKey) {
+            headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // jwt authentication
+        }
+
+        const response = await this.request({
+            path: `/auth/voice`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: VoiceVerificationRequestModelToJSON(requestParameters.body),
+        });
+
+        return new runtime.TextApiResponse(response) as any;
+    }
+
+    /**
+     * Calls twilio to send the code to the user via a voice call
+     * Make the request to twilio to send the verification code to the user using a voice call
+     */
+    async postAuthVoice(requestParameters: PostAuthVoiceRequest): Promise<string> {
+        const response = await this.postAuthVoiceRaw(requestParameters);
         return await response.value();
     }
 

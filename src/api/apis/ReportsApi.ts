@@ -91,7 +91,7 @@ export class ReportsApi extends runtime.BaseAPI {
 
     /**
      * This is a temporary thing
-     * Returns SKU Activity for Kill Cliff
+     * Returns SKU Activity for Kill Cliff ... does this change
      */
     async getReportsKcskuactivityRaw(): Promise<runtime.ApiResponse<Array<object>>> {
         const queryParameters: runtime.HTTPQuery = {};
@@ -114,10 +114,42 @@ export class ReportsApi extends runtime.BaseAPI {
 
     /**
      * This is a temporary thing
-     * Returns SKU Activity for Kill Cliff
+     * Returns SKU Activity for Kill Cliff ... does this change
      */
     async getReportsKcskuactivity(): Promise<Array<object>> {
         const response = await this.getReportsKcskuactivityRaw();
+        return await response.value();
+    }
+
+    /**
+     * Filtered to the company baseed on the BILL_TO_CODE
+     * Returns Order history for the comapany associated with this login
+     */
+    async getReportsTmwOrdersRaw(): Promise<runtime.ApiResponse<Array<object>>> {
+        const queryParameters: runtime.HTTPQuery = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.apiKey) {
+            headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // jwt authentication
+        }
+
+        const response = await this.request({
+            path: `/reports/tmw/orders`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        });
+
+        return new runtime.JSONApiResponse<any>(response);
+    }
+
+    /**
+     * Filtered to the company baseed on the BILL_TO_CODE
+     * Returns Order history for the comapany associated with this login
+     */
+    async getReportsTmwOrders(): Promise<Array<object>> {
+        const response = await this.getReportsTmwOrdersRaw();
         return await response.value();
     }
 

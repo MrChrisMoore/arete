@@ -11,9 +11,11 @@
 [main] INFO  o.o.codegen.AbstractGenerator - writing file /Users/chris/dev/advance/./src/api/models/NotFoundResponse.ts
 [main] INFO  o.o.codegen.AbstractGenerator - writing file /Users/chris/dev/advance/./src/api/models/UserJson.ts
 [main] INFO  o.o.codegen.AbstractGenerator - writing file /Users/chris/dev/advance/./src/api/models/VerificationCodeModel.ts
+[main] INFO  o.o.codegen.AbstractGenerator - writing file /Users/chris/dev/advance/./src/api/models/VoiceVerificationRequestModel.ts
 [main] INFO  o.o.codegen.AbstractGenerator - writing file /Users/chris/dev/advance/./src/api/apis/DefaultApi.ts
 [main] INFO  o.o.codegen.AbstractGenerator - writing file /Users/chris/dev/advance/./src/api/apis/AuthApi.ts
 [main] INFO  o.o.codegen.AbstractGenerator - writing file /Users/chris/dev/advance/./src/api/apis/ReportsApi.ts
+[main] INFO  o.o.codegen.AbstractGenerator - writing file /Users/chris/dev/advance/./src/api/apis/TranslationsApi.ts
 [main] INFO  o.o.codegen.AbstractGenerator - writing file /Users/chris/dev/advance/./src/api/apis/UserApi.ts
 [main] INFO  o.o.codegen.AbstractGenerator - writing file /Users/chris/dev/advance/./src/api/index.ts
 [main] INFO  o.o.codegen.AbstractGenerator - writing file /Users/chris/dev/advance/./src/api/runtime.ts
