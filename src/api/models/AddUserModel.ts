@@ -13,6 +13,13 @@
  */
 
 import { exists, mapValues } from '../runtime';
+import {
+    Company,
+    CompanyFromJSON,
+    CompanyFromJSONTyped,
+    CompanyToJSON,
+} from './';
+
 /**
  * 
  * @export
@@ -45,10 +52,10 @@ export interface AddUserModel {
     permissionLevel: AddUserModelPermissionLevelEnum;
     /**
      * 
-     * @type {string}
+     * @type {Company}
      * @memberof AddUserModel
      */
-    groupCode: string;
+    company: Company;
     /**
      * 
      * @type {string}
@@ -77,7 +84,7 @@ export function AddUserModelFromJSONTyped(json: any, ignoreDiscriminator: boolea
         'lastName': json['lastName'],
         'username': json['username'],
         'permissionLevel': json['permissionLevel'],
-        'groupCode': json['groupCode'],
+        'company': CompanyFromJSON(json['company']),
         'email': json['email'],
         'phone': json['phone'],
     };
@@ -96,7 +103,7 @@ export function AddUserModelToJSON(value?: AddUserModel | null): any {
         'lastName': value.lastName,
         'username': value.username,
         'permissionLevel': value.permissionLevel,
-        'groupCode': value.groupCode,
+        'company': CompanyToJSON(value.company),
         'email': value.email,
         'phone': value.phone,
     };

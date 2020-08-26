@@ -1,4 +1,5 @@
 export * from './AddUserModel';
+export * from './Company';
 export * from './LoginModel';
 export * from './LoginSuccessResponse';
 export * from './NotFoundResponse';
