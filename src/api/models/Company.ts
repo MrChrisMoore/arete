@@ -24,7 +24,7 @@ export interface Company {
      * @type {string}
      * @memberof Company
      */
-    cOMPANYNAME?: string;
+    cOMPANYNAME: string;
     /**
      * 
      * @type {string}
@@ -91,7 +91,7 @@ export function CompanyFromJSONTyped(json: any, ignoreDiscriminator: boolean): C
     }
     return {
         
-        'cOMPANYNAME': !exists(json, 'COMPANY NAME') ? undefined : json['COMPANY NAME'],
+        'cOMPANYNAME': json['COMPANY NAME'],
         'cADENCEID': !exists(json, 'CADENCE ID') ? undefined : json['CADENCE ID'],
         'tMWCODE': !exists(json, 'TMW CODE') ? undefined : json['TMW CODE'],
         'wPCRMID': !exists(json, 'WP CRM ID') ? undefined : json['WP CRM ID'],

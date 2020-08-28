@@ -13,6 +13,13 @@
  */
 
 import { exists, mapValues } from '../runtime';
+import {
+    Company,
+    CompanyFromJSON,
+    CompanyFromJSONTyped,
+    CompanyToJSON,
+} from './';
+
 /**
  * 
  * @export
@@ -45,10 +52,16 @@ export interface UserJson {
     permissionLevel?: string;
     /**
      * 
-     * @type {string}
+     * @type {Company}
      * @memberof UserJson
      */
-    groupCode?: string;
+    company: Company;
+    /**
+     * 
+     * @type {Array<string>}
+     * @memberof UserJson
+     */
+    tmwCodes?: Array<string>;
     /**
      * 
      * @type {string}
@@ -83,7 +96,8 @@ export function UserJsonFromJSONTyped(json: any, ignoreDiscriminator: boolean): 
         'lastName': !exists(json, 'lastName') ? undefined : json['lastName'],
         'username': !exists(json, 'username') ? undefined : json['username'],
         'permissionLevel': !exists(json, 'permissionLevel') ? undefined : json['permissionLevel'],
-        'groupCode': !exists(json, 'groupCode') ? undefined : json['groupCode'],
+        'company': CompanyFromJSON(json['company']),
+        'tmwCodes': !exists(json, 'tmw_codes') ? undefined : json['tmw_codes'],
         'email': !exists(json, 'email') ? undefined : json['email'],
         'phone': !exists(json, 'phone') ? undefined : json['phone'],
         'verified': !exists(json, 'verified') ? undefined : json['verified'],
@@ -103,7 +117,8 @@ export function UserJsonToJSON(value?: UserJson | null): any {
         'lastName': value.lastName,
         'username': value.username,
         'permissionLevel': value.permissionLevel,
-        'groupCode': value.groupCode,
+        'company': CompanyToJSON(value.company),
+        'tmw_codes': value.tmwCodes,
         'email': value.email,
         'phone': value.phone,
         'verified': value.verified,
