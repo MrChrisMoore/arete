@@ -13,7 +13,7 @@
             <v-container class="py-0">
               <v-row v-if="!isCreate">
                 <v-col cols="12" md="4">
-                  <v-text-field label="Company" :disabled="!isCreate" v-model="user.company['Company Name']" />
+                  <v-text-field label="Company" :disabled="!isCreate" v-model="user.company.cOMPANYNAME" />
                 </v-col>
 
                 <v-col cols="12" md="4">
@@ -336,12 +336,13 @@ export default class UserProfile extends Vue {
   }
 
   async save() {
+    let nUser:any = this.newUser;
     if (this.newUser && typeof this.newUser.company === "object") {
-      this.newUser.company = CompanyFromJSONTyped(this.newUser.company, false);
+      nUser.company = CompanyFromJSONTyped(this.newUser.company, false);
     }
     // debugger
     let response = await this.userApi
-      .postUserAdd({ body: this.newUser })
+      .postUserAdd({ body: nUser })
       .catch((err) => {
         console.log(err);
       });
