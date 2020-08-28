@@ -1,7 +1,7 @@
 import { Configuration } from "../api/runtime";
 import { VueConstructor } from "vue/types/umd";
 import { AuthApi } from "../api/apis/AuthApi";
-import { UserApi } from '@/api';
+import { UserApi, TranslationsApi } from '@/api';
 import { ReportsApi } from '@/api/apis/ReportsApi';
 
 const getApiKey = (name: string) => {
@@ -23,5 +23,7 @@ export default {
     vue.component.prototype.$userApi = new UserApi();
     vue.prototype.reportsApi = new ReportsApi(apiConfig);
     vue.component.prototype.$reportsApi = new ReportsApi();
+    vue.prototype.translationApi = new TranslationsApi(apiConfig);
+    vue.component.prototype.$translationApi = new TranslationsApi();
   },
 };

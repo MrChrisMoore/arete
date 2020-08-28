@@ -13,7 +13,7 @@
             <v-container class="py-0">
               <v-row v-if="!isCreate">
                 <v-col cols="12" md="4">
-                  <v-text-field label="Group Code" :disabled="!isCreate" v-model="user.groupCode" />
+                  <v-text-field label="Company" :disabled="!isCreate" v-model="user.company['Company Name']" />
                 </v-col>
 
                 <v-col cols="12" md="4">
@@ -67,13 +67,17 @@
               </v-row>
               <v-row v-if="isCreate">
                 <v-col cols="12" md="4">
-                  <v-text-field
-                    label="Group Code"
+                  <v-autocomplete
+                    label="Company"
+                    :items="companies"
+                    placeholder="Drop down or begin typing"
                     :disabled="!isCreate"
-                    :error-messages="groupCodeErrors"
-                    v-model="newUser.groupCode"
-                    @blur="$v.groupCode.$touch()"
-                    @change="$v.groupCode.$touch()"
+                    item-text="COMPANY NAME"
+                    :error-messages="companyErrors"
+                    v-model="newUser.company"
+                    return-object
+                    @blur="$v.company.$touch()"
+                    @change="$v.company.$touch()"
                   />
                 </v-col>
 
@@ -121,7 +125,7 @@
                     @blur="$v.lastName.$touch()"
                   />
                 </v-col>
-                <v-col cols="12" md="6">
+                <!-- <v-col cols="12" md="6">
                   <v-text-field
                     :error-messages="phoneErrors"
                     label="Phone"
@@ -130,11 +134,28 @@
                     @change="$v.phone.$touch()"
                     @blur="$v.phone.$touch()"
                   />
+                </v-col>-->
+
+                <v-col cols="12" md="6">
+                  <VuePhoneNumberInput
+                    dark
+                    :error-messages="phoneErrors"
+                    error-color="red"
+                    label="Phone"
+                    class="purple-input"
+                    clearable
+                    :error="hasErrorActive"
+                    v-model="newUser.phone"
+                    @change="$v.phone.$touch()"
+                    @blur="$v.phone.$touch()"
+                    @update="onUpdate"
+                  />
                 </v-col>
                 <v-col cols="12" md="6">
-                  <v-text-field
+                  <v-select
                     label="Permission Level"
                     class="purple-input"
+                    :items="permLevels"
                     :error-messages="permissionLevelErrors"
                     v-model="newUser.permissionLevel"
                     @change="$v.permissionLevel.$touch()"
@@ -161,7 +182,7 @@
         </base-material-card>
       </v-col>-->
     </v-row>
-    <v-row justify="center">
+    <v-row v-if="canAdd" justify="center">
       <v-col cols="12" md="4">
         <v-btn block color="secondary" dark @click="addMode()">Add User</v-btn>
       </v-col>
@@ -172,22 +193,40 @@
 <script lang='ts'>
 import Vue from "vue";
 import Component from "vue-class-component";
-import { UserApi, AddUserModelPermissionLevelEnum } from "../../../api";
+import {
+  UserApi,
+  AddUserModelPermissionLevelEnum,
+  TranslationsApi,
+  CompanyFromJSONTyped,
+} from "../../../api";
 import { required, minLength, email } from "vuelidate/lib/validators";
 import { validationMixin } from "vuelidate";
 import { Validations } from "vuelidate-property-decorators";
-const isPhone = (value) => /^1(3|4|5|7|8)\d{9}$/.test(value);
+import VuePhoneNumberInput from "vue-phone-number-input";
+import "vue-phone-number-input/dist/vue-phone-number-input.css";
+const isPhone = (value) => {
+  debugger;
+  return /^1(3|4|5|7|8)\d{9}$/.test(value);
+};
 const isPerm = (value) => ["ADMIN", "USER", "SUPER"];
 
-@Component({ mixins: [validationMixin] })
+@Component({ mixins: [validationMixin], components: { VuePhoneNumberInput } })
 export default class UserProfile extends Vue {
   headingText: string = "Review your profile";
   headingSubtitle: string = "";
-
+  get permLevels() {
+    return ["SUPER", "ADMIN", "USER"].filter((v, k) => {
+      return this.user.permissionLevel === "SUPER" && v === "SUPER"
+        ? v
+        : v !== "SUPER" && v;
+    });
+  }
+  hasErrorActive = false;
+  canAdd = false;
   user = {
     firstName: "",
     lastName: "",
-    groupCode: "",
+    company: "",
     phone: "",
     username: "",
     email: "",
@@ -196,18 +235,26 @@ export default class UserProfile extends Vue {
   newUser = {
     firstName: "",
     lastName: "",
-    groupCode: "",
+    company: {},
     phone: "",
     username: "",
     email: "",
     permissionLevel: AddUserModelPermissionLevelEnum.USER,
   };
 
+  companies = [];
+
   //permLevels: AddUserModelPermissionLevelEnum;
 
   isCreate: boolean = false;
   mounted() {
     this.user = JSON.parse(localStorage.user);
+    this.canAdd =
+      this.user.permissionLevel === "SUPER" ||
+      this.user.permissionLevel === "ADMIN";
+  }
+  onUpdate(payload) {
+    this.hasErrorActive = !payload.isValid;
   }
   @Validations()
   validations = {
@@ -216,50 +263,61 @@ export default class UserProfile extends Vue {
     },
 
     lastName: { required },
-    groupCode: { required },
+    company: { required },
     phone: { required, isPhone },
     username: { required },
     email: { required, email },
     permissionLevel: { isPerm },
   };
-  addMode() {
+  async addMode() {
     this.isCreate = true;
     this.headingText = "Add user";
     this.headingSubtitle =
       "Please fill in the required information to add a user";
+    this.companies = await this.translationApi.getTranslationsCompanies();
   }
 
   get firstNameErrors() {
     const errors = [];
     if (!this.$v.firstName.$dirty) return errors;
-    !this.$v.firstName.required && errors.push("First Name is required");
+    !this.$v.firstName.required &&
+      !this.newUser.firstName &&
+      errors.push("First Name is required");
     return errors;
   }
   get lastNameErrors() {
     const errors = [];
     if (!this.$v.lastName.$dirty) return errors;
-    !this.$v.firstName.required && errors.push("Last Name is required");
+    !this.$v.firstName.required &&
+      !this.newUser.lastName &&
+      errors.push("Last Name is required");
     return errors;
   }
-  get groupCodeErrors() {
+  get companyErrors() {
     const errors = [];
-    debugger;
-    if (!this.$v.groupCode.$dirty) return errors;
-    !this.$v.groupCode.required && errors.push("Group Code is required");
+    if (!this.$v.company.$dirty) return errors;
+    !this.$v.company.required &&
+      !this.newUser.company &&
+      errors.push("Company is required");
     return errors;
   }
   get phoneErrors() {
     const errors = [];
     if (!this.$v.phone.$dirty) return errors;
+    debugger;
     !this.$v.phone.isPhone && errors.push("Must be a valid phone number");
-    !this.$v.phone.required && errors.push("Phone is required.");
+    !this.$v.phone.required &&
+      !this.newUser.phone &&
+      errors.push("Phone is required.");
     return errors;
   }
   get emailErrors() {
     const errors = [];
     if (!this.$v.email.$dirty) return errors;
     !this.$v.email.email && errors.push("Must be valid e-mail");
-    !this.$v.email.required && errors.push("E-mail is required");
+    !this.$v.email.required &&
+      !this.newUser.email &&
+      errors.push("E-mail is required");
     return errors;
   }
   get permissionLevelErrors() {
@@ -271,13 +329,33 @@ export default class UserProfile extends Vue {
   get userNameErrors() {
     const errors = [];
     if (!this.$v.username.$dirty) return errors;
-    !this.$v.username.required && errors.push("Username is required.");
+    !this.$v.username.required &&
+      !this.newUser.username &&
+      errors.push("Username is required.");
     return errors;
   }
 
   async save() {
-    let response = await this.userApi.postUserAdd({ body: this.newUser });
-          
+    if (this.newUser && typeof this.newUser.company === "object") {
+      this.newUser.company = CompanyFromJSONTyped(this.newUser.company, false);
+    }
+    // debugger
+    let response = await this.userApi
+      .postUserAdd({ body: this.newUser })
+      .catch((err) => {
+        console.log(err);
+      });
+    if (response) {
+      this.newUser = {
+        firstName: "",
+        lastName: "",
+        company: {},
+        phone: "",
+        username: "",
+        email: "",
+        permissionLevel: AddUserModelPermissionLevelEnum.USER,
+      };
+    }
   }
 }
 </script>

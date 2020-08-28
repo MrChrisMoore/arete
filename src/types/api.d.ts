@@ -4,7 +4,7 @@
 
 import Vue from 'vue'
 
-import { AuthApi } from '../api/apis';
+import { AuthApi, TranslationsApi } from '../api/apis';
 import { UserApi } from '@/api/apis/UserApi';
 import { ReportsApi } from '@/api/apis/ReportsApi';
 
@@ -13,7 +13,8 @@ declare module 'vue/types/vue' {
   export interface Vue {
     auth: AuthApi,
     userApi:UserApi,
-    reportsApi?:ReportsApi
+    reportsApi?:ReportsApi, 
+    translationApi?:TranslationsApi
   }
 }
 
@@ -27,7 +28,8 @@ declare module 'vue/types/options' {
     Props=DefaultProps> {
       auth?: AuthApi,
       userApi?:UserApi,
-      reportsApi?:ReportsApi
+      reportsApi?:ReportsApi,
+      translationApi?:TranslationsApi
   }
 }
 

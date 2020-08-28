@@ -73,7 +73,7 @@ export default class Login extends Vue {
         })
         .catch((err) => {
           if (process.env.LOG_ERROR !== "false") console.log(err);
-        });
+        });        
       if (authResponse) {
         localStorage.token = authResponse.token;
         localStorage.user = JSON.stringify(authResponse.userJson);

@@ -18,6 +18,7 @@
     "vue-chartist": "^2.3.1",
     "vue-class-component": "^7.2.3",
     "vue-i18n": "^8.18.2",
+    "vue-phone-number-input": "^1.1.10",
     "vue-property-decorator": "^8.4.2",
     "vue-router": "^3.2.0",
     "vuelidate": "^0.7.5",
