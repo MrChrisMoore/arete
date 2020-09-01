@@ -24,6 +24,9 @@ import {
     NotFoundResponse,
     NotFoundResponseFromJSON,
     NotFoundResponseToJSON,
+    PasswordResetModel,
+    PasswordResetModelFromJSON,
+    PasswordResetModelToJSON,
     VerificationCodeModel,
     VerificationCodeModelFromJSON,
     VerificationCodeModelToJSON,
@@ -42,6 +45,10 @@ export interface GetAuthVerificationsRequest {
 
 export interface PostAuthLoginRequest {
     body?: LoginModel;
+}
+
+export interface PostAuthResetRequest {
+    body?: PasswordResetModel;
 }
 
 export interface PostAuthSmsRequest {
@@ -199,6 +206,41 @@ export class AuthApi extends runtime.BaseAPI {
      */
     async postAuthLogin(requestParameters: PostAuthLoginRequest): Promise<LoginSuccessResponse> {
         const response = await this.postAuthLoginRaw(requestParameters);
+        return await response.value();
+    }
+
+    /**
+     * Reset the users password after initial login or on request
+     * Reset Password
+     */
+    async postAuthResetRaw(requestParameters: PostAuthResetRequest): Promise<runtime.ApiResponse<string>> {
+        const queryParameters: runtime.HTTPQuery = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        if (this.configuration && this.configuration.apiKey) {
+            headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // jwt authentication
+        }
+
+        const response = await this.request({
+            path: `/auth/reset`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: PasswordResetModelToJSON(requestParameters.body),
+        });
+
+        return new runtime.TextApiResponse(response) as any;
+    }
+
+    /**
+     * Reset the users password after initial login or on request
+     * Reset Password
+     */
+    async postAuthReset(requestParameters: PostAuthResetRequest): Promise<string> {
+        const response = await this.postAuthResetRaw(requestParameters);
         return await response.value();
     }
 

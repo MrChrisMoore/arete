@@ -3,6 +3,7 @@ export * from './Company';
 export * from './LoginModel';
 export * from './LoginSuccessResponse';
 export * from './NotFoundResponse';
+export * from './PasswordResetModel';
 export * from './UserJson';
 export * from './VerificationCodeModel';
 export * from './VoiceVerificationRequestModel';
