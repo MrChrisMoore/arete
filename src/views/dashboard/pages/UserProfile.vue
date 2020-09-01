@@ -346,7 +346,7 @@ export default class UserProfile extends Vue {
       .catch((err) => {
         console.log(err);
       });
-    if (response) {
+    if (response && response !== 'User Exists') {
       this.newUser = {
         firstName: "",
         lastName: "",

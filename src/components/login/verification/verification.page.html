@@ -12,14 +12,24 @@
         </template>
             <v-card-text>
               <v-form @submit.prevent="submit" @keyup.native.enter="callFunc">
-                <v-text-field
+                <!-- <v-text-field
                 v-model="phone"
                   label="Phone"
                   name="phone"
                   prepend-icon="mdi-phone"
                   type="phone"
-                ></v-text-field>
-
+                ></v-text-field> -->
+                <VuePhoneNumberInput
+                dark
+                :error-messages="phoneErrors"
+                error-color="red"
+                label="Phone"
+                class="purple-input"
+                clearable
+                :error="hasErrorActive"
+                v-model="phone"               
+                @update="onUpdate"
+              />
                 <v-text-field v-if="codeSent"
                 v-model="code"
                   id="code"
