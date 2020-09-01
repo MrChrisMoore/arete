@@ -1,0 +1,34 @@
+<section id="change">
+  <base-material-card class="elevation-12">
+    <template v-slot:heading>
+      <div class="display-2 font-weight-light">
+        Change Password
+      </div>
+
+      <div class="subtitle-1 font-weight-light">
+        Please change your password
+      </div>
+    </template>
+    <v-card-text>
+      <v-form @submit.prevent="submit" @keyup.native.enter="go">
+        <v-text-field :error-messages="currentErrors" v-model="current" label="Current Password" name="current"
+          prepend-icon="mdi-lock" type="password" @change="$v.current.$touch()" @blur="$v.current.$touch()">
+        </v-text-field>
+
+        <v-text-field :error-messages="newPassErrors" v-model="newPass" id="new" label="New Password" name="new"
+          prepend-icon="mdi-lock" type="password" autocomplete="true" @change="$v.newPass.$touch()"
+          @blur="$v.newPass.$touch()"></v-text-field>
+        <v-text-field :error-messages="confirmErrors" v-model="confirm" id="confirm" label="Confirm Password"
+          name="confirm" prepend-icon="mdi-lock" type="password" autocomplete="true" @change="$v.confirm.$touch()"
+          @blur="$v.confirm.$touch()"></v-text-field>
+      </v-form>
+    </v-card-text>
+    <v-card-actions>
+      <v-spacer></v-spacer>
+      <v-btn type="submit" color="primary" @click="go()">Save</v-btn>
+      <!-- <v-btn color="primary" @click="loginGoogle()">Google Login</v-btn>
+                <v-btn color="primary" @click="loginFacebook()">Facebook Login</v-btn> -->
+    </v-card-actions>
+  </base-material-card>
+
+</section>

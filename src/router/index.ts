@@ -2,6 +2,7 @@ import Vue from "vue";
 import VueRouter, { RouteConfig, Route, NavigationGuardNext } from "vue-router";
 import Login from "../views/Login.vue";
 import VerificationComponent from "@/components/login/verification/index.vue";
+import ChangePage from '@/components/login/change/index.vue';
 
 Vue.use(VueRouter);
 const router = new VueRouter({
@@ -35,6 +36,15 @@ const router = new VueRouter({
           path: "/verify",
           name: "verify",
           component: VerificationComponent,
+          meta: {
+            requiresAuth: true,
+          },
+          // beforeEnter:loggedInRedirectDashboard
+        },
+        {
+          path: "/change",
+          name: "change",
+          component: ChangePage,
           meta: {
             requiresAuth: true,
           },
@@ -142,20 +152,30 @@ const router = new VueRouter({
   ],
 });
 
-router.beforeEach((to, from, next) => {
+router.beforeEach((to, from, next) => {  
+  // if needs auth
   if (to.matched.some((record) => record.meta.requiresAuth)) {
+    // needs auth true
     if (process.env.LOG_VERBOSE !== "false") console.log("Checking for token.");
     if (!localStorage.getItem("token")) {
+      // no token send to login
       next({
         path: "/login",
         params: { nextUrl: to.fullPath },
       });
     } else {
+      // has token check for user
       if (process.env.LOG_VERBOSE !== "false")
         console.log("Checking for User.");
       let user = JSON.parse(localStorage.getItem("user"));
+      if(user){
+        let tempVerifcation = JSON.parse(localStorage.getItem('tempVerification'));
       // check if the user has been verified
-      if (user.verified || to.path === '/verify') {
+      if (user.verified || to.path === '/verify' || (tempVerifcation && tempVerifcation.valid) ) {
+        // user is verified 
+        if(user.needsNewPassword){
+          next({name:'change'})
+        }
         if (to.matched.some((record) => record.meta.is_admin)) {
           if (user.is_admin == 1) {
             next();
@@ -168,6 +188,14 @@ router.beforeEach((to, from, next) => {
       } else {
         next({name:'verify'});
       }
+    }
+    else {
+      // no user hmmmmmmm 
+      next({
+        path: "/login",
+        params: { nextUrl: to.fullPath },
+      });
+    }
     }
   } else if (to.matched.some((record) => record.meta.guest)) {
     if (process.env.LOG_VERBOSE !== "false")

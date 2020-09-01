@@ -17,29 +17,30 @@
                 </v-col>
 
                 <v-col cols="12" md="4">
-                  <v-text-field class="purple-input" label="User Name" v-model="user.username" />
+                  <v-text-field class="purple-input" :disabled="!isCreate" label="User Name" v-model="user.username" />
                 </v-col>
 
                 <v-col cols="12" md="4">
-                  <v-text-field label="Email Address" class="purple-input" v-model="user.email" />
+                  <v-text-field label="Email Address" :disabled="!isCreate" class="purple-input" v-model="user.email" />
                 </v-col>
 
                 <v-col cols="12" md="6">
-                  <v-text-field label="First Name" class="purple-input" v-model="user.firstName" />
+                  <v-text-field label="First Name" :disabled="!isCreate" class="purple-input" v-model="user.firstName" />
                 </v-col>
 
                 <v-col cols="12" md="6">
-                  <v-text-field label="Last Name" class="purple-input" v-model="user.lastName" />
+                  <v-text-field label="Last Name" :disabled="!isCreate" class="purple-input" v-model="user.lastName" />
                 </v-col>
                 <v-col cols="12" md="6">
                   <v-text-field
+                  :disabled="!isCreate"
                     label="Permission Level"
                     class="purple-input"
                     v-model="user.permissionLevel"
                   />
                 </v-col>
                 <v-col cols="12" md="6">
-                  <v-text-field label="Phone" class="purple-input" v-model="user.phone" />
+                  <v-text-field label="Phone" :disabled="!isCreate" class="purple-input" v-model="user.phone" />
                 </v-col>
                 <!-- <v-col cols="12">
                   <v-text-field label="Adress" class="purple-input" />
@@ -243,7 +244,7 @@ export default class UserProfile extends Vue {
   };
 
   companies = [];
-
+  phoneObject:any={};
   //permLevels: AddUserModelPermissionLevelEnum;
 
   isCreate: boolean = false;
@@ -255,6 +256,7 @@ export default class UserProfile extends Vue {
   }
   onUpdate(payload) {
     this.hasErrorActive = !payload.isValid;
+    this.phoneObject = payload;
   }
   @Validations()
   validations = {
@@ -339,6 +341,7 @@ export default class UserProfile extends Vue {
     let nUser:any = this.newUser;
     if (this.newUser && typeof this.newUser.company === "object") {
       nUser.company = CompanyFromJSONTyped(this.newUser.company, false);
+      nUser.phone = this.phoneObject.formattedNumber
     }
     // debugger
     let response = await this.userApi

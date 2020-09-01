@@ -9,16 +9,19 @@ export default class VerificationPage extends Vue {
   code: string = '';
   codeSent: boolean = false;
   hasErrorActive = false;
+  phoneObject:any={};
   onUpdate(payload) {
     this.hasErrorActive = !payload.isValid;
+    this.phoneObject = payload;
   }
   callFunc() {
     if (this.codeSent) { this.verifySendCode() }
     else { this.verifyGetCode() }
   }
   async verifyGetCode() {
-
-    let response = await this.auth.getAuthSms({ phone: this.phone }).catch((err) => {
+    let phone = this.phoneObject.formattedNumber.replace('+', '');
+    
+    let response = await this.auth.getAuthSms({ phone: phone }).catch((err) => {
       if (process.env.LOG_ERROR !== 'false') console.log(err);
     });
 
@@ -28,12 +31,16 @@ export default class VerificationPage extends Vue {
   }
 
   async verifySendCode() {
-    let response = await this.auth.postAuthSms({ body: { code: this.code, phone: this.phone } }).catch((err) => {
+    let phone = this.phoneObject.formattedNumber.replace('+', '');
+    
+    let response = await this.auth.postAuthSms({ body: { code: this.code, phone: phone } }).catch((err) => {
       if (process.env.LOG_ERROR !== 'false') console.log(err);
     });
-
+    if(typeof response === 'string')
+    localStorage.setItem("tempVerification", response)
+    
     if (response) {
-      this.logout();
+      this.$router.push('/change');
     }
 
   }
