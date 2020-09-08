@@ -238,6 +238,7 @@
 import {AuthApi} from '../../api/apis/AuthApi';
 import Vue from 'vue';
 import Component from 'vue-class-component'
+import { UserJson } from '@/api';
 
 const API_URL = `${process.env.VUE_APP_API_URL}/auth`;
 @Component
@@ -447,20 +448,15 @@ export default class Dash extends Vue {
       }
   
 
-  // async mounted() {
-    
-  //   let auth: AuthApi =(this as any).auth;
+  async mounted() {
+    let user:UserJson = JSON.parse(localStorage.getItem('user'));
   
-  //   let creds = await auth.getAuth().catch((err) => {
-  //    if(process.env.LOG_ERROR !== 'false')  console.log(err);
-  //   });
-  //   if (creds) {
-  //     localStorage.user = JSON.stringify(creds);      
-  //   }
-  //   else{
-  //     this.$router.push('/login');
-  //   }
-  // }
+    let response = await this.reportsApi.postReportsTmwOrders({body:{tmwCodes:user.tmwCodes}})
+    if(response){
+      
+    }
+
+  }
   
     complete(index) {
       this.list[index] = !this.list[index];

@@ -78,9 +78,15 @@ export default class Login extends Vue {
         localStorage.token = authResponse.token;
         localStorage.user = JSON.stringify(authResponse.userJson);
         if (!authResponse.userJson.verified) {
+          
           this.$router.push("/verify");
         } else {
-          this.$router.push("/sisense/wh-overview");
+          if(authResponse.userJson.needsNewPassword){
+            this.$router.push('/change');
+          }else{
+
+           // this.$router.push("/sisense/wh-overview");
+          }
         }
       }
     } catch (error) {

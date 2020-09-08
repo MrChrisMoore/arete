@@ -94,21 +94,21 @@ export default {
          title: "Examples",
          to: "/examples"
        },
-      {
-        icon: "mdi-view-dashboard-variant",
-        title: "Inventory",
-        to: "/reports/inventory"
-      },
+      // {
+      //   icon: "mdi-view-dashboard-variant",
+      //   title: "Inventory",
+      //   to: "/reports/inventory"
+      // },
        {
         icon: "mdi-view-dashboard-variant",
         title: "Orders",
-        to: "/reports/orders"
+        to: "/tmw/orders"
       },
-       {
-        icon: "mdi-view-dashboard-variant",
-        title: "SKU Activity",
-        to: "/reports/sku"
-      },
+      //  {
+      //   icon: "mdi-view-dashboard-variant",
+      //   title: "SKU Activity",
+      //   to: "/reports/sku"
+      // },
       // {
       //   icon: "mdi-file-table-box-multiple",
       //   title: "My Reports",

@@ -2,6 +2,7 @@ export * from './AddUserModel';
 export * from './Company';
 export * from './LoginModel';
 export * from './LoginSuccessResponse';
+export * from './Model2';
 export * from './NotFoundResponse';
 export * from './PasswordResetModel';
 export * from './UserJson';

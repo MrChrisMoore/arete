@@ -6,22 +6,23 @@
 [main] INFO  o.o.codegen.DefaultGenerator - Model Model1 not generated since it's a free-form object
 [main] INFO  o.o.codegen.DefaultGenerator - Model DataResponse not generated since it's an alias to array (without property) and `generateAliasAsModel` is set to false (default)
 [main] INFO  o.o.codegen.DefaultGenerator - Model tmw_codes not generated since it's an alias to array (without property) and `generateAliasAsModel` is set to false (default)
-[main] INFO  o.o.codegen.AbstractGenerator - writing file /Users/chris/dev/advance/./src/api/models/AddUserModel.ts
-[main] INFO  o.o.codegen.AbstractGenerator - writing file /Users/chris/dev/advance/./src/api/models/Company.ts
-[main] INFO  o.o.codegen.AbstractGenerator - writing file /Users/chris/dev/advance/./src/api/models/LoginModel.ts
-[main] INFO  o.o.codegen.AbstractGenerator - writing file /Users/chris/dev/advance/./src/api/models/LoginSuccessResponse.ts
-[main] INFO  o.o.codegen.AbstractGenerator - writing file /Users/chris/dev/advance/./src/api/models/NotFoundResponse.ts
-[main] INFO  o.o.codegen.AbstractGenerator - writing file /Users/chris/dev/advance/./src/api/models/PasswordResetModel.ts
-[main] INFO  o.o.codegen.AbstractGenerator - writing file /Users/chris/dev/advance/./src/api/models/UserJson.ts
-[main] INFO  o.o.codegen.AbstractGenerator - writing file /Users/chris/dev/advance/./src/api/models/VerificationCodeModel.ts
-[main] INFO  o.o.codegen.AbstractGenerator - writing file /Users/chris/dev/advance/./src/api/models/VoiceVerificationRequestModel.ts
-[main] INFO  o.o.codegen.AbstractGenerator - writing file /Users/chris/dev/advance/./src/api/apis/DefaultApi.ts
-[main] INFO  o.o.codegen.AbstractGenerator - writing file /Users/chris/dev/advance/./src/api/apis/AuthApi.ts
-[main] INFO  o.o.codegen.AbstractGenerator - writing file /Users/chris/dev/advance/./src/api/apis/ReportsApi.ts
-[main] INFO  o.o.codegen.AbstractGenerator - writing file /Users/chris/dev/advance/./src/api/apis/TranslationsApi.ts
-[main] INFO  o.o.codegen.AbstractGenerator - writing file /Users/chris/dev/advance/./src/api/apis/UserApi.ts
-[main] INFO  o.o.codegen.AbstractGenerator - writing file /Users/chris/dev/advance/./src/api/index.ts
-[main] INFO  o.o.codegen.AbstractGenerator - writing file /Users/chris/dev/advance/./src/api/runtime.ts
-[main] INFO  o.o.codegen.AbstractGenerator - writing file /Users/chris/dev/advance/./src/api/apis/index.ts
-[main] INFO  o.o.codegen.AbstractGenerator - writing file /Users/chris/dev/advance/./src/api/models/index.ts
-[main] INFO  o.o.codegen.AbstractGenerator - writing file /Users/chris/dev/advance/./src/api/.openapi-generator/VERSION
+[main] INFO  o.o.codegen.AbstractGenerator - writing file C:\Users\chris\Desktop\Dev\arete\.\src\api\models\AddUserModel.ts
+[main] INFO  o.o.codegen.AbstractGenerator - writing file C:\Users\chris\Desktop\Dev\arete\.\src\api\models\Company.ts
+[main] INFO  o.o.codegen.AbstractGenerator - writing file C:\Users\chris\Desktop\Dev\arete\.\src\api\models\LoginModel.ts
+[main] INFO  o.o.codegen.AbstractGenerator - writing file C:\Users\chris\Desktop\Dev\arete\.\src\api\models\LoginSuccessResponse.ts
+[main] INFO  o.o.codegen.AbstractGenerator - writing file C:\Users\chris\Desktop\Dev\arete\.\src\api\models\Model2.ts
+[main] INFO  o.o.codegen.AbstractGenerator - writing file C:\Users\chris\Desktop\Dev\arete\.\src\api\models\NotFoundResponse.ts
+[main] INFO  o.o.codegen.AbstractGenerator - writing file C:\Users\chris\Desktop\Dev\arete\.\src\api\models\PasswordResetModel.ts
+[main] INFO  o.o.codegen.AbstractGenerator - writing file C:\Users\chris\Desktop\Dev\arete\.\src\api\models\UserJson.ts
+[main] INFO  o.o.codegen.AbstractGenerator - writing file C:\Users\chris\Desktop\Dev\arete\.\src\api\models\VerificationCodeModel.ts
+[main] INFO  o.o.codegen.AbstractGenerator - writing file C:\Users\chris\Desktop\Dev\arete\.\src\api\models\VoiceVerificationRequestModel.ts
+[main] INFO  o.o.codegen.AbstractGenerator - writing file C:\Users\chris\Desktop\Dev\arete\.\src\api\apis\DefaultApi.ts
+[main] INFO  o.o.codegen.AbstractGenerator - writing file C:\Users\chris\Desktop\Dev\arete\.\src\api\apis\AuthApi.ts
+[main] INFO  o.o.codegen.AbstractGenerator - writing file C:\Users\chris\Desktop\Dev\arete\.\src\api\apis\ReportsApi.ts
+[main] INFO  o.o.codegen.AbstractGenerator - writing file C:\Users\chris\Desktop\Dev\arete\.\src\api\apis\TranslationsApi.ts
+[main] INFO  o.o.codegen.AbstractGenerator - writing file C:\Users\chris\Desktop\Dev\arete\.\src\api\apis\UserApi.ts
+[main] INFO  o.o.codegen.AbstractGenerator - writing file C:\Users\chris\Desktop\Dev\arete\.\src\api\index.ts
+[main] INFO  o.o.codegen.AbstractGenerator - writing file C:\Users\chris\Desktop\Dev\arete\.\src\api\runtime.ts
+[main] INFO  o.o.codegen.AbstractGenerator - writing file C:\Users\chris\Desktop\Dev\arete\.\src\api\apis\index.ts
+[main] INFO  o.o.codegen.AbstractGenerator - writing file C:\Users\chris\Desktop\Dev\arete\.\src\api\models\index.ts
+[main] INFO  o.o.codegen.AbstractGenerator - writing file C:\Users\chris\Desktop\Dev\arete\.\src\api\.openapi-generator\VERSION

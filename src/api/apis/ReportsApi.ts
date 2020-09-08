@@ -15,10 +15,17 @@
 
 import * as runtime from '../runtime';
 import {
+    Model2,
+    Model2FromJSON,
+    Model2ToJSON,
     NotFoundResponse,
     NotFoundResponseFromJSON,
     NotFoundResponseToJSON,
 } from '../models';
+
+export interface PostReportsTmwOrdersRequest {
+    body?: Model2;
+}
 
 /**
  * 
@@ -125,10 +132,12 @@ export class ReportsApi extends runtime.BaseAPI {
      * Filtered to the company baseed on the BILL_TO_CODE
      * Returns Order history for the comapany associated with this login
      */
-    async getReportsTmwOrdersRaw(): Promise<runtime.ApiResponse<Array<object>>> {
+    async postReportsTmwOrdersRaw(requestParameters: PostReportsTmwOrdersRequest): Promise<runtime.ApiResponse<Array<object>>> {
         const queryParameters: runtime.HTTPQuery = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
 
         if (this.configuration && this.configuration.apiKey) {
             headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // jwt authentication
@@ -136,9 +145,10 @@ export class ReportsApi extends runtime.BaseAPI {
 
         const response = await this.request({
             path: `/reports/tmw/orders`,
-            method: 'GET',
+            method: 'POST',
             headers: headerParameters,
             query: queryParameters,
+            body: Model2ToJSON(requestParameters.body),
         });
 
         return new runtime.JSONApiResponse<any>(response);
@@ -148,8 +158,8 @@ export class ReportsApi extends runtime.BaseAPI {
      * Filtered to the company baseed on the BILL_TO_CODE
      * Returns Order history for the comapany associated with this login
      */
-    async getReportsTmwOrders(): Promise<Array<object>> {
-        const response = await this.getReportsTmwOrdersRaw();
+    async postReportsTmwOrders(requestParameters: PostReportsTmwOrdersRequest): Promise<Array<object>> {
+        const response = await this.postReportsTmwOrdersRaw(requestParameters);
         return await response.value();
     }
 

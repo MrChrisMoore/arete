@@ -12,14 +12,27 @@
     <v-card-text>
       <v-form @submit.prevent="submit" @keyup.native.enter="go">
         <v-text-field :error-messages="currentErrors" v-model="current" label="Current Password" name="current"
-          prepend-icon="mdi-lock" type="password" @change="$v.current.$touch()" @blur="$v.current.$touch()">
+          prepend-icon="mdi-lock" @change="$v.current.$touch()" @blur="$v.current.$touch()"
+          :type="showCurrent ? 'text' : 'password'"
+          hint="Please enter you current password"          
+          @click:append="showCurrent = !showCurrent"          
+          :append-icon="showCurrent ? 'mdi-eye' : 'mdi-eye-off'">
         </v-text-field>
 
-        <v-text-field :error-messages="newPassErrors" v-model="newPass" id="new" label="New Password" name="new"
-          prepend-icon="mdi-lock" type="password" autocomplete="true" @change="$v.newPass.$touch()"
-          @blur="$v.newPass.$touch()"></v-text-field>
-        <v-text-field :error-messages="confirmErrors" v-model="confirm" id="confirm" label="Confirm Password"
-          name="confirm" prepend-icon="mdi-lock" type="password" autocomplete="true" @change="$v.confirm.$touch()"
+        <v-text-field :error-messages="newPassErrors" error-count="2" messages="Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character" v-model="newPass" id="new" label="New Password" name="new"
+            counter="8" prepend-icon="mdi-lock" autocomplete="true" @change="$v.newPass.$touch()"
+          @blur="$v.newPass.$touch()"         
+          :type="showNew ? 'text' : 'password'"
+          hint="At least 8 characters"          
+          @click:append="showNew = !showNew"          
+          :append-icon="showNew ? 'mdi-eye' : 'mdi-eye-off'"          
+          ></v-text-field>
+        <v-text-field :error-messages="confirmErrors" counter="8" v-model="confirm" id="confirm" label="Confirm Password"
+          name="confirm" prepend-icon="mdi-lock"  autocomplete="true" @change="$v.confirm.$touch()"
+          :type="showConfirm ? 'text' : 'password'"
+          hint="Please retype your new password"          
+          @click:append="showConfirm = !showConfirm"          
+          :append-icon="showConfirm ? 'mdi-eye' : 'mdi-eye-off'"
           @blur="$v.confirm.$touch()"></v-text-field>
       </v-form>
     </v-card-text>
