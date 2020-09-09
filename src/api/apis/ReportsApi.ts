@@ -23,7 +23,15 @@ import {
     NotFoundResponseToJSON,
 } from '../models';
 
+export interface PostReportsTmwAccessorialsRequest {
+    body?: Model2;
+}
+
 export interface PostReportsTmwOrdersRequest {
+    body?: Model2;
+}
+
+export interface PostReportsTmwOtdssRequest {
     body?: Model2;
 }
 
@@ -130,6 +138,41 @@ export class ReportsApi extends runtime.BaseAPI {
 
     /**
      * Filtered to the company baseed on the BILL_TO_CODE
+     * Returns Accessorials for the comapany associated with this login
+     */
+    async postReportsTmwAccessorialsRaw(requestParameters: PostReportsTmwAccessorialsRequest): Promise<runtime.ApiResponse<Array<object>>> {
+        const queryParameters: runtime.HTTPQuery = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        if (this.configuration && this.configuration.apiKey) {
+            headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // jwt authentication
+        }
+
+        const response = await this.request({
+            path: `/reports/tmw/accessorials`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: Model2ToJSON(requestParameters.body),
+        });
+
+        return new runtime.JSONApiResponse<any>(response);
+    }
+
+    /**
+     * Filtered to the company baseed on the BILL_TO_CODE
+     * Returns Accessorials for the comapany associated with this login
+     */
+    async postReportsTmwAccessorials(requestParameters: PostReportsTmwAccessorialsRequest): Promise<Array<object>> {
+        const response = await this.postReportsTmwAccessorialsRaw(requestParameters);
+        return await response.value();
+    }
+
+    /**
+     * Filtered to the company baseed on the BILL_TO_CODE
      * Returns Order history for the comapany associated with this login
      */
     async postReportsTmwOrdersRaw(requestParameters: PostReportsTmwOrdersRequest): Promise<runtime.ApiResponse<Array<object>>> {
@@ -160,6 +203,41 @@ export class ReportsApi extends runtime.BaseAPI {
      */
     async postReportsTmwOrders(requestParameters: PostReportsTmwOrdersRequest): Promise<Array<object>> {
         const response = await this.postReportsTmwOrdersRaw(requestParameters);
+        return await response.value();
+    }
+
+    /**
+     * Filtered to the company baseed on the BILL_TO_CODE
+     * Returns On Time Delivery Info and Sailing Schedule for the comapany associated with this login
+     */
+    async postReportsTmwOtdssRaw(requestParameters: PostReportsTmwOtdssRequest): Promise<runtime.ApiResponse<Array<object>>> {
+        const queryParameters: runtime.HTTPQuery = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        if (this.configuration && this.configuration.apiKey) {
+            headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // jwt authentication
+        }
+
+        const response = await this.request({
+            path: `/reports/tmw/otd-ss`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: Model2ToJSON(requestParameters.body),
+        });
+
+        return new runtime.JSONApiResponse<any>(response);
+    }
+
+    /**
+     * Filtered to the company baseed on the BILL_TO_CODE
+     * Returns On Time Delivery Info and Sailing Schedule for the comapany associated with this login
+     */
+    async postReportsTmwOtdss(requestParameters: PostReportsTmwOtdssRequest): Promise<Array<object>> {
+        const response = await this.postReportsTmwOtdssRaw(requestParameters);
         return await response.value();
     }
 

@@ -6,11 +6,11 @@ import {Resize} from 'vuetify/lib/directives'
 @Component({
   components: {
   },
-  name: 'tmw-orders',
+  name: 'tmw-accessorials',
   directives:{Resize}
 })
 
-export default class OrdersPage extends Vue {
+export default class accessorialsPage extends Vue {
   headers: DataTableHeader[] = [];
   items = [];
   loading = true;
@@ -24,7 +24,7 @@ export default class OrdersPage extends Vue {
   }
   async mounted() {
     let user = JSON.parse(localStorage.getItem('user'));
-    let response = await this.reportsApi.postReportsTmwOrders({ body: { tmwCodes: user.tmwCodes } })
+    let response = await this.reportsApi.postReportsTmwAccessorials({ body: { tmwCodes: user.tmwCodes } })
     if (response && response.length) {
       this.loading = false;
 

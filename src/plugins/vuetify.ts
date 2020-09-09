@@ -1,7 +1,9 @@
 import Vue from 'vue';
-import Vuetify from 'vuetify/lib';
+import Vuetify,{VLayout, VFlex} from 'vuetify/lib';
 import '@/sass/overrides.sass'
-Vue.use(Vuetify);
+Vue.use(Vuetify,{components: {
+  VLayout,VFlex
+}});
 
 export default new Vuetify({
   theme: {
@@ -27,4 +29,5 @@ export default new Vuetify({
       },
     },
   },
+  
 });

@@ -156,6 +156,24 @@ const router = new VueRouter({
             requiresAuth: true,
           },
         },
+        {
+          name: "Accessorials",
+          path: "/tmw/accessorials",
+          component: () =>
+            import("@/views/dashboard/pages/tmw/accessorials/index.vue"),
+          meta: {
+            requiresAuth: true,
+          },
+        },
+        {
+          name: "On Time Delivery and Sailing Schedule",
+          path: "/tmw/otd-ss",
+          component: () =>
+            import("@/views/dashboard/pages/tmw/otd-ss/index.vue"),
+          meta: {
+            requiresAuth: true,
+          },
+        },
       ],
     },
   ],

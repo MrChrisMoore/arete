@@ -101,8 +101,18 @@ export default {
       // },
        {
         icon: "mdi-view-dashboard-variant",
+        title: "Accessorials",
+        to: "/tmw/accessorials"
+      },
+      {
+        icon: "mdi-view-dashboard-variant",
         title: "Orders",
         to: "/tmw/orders"
+      },
+      {
+        icon: "mdi-view-dashboard-variant",
+        title: "OTD-SS",
+        to: "/tmw/otd-ss"
       },
       //  {
       //   icon: "mdi-view-dashboard-variant",

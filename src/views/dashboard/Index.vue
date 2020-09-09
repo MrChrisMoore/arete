@@ -7,6 +7,8 @@
     <dashboard-core-view />
 
     <dashboard-core-settings />
+
+    <!-- <dashboard-core-footer /> -->
     
   </v-app>
 </template>
@@ -20,6 +22,7 @@
       DashboardCoreDrawer: () => import('./components/core/Drawer'),
       DashboardCoreSettings: () => import('./components/core/Settings'),
       DashboardCoreView: () => import('./components/core/View'),
+       DashboardCoreFooter: () => import('./components/core/Footer'),
     },
 
     data: () => ({
