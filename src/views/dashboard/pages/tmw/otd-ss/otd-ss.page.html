@@ -5,7 +5,7 @@
     </template>
     <v-card-text v-resize="onResize">
       <v-data-table :height="windowSize.y - (75 + 81 + 32 + 24 + 59 + 45)"  :headers="headers" :items="items" :loading="loading" loading-text="Loading... Please wait"
-        show-group-by >
+       >
         <!-- <template v-slot:group.header="{ group, headers, toggle, isOpen }">
           <td :colspan="headers.length">
              <v-btn @click="toggle" x-small icon :ref="group">

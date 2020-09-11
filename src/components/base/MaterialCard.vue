@@ -17,7 +17,7 @@
       <v-sheet
         v-else
         :class="{
-          'pa-7': !$slots.image
+          'pa-5': !$slots.image
         }"
         :color="color"
         :max-height="icon ? 90 : undefined"
