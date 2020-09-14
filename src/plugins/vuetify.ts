@@ -1,9 +1,9 @@
 import Vue from 'vue';
-import Vuetify,{VLayout, VFlex,VDataIterator,VList,VListGroup,VListItem,VListItemContent,VCard,VCardTitle,VCardText,VCol,VDivider,VRow,VIcon,VBtn,VSpacer,VListItemTitle,VMenu,VBtnToggle,VSelect,VTextField,VToolbar} from 'vuetify/lib';
+import Vuetify,{VLayout, VFlex,VDataIterator,VList,VListGroup,VListItem,VListItemContent,VCard,VCardTitle,VCardText,VCol,VDivider,VRow,VIcon,VBtn,VSpacer,VListItemTitle,VMenu,VBtnToggle,VSelect,VTextField,VToolbar,VSnackbar,VProgressLinear} from 'vuetify/lib';
 import '@/sass/overrides.sass'
 //import '@mdi/font/css/materialdesignicons.css'
 Vue.use(Vuetify,{components: {
-  VLayout,VFlex,VDataIterator,VList,VListGroup,VListItem,VListItemContent,VCard,VCardTitle,VCardText,VCol,VDivider,VRow,VIcon,VBtn,VSpacer,VListItemTitle,VMenu,VBtnToggle,VSelect,VTextField,VToolbar
+  VLayout,VFlex,VDataIterator,VList,VListGroup,VListItem,VListItemContent,VCard,VCardTitle,VCardText,VCol,VDivider,VRow,VIcon,VBtn,VSpacer,VListItemTitle,VMenu,VBtnToggle,VSelect,VTextField,VToolbar,VSnackbar,VProgressLinear
 }});
 
 export default new Vuetify({

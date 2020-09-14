@@ -63,14 +63,14 @@ keys=[];
   sortDesc= false;
   page= 1;
   itemsPerPage= 4;
-  sortBy= 'DETAIL_LINE_ID';
+  sortBy= 'FreightBill';
 
   
   get  numberOfPages () {
       return Math.ceil(this.items.length / this.itemsPerPage)
     }
   get  filteredKeys () {
-      return this.keys.filter(key => key !== `DETAIL_LINE_ID`)
+      return this.keys.filter(key => key !== `FreightBill`)
     }
  
 

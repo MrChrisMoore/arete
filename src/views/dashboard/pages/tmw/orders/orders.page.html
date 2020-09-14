@@ -79,14 +79,14 @@
               v-for="item in props.items"
               :key="item.DETAIL_LINE_ID"
               cols="12"
-              sm="6"
-              md="4"
+              sm="8"
+              md="6"
               lg="3"
               style="height: 50%"
             >
             <base-material-card height="50%" dense shaped elevation="2" color="warning">
             <template v-slot:heading>
-              <div class="display-2 font-weight-light">Detail ID: {{ item.DETAIL_LINE_ID }}</div>
+              <div class="display-2 font-weight-light">Freight Bill: {{ item.FreightBill }}</div>
             </template>
                 <!-- <v-card-title class="subheading font-weight-bold">{{ item.DETAIL_LINE_ID }}</v-card-title> -->
   

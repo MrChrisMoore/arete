@@ -14,34 +14,83 @@
         <v-text-field :error-messages="currentErrors" v-model="current" label="Current Password" name="current"
           prepend-icon="mdi-lock" @change="$v.current.$touch()" @blur="$v.current.$touch()"
           :type="showCurrent ? 'text' : 'password'"
-          hint="Please enter you current password"          
-          @click:append="showCurrent = !showCurrent"          
-          :append-icon="showCurrent ? 'mdi-eye' : 'mdi-eye-off'">
+          messages="Current password will be validated once the save button is clicked"
+          hint="Please enter you current password">
+          <template v-slot:append>
+            <v-btn @click="showCurrent = !showCurrent" tabindex="-1">
+              <v-icon v-if="showCurrent" >mdi-eye</v-icon>
+              <v-icon v-if="!showCurrent" >mdi-eye-off</v-icon>
+            </v-btn>
+          </template>
         </v-text-field>
 
-        <v-text-field :error-messages="newPassErrors" error-count="2" messages="Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character" v-model="newPass" id="new" label="New Password" name="new"
-            counter="8" prepend-icon="mdi-lock" autocomplete="true" @change="$v.newPass.$touch()"
+        <!-- <v-text-field
+        v-model="value"
+        color="cyan darken"
+        label="Text field"
+        placeholder="Start typing..."
+        loading
+      >
+        <template v-slot:progress>
+          <v-progress-linear
+            
+          :value="newPassProgress"
+          :color="newPassProgressColor"
+            absolute
+            height="7"
+          ></v-progress-linear>
+        </template>
+      </v-text-field> -->
+        <v-text-field :error-messages="newPassErrors" error-count="2" messages="Minimum six characters, at least one uppercase letter, one lowercase letter, one number and one special character" v-model="newPass" id="new" label="New Password" name="new"
+            counter  prepend-icon="mdi-lock" autocomplete="true" @change="$v.newPass.$touch()"
           @blur="$v.newPass.$touch()"         
           :type="showNew ? 'text' : 'password'"
-          hint="At least 8 characters"          
-          @click:append="showNew = !showNew"          
-          :append-icon="showNew ? 'mdi-eye' : 'mdi-eye-off'"          
-          ></v-text-field>
-        <v-text-field :error-messages="confirmErrors" counter="8" v-model="confirm" id="confirm" label="Confirm Password"
-          name="confirm" prepend-icon="mdi-lock"  autocomplete="true" @change="$v.confirm.$touch()"
+          hint="At least 6 characters" >
+          <template v-slot:append>
+            <v-btn @click="showNew = !showNew" tabindex="-1">
+              <v-icon v-if="showNew" >mdi-eye</v-icon>
+              <v-icon v-if="!showNew" >mdi-eye-off</v-icon>
+            </v-btn>
+          </template>
+          <!-- <template v-slot:progress>
+            <v-progress-linear             
+              :value="newPassProgress"
+              :color="newPassProgressColor"
+              absolute
+              height="7"
+            ></v-progress-linear> -->
+          </template>
+        </v-text-field>
+        <v-text-field :error-messages="confirmErrors"  v-model="confirm" id="confirm" label="Confirm Password"
+          name="confirm" prepend-icon="mdi-lock"  autocomplete="true" 
+          @change="$v.confirm.$touch()"                   
+          @blur="$v.confirm.$touch()"
           :type="showConfirm ? 'text' : 'password'"
-          hint="Please retype your new password"          
-          @click:append="showConfirm = !showConfirm"          
-          :append-icon="showConfirm ? 'mdi-eye' : 'mdi-eye-off'"
-          @blur="$v.confirm.$touch()"></v-text-field>
+          hint="Please retype your new password" >
+          <template v-slot:append>
+          <v-btn @click="showConfirm = !showConfirm" tabindex="-1">
+            <v-icon v-if="showConfirm" >mdi-eye</v-icon>
+            <v-icon v-if="!showConfirm" >mdi-eye-off</v-icon>
+          </v-btn>
+        </template>
+        </v-text-field>
       </v-form>
     </v-card-text>
+    <v-progress-linear             
+    :value="newPassProgress"
+    :color="newPassProgressColor"    
+    height="7"
+  ></v-progress-linear>
     <v-card-actions>
-      <v-spacer></v-spacer>
+      <v-spacer></v-spacer>      
       <v-btn type="submit" color="primary" @click="go()">Save</v-btn>
-      <!-- <v-btn color="primary" @click="loginGoogle()">Google Login</v-btn>
-                <v-btn color="primary" @click="loginFacebook()">Facebook Login</v-btn> -->
     </v-card-actions>
   </base-material-card>
-
+ 
+  <v-snackbar
+  v-model="snackbar"
+  color="error"
+>
+  {{ message }}
+ </v-snackbar>
 </section>

@@ -148,7 +148,7 @@ const router = new VueRouter({
           },
         },
         {
-          name: "TWM-Orders",
+          name: "Truckmate-Orders",
           path: "/tmw/orders",
           component: () =>
             import("@/views/dashboard/pages/tmw/orders/index.vue"),

@@ -72,7 +72,7 @@
                     label="Company"
                     :items="companies"
                     placeholder="Drop down or begin typing"
-                    :disabled="!isCreate"
+                    :disabled="companyDisabled"
                     item-text="COMPANY NAME"
                     :error-messages="companyErrors"
                     v-model="newUser.company"
@@ -188,6 +188,12 @@
         <v-btn block color="secondary" dark @click="addMode()">Add User</v-btn>
       </v-col>
     </v-row>
+     <v-snackbar
+      v-model="snackbar"
+      :color="color"
+    >
+      {{ message }}
+     </v-snackbar>
   </v-container>
 </template>
 
@@ -198,7 +204,7 @@ import {
   UserApi,
   AddUserModelPermissionLevelEnum,
   TranslationsApi,
-  CompanyFromJSONTyped,
+  CompanyFromJSONTyped, UserJson
 } from "../../../api";
 import { required, minLength, email } from "vuelidate/lib/validators";
 import { validationMixin } from "vuelidate";
@@ -215,6 +221,7 @@ const isPerm = (value) => ["ADMIN", "USER", "SUPER"];
 export default class UserProfile extends Vue {
   headingText: string = "Review your profile";
   headingSubtitle: string = "";
+  companyDisabled=true;
   get permLevels() {
     return ["SUPER", "ADMIN", "USER"].filter((v, k) => {
       return this.user.permissionLevel === "SUPER" && v === "SUPER"
@@ -224,15 +231,10 @@ export default class UserProfile extends Vue {
   }
   hasErrorActive = false;
   canAdd = false;
-  user = {
-    firstName: "",
-    lastName: "",
-    company: "",
-    phone: "",
-    username: "",
-    email: "",
-    permissionLevel: "User",
-  };
+  snackbar = false;
+  message = '';
+  color = 'success';
+  user:UserJson =JSON.parse(localStorage.user);
   newUser = {
     firstName: "",
     lastName: "",
@@ -249,10 +251,12 @@ export default class UserProfile extends Vue {
 
   isCreate: boolean = false;
   mounted() {
-    this.user = JSON.parse(localStorage.user);
+   // this.user = JSON.parse(localStorage.user);
+   
     this.canAdd =
       this.user.permissionLevel === "SUPER" ||
       this.user.permissionLevel === "ADMIN";
+    
   }
   onUpdate(payload) {
     this.hasErrorActive = !payload.isValid;
@@ -263,7 +267,6 @@ export default class UserProfile extends Vue {
     firstName: {
       required,
     },
-
     lastName: { required },
     company: { required },
     phone: { required, isPhone },
@@ -277,6 +280,11 @@ export default class UserProfile extends Vue {
     this.headingSubtitle =
       "Please fill in the required information to add a user";
     this.companies = await this.translationApi.getTranslationsCompanies();
+     if(this.companies){
+       let foundCompany = this.companies.filter((v) =>{return v['CADENCE ID'] === this.user.company.cADENCEID});
+       if(foundCompany && foundCompany.length ===1)        this.newUser.company = foundCompany[0];
+      }
+       if(this.user.permissionLevel === "SUPER") this.companyDisabled = false;
   }
 
   get firstNameErrors() {
@@ -305,8 +313,7 @@ export default class UserProfile extends Vue {
   }
   get phoneErrors() {
     const errors = [];
-    if (!this.$v.phone.$dirty) return errors;
-    debugger;
+    if (!this.$v.phone.$dirty) return errors;    
     !this.$v.phone.isPhone && errors.push("Must be a valid phone number");
     !this.$v.phone.required &&
       !this.newUser.phone &&
@@ -350,6 +357,8 @@ export default class UserProfile extends Vue {
         console.log(err);
       });
     if (response && response !== 'User Exists') {
+      this.color ='success'
+      this.message =`User Added`;
       this.newUser = {
         firstName: "",
         lastName: "",
@@ -359,7 +368,11 @@ export default class UserProfile extends Vue {
         email: "",
         permissionLevel: AddUserModelPermissionLevelEnum.USER,
       };
+    }else{
+      this.color = 'error';
+      if(response) this.message = response;
     }
+    this.snackbar = true;
   }
 }
 </script>
