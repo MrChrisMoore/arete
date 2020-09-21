@@ -2,7 +2,7 @@
 import {  PostTmwOrdersRequest } from '@/api';
 
 import Vue from 'vue';
-import {VCard,VCardActions,VCardText,VCardTitle,VSwitch}from 'vuetify/lib';
+import {VCard,VCardActions,VCardText,VCardTitle,VSwitch,VDataTable,VChip}from 'vuetify/lib';
 import Component from 'vue-class-component';
 import { Watch } from 'vue-property-decorator';
 import { DataTableHeader } from 'vuetify';
@@ -10,7 +10,7 @@ import {Resize} from 'vuetify/lib/directives'
 
 @Component({
   components: {
-    VCard,VCardActions,VCardText,VCardTitle,VSwitch  },
+    VCard,VCardActions,VCardText,VCardTitle,VSwitch,VDataTable ,VChip },
   name: 'tmw-orders',
   directives:{Resize}
 })
@@ -25,6 +25,7 @@ export default class OrdersPage extends Vue {
     x: 0,
     y: 0,
   }
+  cards=false
   accDialog=false;
   accCharges =[];
   selectedOrderHeader= {};
