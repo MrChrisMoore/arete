@@ -24,7 +24,7 @@ export default class OTDSS extends Vue {
   }
   async mounted() {
     let user = JSON.parse(localStorage.getItem('user'));
-    let response = await this.reportsApi.postReportsTmwOtdss({ body: { tmwCodes: user.tmwCodes } })
+    let response = await this.tmwApi.postTmwOtdss({ body: { tmwCodes: user.tmwCodes } })
     if (response && response.length) {
       this.loading = false;
 

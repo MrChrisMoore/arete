@@ -1,0 +1,1 @@
+openapi-generator generate -g  openapi-yaml -i http://localhost:5000/swagger.json  -o > openapi-generator generate -g typescript-fetch -o ./src/api --additional-properties=typescriptThreePlus=true

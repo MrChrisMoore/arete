@@ -8,7 +8,7 @@
       flat
       link
       min-width="100"
-      style="position: fixed; top: 115px; right: -35px; border-radius: 8px;"
+      style="position: fixed; top: 50px; right: -35px; border-radius: 8px;"
     >
       <v-icon large>
         mdi-settings
@@ -66,7 +66,7 @@
 
             <v-col cols="auto">
               <v-switch
-                v-model="$vuetify.theme.dark"
+                v-model="dark"
                 class="ma-0 pa-0"
                 color="secondary"
                 hide-details
@@ -106,59 +106,7 @@
               </template>
             </v-item>
           </v-item-group> -->
-<!-- 
-          <v-btn
-            block
-            class="mb-3"
-            color="success"
-            href="https://www.creative-tim.com/product/vuetify-material-dashboard"
-            default
-            rel="noopener"
-            target="_blank"
-          >
-            Free Download
-          </v-btn>
 
-          <v-btn
-            block
-            class="mb-3"
-            color="grey darken-1"
-            dark
-            href="https://vuetifyjs.com/components/api-explorer"
-            default
-            rel="noopener"
-            target="_blank"
-          >
-            Documentation
-          </v-btn>
-
-          <div class="my-12" />
-
-          <div>
-            <strong class="mb-3 d-inline-block">THANK YOU FOR SHARING!</strong>
-          </div>
-
-          <v-btn
-            class="ma-1"
-            color="#55acee"
-            dark
-            default
-            rounded
-          >
-            <v-icon>mdi-twitter</v-icon>
-            - 45
-          </v-btn>
-
-          <v-btn
-            class="ma-1"
-            color="#3b5998"
-            dark
-            default
-            rounded
-          >
-            <v-icon>mdi-facebook</v-icon>
-            - 50
-          </v-btn> -->
         </v-card-text>
       </v-card>
     </v-menu>
@@ -166,6 +114,7 @@
 </template>
 
 <script>
+
   // Mixins
   import Proxyable from 'vuetify/lib/mixins/proxyable'
   import { mapMutations, mapState } from 'vuex'
@@ -174,9 +123,24 @@
     name: 'DashboardCoreSettings',
 
     mixins: [Proxyable],
-
+    beforeMount:function(){
+      this.user = JSON.parse(localStorage.getItem('user')); 
+      if(this.user.uiSettings && typeof this.user.uiSettings.darkMode === 'boolean' && this.dark !== this.user.uiSettings.darkMode){
+        this.dark = this.user.uiSettings.darkMode
+      }
+   
+    },
+    // mounted:function(){
+    //   debugger
+      
+    //   if(this.user.uiSettings && typeof this.user.uiSettings.darkMode === 'boolean' && this.dark !== this.user.uiSettings.darkMode){
+    //     this.dark = this.user.uiSettings.darkMode
+    //   }
+    // },
     data: () => ({
       color: '#E91E63',
+      dark:false,
+      user:{},
       colors: [
         '#9C27b0',
         '#00CAE3',
@@ -184,14 +148,7 @@
         '#ff9800',
         '#E91E63',
         '#FF5252',
-      ],
-      image: 'https://demos.creative-tim.com/material-dashboard/assets/img/sidebar-1.jpg',
-      images: [
-        'https://demos.creative-tim.com/material-dashboard/assets/img/sidebar-1.jpg',
-        'https://demos.creative-tim.com/material-dashboard/assets/img/sidebar-2.jpg',
-        'https://demos.creative-tim.com/material-dashboard/assets/img/sidebar-3.jpg',
-        'https://demos.creative-tim.com/material-dashboard/assets/img/sidebar-4.jpg',
-      ],
+      ],     
       menu: false,
       saveImage: '',
       showImg: false,
@@ -203,14 +160,31 @@
 
     watch: {
       color (val) {
-        this.$vuetify.theme.themes[this.isDark ? 'dark' : 'light'].primary = val
+        this.$vuetify.theme.themes[this.isDark ? 'dark' : 'light'] = val
       },
-     
+      dark (val){
+        this.$vuetify.theme.dark = val;
+        if(this.user && this.user.uiSettings) {
+            if(this.user.uiSettings.darkMode !== val){
+             this.user.uiSettings.darkMode === val;
+             localStorage.setItem('user',JSON.stringify(this.user));
+             this.updateDarkMode(val);
+            }
+          } else{
+            
+            this.updateDarkMode(val)
+          }
+          
+      }
       
     },
 
     methods: {
-    
+     async updateDarkMode(val){
+       
+      let response = await this.userApi.postUserUpdate({body:{key:'darkMode', value:val}});
+      
+      }
     },
   }
 </script>

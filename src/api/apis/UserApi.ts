@@ -18,10 +18,20 @@ import {
     AddUserModel,
     AddUserModelFromJSON,
     AddUserModelToJSON,
+    NotFoundResponse,
+    NotFoundResponseFromJSON,
+    NotFoundResponseToJSON,
+    UserUpdateModel,
+    UserUpdateModelFromJSON,
+    UserUpdateModelToJSON,
 } from '../models';
 
 export interface PostUserAddRequest {
     body?: AddUserModel;
+}
+
+export interface PostUserUpdateRequest {
+    body?: UserUpdateModel;
 }
 
 /**
@@ -61,6 +71,41 @@ export class UserApi extends runtime.BaseAPI {
      */
     async postUserAdd(requestParameters: PostUserAddRequest): Promise<string> {
         const response = await this.postUserAddRaw(requestParameters);
+        return await response.value();
+    }
+
+    /**
+     * This applies to the logged in user only
+     * Update a setting on the user object
+     */
+    async postUserUpdateRaw(requestParameters: PostUserUpdateRequest): Promise<runtime.ApiResponse<string>> {
+        const queryParameters: runtime.HTTPQuery = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        if (this.configuration && this.configuration.apiKey) {
+            headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // jwt authentication
+        }
+
+        const response = await this.request({
+            path: `/user/update`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: UserUpdateModelToJSON(requestParameters.body),
+        });
+
+        return new runtime.TextApiResponse(response) as any;
+    }
+
+    /**
+     * This applies to the logged in user only
+     * Update a setting on the user object
+     */
+    async postUserUpdate(requestParameters: PostUserUpdateRequest): Promise<string> {
+        const response = await this.postUserUpdateRaw(requestParameters);
         return await response.value();
     }
 

@@ -24,7 +24,7 @@ export default class accessorialsPage extends Vue {
   }
   async mounted() {
     let user = JSON.parse(localStorage.getItem('user'));
-    let response = await this.reportsApi.postReportsTmwAccessorials({ body: { tmwCodes: user.tmwCodes } })
+    let response = await this.tmwApi.postTmwAccessorials({ body: { tmwCodes: user.tmwCodes } })
     if (response && response.length) {
       this.loading = false;
 

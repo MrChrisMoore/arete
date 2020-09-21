@@ -2,17 +2,17 @@
   <v-navigation-drawer
     id="core-navigation-drawer"
     v-model="drawer"
-    :dark="barColor !== 'rgba(228, 226, 226, 1), rgba(255, 255, 255, 0.7)'"
     :expand-on-hover="expandOnHover"
     :right="$vuetify.rtl"
+    mini-variant
     mobile-breakpoint="960"
     app
-    width="260"
     v-bind="$attrs"
+   
   >
     <v-divider class="mb-1" />
-    <v-list nav>
-      <v-list-item>
+    <v-list dense nav class="py-0">
+      <v-list-item class="px-0">
         <v-list-item-avatar class="align-self-center" contain>
           <img id="logo" src="@/assets/logo.png" max-height="30" />
         </v-list-item-avatar>
@@ -25,11 +25,11 @@
 
     <v-divider class="mb-2" />
 
-    <v-list expand nav>
+    <v-list expand dense nav class="py-0">
       <div />
       <template v-for="(item, i) in computedItems">
         <base-item-group v-if="item.children" :key="`group-${i}`" :item="item"></base-item-group>
-        <base-item v-else :key="`item-${i}`" :item="item" />
+        <base-item class="px-0" v-else :key="`item-${i}`" :item="item" />
       </template>
 
       <!-- Style cascading bug  -->
@@ -51,8 +51,8 @@ export default {
   props: {
     expandOnHover: {
       type: Boolean,
-      default: false
-    }
+      default: true,
+    },
   },
 
   data: () => ({
@@ -62,12 +62,12 @@ export default {
       {
         icon: "mdi-view-dashboard",
         title: "Warehouse",
-        to: "/sisense/wh-overview"
-      },     
+        to: "/sisense/wh-overview",
+      },
       {
         icon: "mdi-account",
         title: "user",
-        to: "/pages/user"
+        to: "/pages/user",
       },
       // {
       //   title: 'rtables',
@@ -87,32 +87,32 @@ export default {
       {
         title: "google",
         icon: "mdi-map-marker",
-        to: "/maps/google-maps"
+        to: "/maps/google-maps",
       },
-        {
-         icon: "mdi-view-dashboard-variant",
-         title: "Examples",
-         to: "/examples"
-       },
+      {
+        icon: "mdi-view-dashboard-variant",
+        title: "Examples",
+        to: "/examples",
+      },
       // {
       //   icon: "mdi-view-dashboard-variant",
       //   title: "Inventory",
       //   to: "/reports/inventory"
       // },
-       {
+      {
         icon: "mdi-view-dashboard-variant",
         title: "Accessorials",
-        to: "/tmw/accessorials"
+        to: "/tmw/accessorials",
       },
       {
-        icon: "mdi-view-dashboard-variant",
+        icon: "mdi-receipt",
         title: "Orders",
-        to: "/tmw/orders"
+        to: "/tmw/orders",
       },
       {
-        icon: "mdi-view-dashboard-variant",
+        icon: "mdi-truck-delivery",
         title: "OTD-SS",
-        to: "/tmw/otd-ss"
+        to: "/tmw/otd-ss",
       },
       //  {
       //   icon: "mdi-view-dashboard-variant",
@@ -134,7 +134,7 @@ export default {
       //   icon: 'mdi-bell',
       //   to: '/components/notifications',
       // },
-    ]
+    ],
   }),
   // mounted() {
   //   fetch(`${URL}/reports/listreports`, {
@@ -173,7 +173,7 @@ export default {
       },
       set(val) {
         this.$store.commit("SET_DRAWER", val);
-      }
+      },
     },
     computedItems() {
       return this.items.map(this.mapItem);
@@ -181,9 +181,9 @@ export default {
     profile() {
       return {
         avatar: true,
-        title: this.$t("avatar")
+        title: this.$t("avatar"),
       };
-    }
+    },
   },
 
   methods: {
@@ -191,7 +191,7 @@ export default {
       return {
         ...item,
         children: item.children ? item.children.map(this.mapItem) : undefined,
-        title: this.$t(item.title)
+        title: this.$t(item.title),
       };
     },
     mapReports(item) {
@@ -201,10 +201,10 @@ export default {
         children: item.children
           ? item.children.map(this.mapReports)
           : undefined,
-        title: this.$t(item.title || item.Name)
+        title: this.$t(item.title || item.Name),
       };
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -212,6 +212,10 @@ export default {
 @import '~vuetify/src/styles/tools/_rtl.sass'
 
 #core-navigation-drawer
+  .v-list--nav 
+    padding-left: 8px
+    padding-right: 8px
+  
   .v-list-group__header.v-list-item--active:before
     opacity: .24
 

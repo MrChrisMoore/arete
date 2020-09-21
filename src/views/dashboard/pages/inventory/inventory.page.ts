@@ -10,25 +10,25 @@ export default class InventoryPage extends Vue {
   headers = [];
   items = [];
   loading = true;
-  async mounted() {
-    let response = await this.reportsApi.getReportsKcinventory();
-    if (response && response.length) {
-      this.loading =false;
-      Object.keys(response[0]).map((v) => {
-        let header:DataTableHeader ={
-          sortable: true,
-          text: v,
-          value: v,
-          width:'auto',
-          groupable:true,
-          filterable:true,
-          divider:true
+  // async mounted() {
+  //   let response = await this.reportsApi.getReportsKcinventory();
+  //   if (response && response.length) {
+  //     this.loading =false;
+  //     Object.keys(response[0]).map((v) => {
+  //       let header:DataTableHeader ={
+  //         sortable: true,
+  //         text: v,
+  //         value: v,
+  //         width:'auto',
+  //         groupable:true,
+  //         filterable:true,
+  //         divider:true
           
-        }
-        this.headers.push(header);
-      });
+  //       }
+  //       this.headers.push(header);
+  //     });
 
-      this.items = response;
-    }
-  }
+  //     this.items = response;
+  //   }
+  // }
 }

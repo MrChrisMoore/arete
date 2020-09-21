@@ -451,7 +451,7 @@ export default class Dash extends Vue {
   async mounted() {
     let user:UserJson = JSON.parse(localStorage.getItem('user'));
   
-    let response = await this.reportsApi.postReportsTmwOrders({body:{tmwCodes:user.tmwCodes}})
+    let response = await this.tmwApi.postTmwOrders({body:{tmwCodes:user.tmwCodes}})
     if(response){
       
     }

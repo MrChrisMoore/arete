@@ -2,7 +2,7 @@ import { Configuration } from "../api/runtime";
 import { VueConstructor } from "vue/types/umd";
 import { AuthApi } from "../api/apis/AuthApi";
 import { UserApi, TranslationsApi } from '@/api';
-import { ReportsApi } from '@/api/apis/ReportsApi';
+import { TmwApi } from '@/api/apis/TmwApi';
 
 const getApiKey = (name: string) => {
   if(process.env.LOG_VERBOSE !== 'false')  console.log("Getting token");
@@ -21,8 +21,8 @@ export default {
     vue.component.prototype.$auth = new AuthApi();
     vue.prototype.userApi = new UserApi(apiConfig);
     vue.component.prototype.$userApi = new UserApi();
-    vue.prototype.reportsApi = new ReportsApi(apiConfig);
-    vue.component.prototype.$reportsApi = new ReportsApi();
+    vue.prototype.tmwApi = new TmwApi(apiConfig);
+    vue.component.prototype.$tmwApi = new TmwApi();
     vue.prototype.translationApi = new TranslationsApi(apiConfig);
     vue.component.prototype.$translationApi = new TranslationsApi();
   },

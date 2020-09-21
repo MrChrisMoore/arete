@@ -26,38 +26,38 @@ import {
     NotFoundResponseToJSON,
 } from '../models';
 
-export interface GetReportsTmwAccessorialIdRequest {
+export interface GetTmwAccessorialIdRequest {
     id: number;
 }
 
-export interface GetReportsTmwOrderHeaderIdRequest {
-    id: number;
+export interface GetTmwOrderHeaderIdRequest {
+    id: string;
 }
 
-export interface PostReportsTmwAccessorialsRequest {
+export interface PostTmwAccessorialsRequest {
     body?: Model2;
 }
 
-export interface PostReportsTmwOrdersRequest {
+export interface PostTmwOrdersRequest {
     body?: Model3;
 }
 
-export interface PostReportsTmwOtdssRequest {
+export interface PostTmwOtdssRequest {
     body?: Model2;
 }
 
 /**
  * 
  */
-export class ReportsApi extends runtime.BaseAPI {
+export class TmwApi extends runtime.BaseAPI {
 
     /**
      * Accessorials by Detail Line ID
      * Returns Accessorials for the order associated with the Detail Line ID
      */
-    async getReportsTmwAccessorialIdRaw(requestParameters: GetReportsTmwAccessorialIdRequest): Promise<runtime.ApiResponse<Array<object>>> {
+    async getTmwAccessorialIdRaw(requestParameters: GetTmwAccessorialIdRequest): Promise<runtime.ApiResponse<Array<object>>> {
         if (requestParameters.id === null || requestParameters.id === undefined) {
-            throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getReportsTmwAccessorialId.');
+            throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getTmwAccessorialId.');
         }
 
         const queryParameters: runtime.HTTPQuery = {};
@@ -69,7 +69,7 @@ export class ReportsApi extends runtime.BaseAPI {
         }
 
         const response = await this.request({
-            path: `/reports/tmw/accessorial/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+            path: `/tmw/accessorial/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -82,8 +82,8 @@ export class ReportsApi extends runtime.BaseAPI {
      * Accessorials by Detail Line ID
      * Returns Accessorials for the order associated with the Detail Line ID
      */
-    async getReportsTmwAccessorialId(requestParameters: GetReportsTmwAccessorialIdRequest): Promise<Array<object>> {
-        const response = await this.getReportsTmwAccessorialIdRaw(requestParameters);
+    async getTmwAccessorialId(requestParameters: GetTmwAccessorialIdRequest): Promise<Array<object>> {
+        const response = await this.getTmwAccessorialIdRaw(requestParameters);
         return await response.value();
     }
 
@@ -91,9 +91,9 @@ export class ReportsApi extends runtime.BaseAPI {
      * Cadence Order Header
      * Return an order header
      */
-    async getReportsTmwOrderHeaderIdRaw(requestParameters: GetReportsTmwOrderHeaderIdRequest): Promise<runtime.ApiResponse<Array<object>>> {
+    async getTmwOrderHeaderIdRaw(requestParameters: GetTmwOrderHeaderIdRequest): Promise<runtime.ApiResponse<Array<object>>> {
         if (requestParameters.id === null || requestParameters.id === undefined) {
-            throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getReportsTmwOrderHeaderId.');
+            throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getTmwOrderHeaderId.');
         }
 
         const queryParameters: runtime.HTTPQuery = {};
@@ -105,7 +105,7 @@ export class ReportsApi extends runtime.BaseAPI {
         }
 
         const response = await this.request({
-            path: `/reports/tmw/order/header/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+            path: `/tmw/order/header/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -118,8 +118,8 @@ export class ReportsApi extends runtime.BaseAPI {
      * Cadence Order Header
      * Return an order header
      */
-    async getReportsTmwOrderHeaderId(requestParameters: GetReportsTmwOrderHeaderIdRequest): Promise<Array<object>> {
-        const response = await this.getReportsTmwOrderHeaderIdRaw(requestParameters);
+    async getTmwOrderHeaderId(requestParameters: GetTmwOrderHeaderIdRequest): Promise<Array<object>> {
+        const response = await this.getTmwOrderHeaderIdRaw(requestParameters);
         return await response.value();
     }
 
@@ -127,7 +127,7 @@ export class ReportsApi extends runtime.BaseAPI {
      * Filtered to the company baseed on the BILL_TO_CODE
      * Returns Accessorials for the comapany associated with this login
      */
-    async postReportsTmwAccessorialsRaw(requestParameters: PostReportsTmwAccessorialsRequest): Promise<runtime.ApiResponse<Array<object>>> {
+    async postTmwAccessorialsRaw(requestParameters: PostTmwAccessorialsRequest): Promise<runtime.ApiResponse<Array<object>>> {
         const queryParameters: runtime.HTTPQuery = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -139,7 +139,7 @@ export class ReportsApi extends runtime.BaseAPI {
         }
 
         const response = await this.request({
-            path: `/reports/tmw/accessorials`,
+            path: `/tmw/accessorials`,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
@@ -153,8 +153,8 @@ export class ReportsApi extends runtime.BaseAPI {
      * Filtered to the company baseed on the BILL_TO_CODE
      * Returns Accessorials for the comapany associated with this login
      */
-    async postReportsTmwAccessorials(requestParameters: PostReportsTmwAccessorialsRequest): Promise<Array<object>> {
-        const response = await this.postReportsTmwAccessorialsRaw(requestParameters);
+    async postTmwAccessorials(requestParameters: PostTmwAccessorialsRequest): Promise<Array<object>> {
+        const response = await this.postTmwAccessorialsRaw(requestParameters);
         return await response.value();
     }
 
@@ -162,7 +162,7 @@ export class ReportsApi extends runtime.BaseAPI {
      * Filtered to the company baseed on the BILL_TO_CODE
      * Returns Order history for the comapany associated with this login
      */
-    async postReportsTmwOrdersRaw(requestParameters: PostReportsTmwOrdersRequest): Promise<runtime.ApiResponse<Array<string>>> {
+    async postTmwOrdersRaw(requestParameters: PostTmwOrdersRequest): Promise<runtime.ApiResponse<Array<string>>> {
         const queryParameters: runtime.HTTPQuery = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -174,7 +174,7 @@ export class ReportsApi extends runtime.BaseAPI {
         }
 
         const response = await this.request({
-            path: `/reports/tmw/orders`,
+            path: `/tmw/orders`,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
@@ -188,8 +188,8 @@ export class ReportsApi extends runtime.BaseAPI {
      * Filtered to the company baseed on the BILL_TO_CODE
      * Returns Order history for the comapany associated with this login
      */
-    async postReportsTmwOrders(requestParameters: PostReportsTmwOrdersRequest): Promise<Array<string>> {
-        const response = await this.postReportsTmwOrdersRaw(requestParameters);
+    async postTmwOrders(requestParameters: PostTmwOrdersRequest): Promise<Array<string>> {
+        const response = await this.postTmwOrdersRaw(requestParameters);
         return await response.value();
     }
 
@@ -197,7 +197,7 @@ export class ReportsApi extends runtime.BaseAPI {
      * Filtered to the company baseed on the BILL_TO_CODE
      * Returns On Time Delivery Info and Sailing Schedule for the comapany associated with this login
      */
-    async postReportsTmwOtdssRaw(requestParameters: PostReportsTmwOtdssRequest): Promise<runtime.ApiResponse<Array<object>>> {
+    async postTmwOtdssRaw(requestParameters: PostTmwOtdssRequest): Promise<runtime.ApiResponse<Array<object>>> {
         const queryParameters: runtime.HTTPQuery = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -209,7 +209,7 @@ export class ReportsApi extends runtime.BaseAPI {
         }
 
         const response = await this.request({
-            path: `/reports/tmw/otd-ss`,
+            path: `/tmw/otd-ss`,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
@@ -223,8 +223,8 @@ export class ReportsApi extends runtime.BaseAPI {
      * Filtered to the company baseed on the BILL_TO_CODE
      * Returns On Time Delivery Info and Sailing Schedule for the comapany associated with this login
      */
-    async postReportsTmwOtdss(requestParameters: PostReportsTmwOtdssRequest): Promise<Array<object>> {
-        const response = await this.postReportsTmwOtdssRaw(requestParameters);
+    async postTmwOtdss(requestParameters: PostTmwOtdssRequest): Promise<Array<object>> {
+        const response = await this.postTmwOtdssRaw(requestParameters);
         return await response.value();
     }
 
