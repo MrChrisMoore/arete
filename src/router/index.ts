@@ -17,7 +17,8 @@ const router = new VueRouter({
 
         {
           name: "Examples",
-          path: "/examples",
+          path: "",
+          
           component: () => import("@/views/dashboard/Dashboard.vue"),
           meta: {
             requiresAuth: true,
@@ -174,6 +175,15 @@ const router = new VueRouter({
             requiresAuth: true,
           },
         },
+        {
+          name: "Order Info",
+          path: "/tmw/orderinfo",
+          component: () =>
+            import("@/views/dashboard/pages/tmw/orderinfo/index.vue"),
+          meta: {
+            requiresAuth: true,
+          },
+        },
       ],
     },
   ],
@@ -214,68 +224,7 @@ router.beforeEach((to, from, next) => {
 
 
 
-  // // if needs auth
-  // if (to.matched.some((record) => record.meta.requiresAuth)) {
-  //   // needs auth true
-  //   if (process.env.LOG_VERBOSE !== "false") console.log("Checking for token.");
-  //   if (!localStorage.getItem("token")) {
-  //     // no token send to login
-  //     next({
-  //       path: "/login",
-  //       params: { nextUrl: to.fullPath },
-  //     });
-  //   } else {
-  //     // has token check for user
-  //     if (process.env.LOG_VERBOSE !== "false")
-  //       console.log("Checking for User.");
-
-  //     let user = JSON.parse(localStorage.getItem("user"));
-  //     if (user) {
-  //       let tempVerifcation = JSON.parse(localStorage.getItem('tempVerification'));
-  //       // check if the user has been verified
-  //       if (user.verified || to.path === '/verify' || (tempVerifcation && tempVerifcation.valid)) {
-  //         // user is verified 
-  //         if (user.needsNewPassword && to.path !== '/change') {       
-            
-  //           next({
-  //             path: "/change",
-  //            // params: { nextUrl: to.fullPath },
-  //           });
-  //         }
-  //         if(user.needsNewPassword && to.path !== '/change') next(false);
-  //         if (to.matched.some((record) => record.meta.is_admin)) {
-  //           if (user.is_admin == 1) {
-  //           //  next();
-  //           } else {
-  //             next({ name: "Dashboard" });
-  //           }
-  //         } else {
-  //          // next();
-  //         }
-  //       } else {
-  //         next({ name: 'verify' });
-  //       }
-  //     }
-  //     else {
-  //       // no user hmmmmmmm 
-  //       next({
-  //         path: "/login",
-  //         params: { nextUrl: to.fullPath },
-  //       });
-  //     }
-  //   }
-  // } else if (to.matched.some((record) => record.meta.guest)) {
-  //   if (process.env.LOG_VERBOSE !== "false")
-  //     console.log("Checking for token on guest.");
-  //   if (localStorage.getItem("jwt") == null) {
-  //   //  next();
-  //   } else {
-  //     next({ name: "Dashboard" });
-  //   }
-  // } else {
-  //  // next();
-  // }
-  // next();
+  
 });
 
 export default router;

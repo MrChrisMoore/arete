@@ -92,7 +92,7 @@ export default {
       {
         icon: "mdi-view-dashboard-variant",
         title: "Examples",
-        to: "/examples",
+        to: "",
       },
       // {
       //   icon: "mdi-view-dashboard-variant",
@@ -104,15 +104,20 @@ export default {
         title: "Accessorials",
         to: "/tmw/accessorials",
       },
-      {
-        icon: "mdi-receipt",
-        title: "Orders",
-        to: "/tmw/orders",
-      },
+      // {
+      //   icon: "mdi-receipt",
+      //   title: "Orders",
+      //   to: "/tmw/orders",
+      // },
       {
         icon: "mdi-truck-delivery",
         title: "OTD-SS",
         to: "/tmw/otd-ss",
+      },
+      {
+        icon: "mdi-receipt",
+        title: "Order Info",
+        to: "/tmw/orderinfo",
       },
       //  {
       //   icon: "mdi-view-dashboard-variant",

@@ -99,7 +99,7 @@ onPickupChanged(){
     }
  
 filterOrders(items, search){
-  debugger
+  
   return items;
 }
   nextPage () {

@@ -85,7 +85,7 @@ export default class Login extends Vue {
             this.$router.push('/change');
           }else{
 
-            this.$router.push('/examples');
+            this.$router.push('/');
           }
         }
       }

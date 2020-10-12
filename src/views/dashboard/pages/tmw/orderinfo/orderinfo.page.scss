@@ -1,0 +1,27 @@
+#orderinfo {
+
+}
+
+.mh-100 {
+    min-height: 100vh;
+    max-height: 100vh;
+    height: 100vh;
+}
+
+.overflow-hidden {
+    overflow: hidden;
+}
+
+.text-small{
+    font-size: small;
+}
+
+.main-card , .main-div{
+    height:100%;
+    max-height:calc(100% - 50px);
+}
+
+.card-iterator{
+    height:100%;
+    max-height:calc(100% - 50px);
+}

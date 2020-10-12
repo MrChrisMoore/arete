@@ -10,7 +10,10 @@
   },
   "dependencies": {
     "@mdi/font": "^3.6.95",
+    "ag-grid-community": "^24.0.0",
+    "ag-grid-vue": "^24.0.0",
     "core-js": "^3.6.5",
+    "joi": "^17.2.1",
     "lodash": "^4.17.19",
     "register-service-worker": "^1.7.1",
     "roboto-fontface": "*",

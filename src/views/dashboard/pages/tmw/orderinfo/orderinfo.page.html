@@ -1,0 +1,412 @@
+<div class="main-div">
+
+  <v-switch v-model="cards" class="pl-3 pt-0" label="Card View"></v-switch>
+  <!-- <v-card v-if="cards" height="87vh"> -->
+    <v-card v-if="cards" class="main-card">
+    <v-data-iterator :items="items" :items-per-page.sync="ipp" :page.sync="page" hide-default-footer :search="search"
+      :sort-by="sortBy" :sort-desc="sortDesc" :custom-filter="filterOrders"
+      class="d-flex flex-column overflow-hidden card-iterator">
+      <!-- <template v-slot:header>
+        <v-toolbar dark color="blue darken-3" class="shrink mb-1">
+          <div class="headline white--text mr-2 text-truncate">
+            Data Iterator {{ rpp }} rows
+          </div>
+        </v-toolbar>
+      </template> -->
+      <template v-slot:default="props">
+        <v-row class=" overflow-auto"  id="container">
+          <v-col v-for="(item,idx) in props.items" :key="item['FB#']" :cols="(12/itemsPerRow)" class="py-2">
+            <v-card class="card ">
+              <v-card-title>
+                <span class="font-weight-light text-truncate">
+                  <span>Freight Bill: {{ item['FB#'] }}</span>
+                  <!-- <v-chip small outlined class="blue--text" >last
+                  </v-chip> -->
+                </span>
+              </v-card-title>
+              <v-divider></v-divider>
+              <v-card-text>
+                <v-list dense style="min-height:250px; max-height:250px;" class="overflow-y-auto">
+                  <v-list-item v-for="(key, index) in filteredKeys" :key="index" v-if="item[key]">
+                    <v-list-item-content v-if="item[key]" class="text-small" :class="{ 'blue--text': sortBy === key }">{{ key }}:
+                    </v-list-item-content>
+                    <v-list-item-content v-if="item[key] && key !=='WHS_NO'" class="align-end text-small" :class="{ 'blue--text': sortBy === key }">                  
+                      {{ item[key] }}
+                    </v-list-item-content>
+                    <v-list-item-content v-else-if="item[key] && key ==='WHS_NO'" class="align-end">                  
+                      <v-btn small color="info" @click="getOrderHeader(item[key])">{{ item[key] }} </v-btn> 
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-list>
+                <!-- <span v-html="item.tagline" class="mr-2"></span>
+                <v-chip v-text="item.first_brewed"></v-chip> -->
+              </v-card-text>
+            </v-card>
+          </v-col>
+        </v-row>
+      </template>
+      <template v-slot:footer>
+        <v-row class="no-gutters mt-auto py-2 shrink" align="center" justify="center">
+          <span class="mx-2">Rows per page</span>{{ rowsPerPage }} (based on viewport height)
+
+          <v-spacer></v-spacer>
+          <span class="mr-4
+                      grey--text">
+            Page {{ page }} of <span v-text="numberOfPages" class="font-weight-bold primary--text"></span>
+          </span>
+          <v-btn small dark rounded color="blue darken-3" class="mr-1" @click="formerPage">
+            <v-icon>mdi-chevron-left</v-icon>
+          </v-btn>
+          <v-btn small dark rounded color="blue darken-3" class="ml-1" @click="nextPage">
+            <v-icon>mdi-chevron-right</v-icon>
+          </v-btn>
+        </v-row>
+      </template>
+    </v-data-iterator>
+
+
+
+    <!-- <v-card-title>
+    <v-toolbar dense class="mb-6">
+      <v-text-field dense v-model="search" clearable flat  hide-details
+      prepend-inner-icon="md-text-box-search" label="Search"></v-text-field>
+      <template v-if="$vuetify.breakpoint.mdAndUp">
+        <v-spacer></v-spacer>
+        <v-select dense v-model="sortBy" flat hide-details :items="keys"
+        prepend-inner-icon="md-select-search" label="Sort by"></v-select>
+        <v-spacer></v-spacer>
+        <v-btn-toggle dense v-model="sortDesc" mandatory>
+          <v-btn depressed :value="false">
+            <v-icon>mdi-arrow-up</v-icon>
+          </v-btn>
+          <v-btn dense depressed :value="true">
+            <v-icon>mdi-arrow-down</v-icon>
+          </v-btn>
+        </v-btn-toggle>
+      </template>
+    </v-toolbar>
+  </v-card-title>
+  <v-card-text v-resize="onResize" style="height: 88%;">    
+    <v-data-iterator :items="items" :items-per-page.sync="itemsPerPage" :page="page" :search="search"
+    :sort-by="sortBy" :sort-desc="sortDesc" :custom-filter="filterOrders"
+    hide-default-footer :loading="loading" style="height: 100%;"> 
+  <template v-slot:default="props">
+    <v-row style="height: 91%">
+      <v-col style="height: 100%" v-for="item in props.items" :key="item.DETAIL_LINE_ID" cols="12" sm="8" md="6" lg="3"
+      >
+      <base-material-card  height="100%" dense shaped elevation="2"  color="warning">
+      <template v-slot:heading>
+        <div class="display-2 font-weight-light">Freight Bill: {{ item['FB#'] }}</div>
+      </template>  
+            <v-divider></v-divider>      
+      <v-list dense style="max-height: 93%" class="overflow-y-auto">
+        <v-list-item v-for="(key, index) in filteredKeys" :key="index" v-if="item[key]">
+          <v-list-item-content v-if="item[key]" :class="{ 'blue--text': sortBy === key }">{{ key }}:
+          </v-list-item-content>
+          <v-list-item-content v-if="item[key] && key !=='WHS_NO'" class="align-end" :class="{ 'blue--text': sortBy === key }">                  
+            {{ item[key] }}
+          </v-list-item-content>
+          <v-list-item-content v-else-if="item[key] && key ==='WHS_NO'" class="align-end">                  
+            <v-btn small color="info" @click="getOrderHeader(item[key])">{{ item[key] }} </v-btn> 
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
+      <template v-if="item.ACCESSORIALS" v-slot:actions>
+        
+        <v-btn color="success" @click="accessorials(item.DETAIL_LINE_ID)">Accessorial Charges</v-btn>
+        
+      </template>
+    </base-material-card>
+  </v-col>
+</v-row>
+</template>
+
+<template v-slot:footer>
+  <v-row class="mt-2" align="center" justify="center">
+    <span class="grey--text">Items per page</span>
+    <v-menu offset-y>
+      <template v-slot:activator="{ on, attrs }">
+        <v-btn dark text color="primary" class="ml-2" v-bind="attrs" v-on="on">
+          {{ itemsPerPage }}
+          <v-icon>mdi-chevron-down</v-icon>
+        </v-btn>
+      </template>
+      <v-list>
+        <v-list-item v-for="(number, index) in itemsPerPageArray" :key="index"
+        @click="updateItemsPerPage(number)">
+        <v-list-item-title>{{ number }}</v-list-item-title>
+      </v-list-item>
+    </v-list>
+  </v-menu>
+  
+  <v-spacer></v-spacer>
+  
+  <span class="mr-4
+  grey--text">
+  Page {{ page }} of {{ numberOfPages }}
+</span>
+<v-btn fab dark color="blue darken-3" class="mr-1" @click="formerPage">
+  <v-icon>mdi-chevron-left</v-icon>
+</v-btn>
+<v-btn fab dark color="blue darken-3" class="ml-1" @click="nextPage">
+  <v-icon>mdi-chevron-right</v-icon>
+</v-btn>
+</v-row>
+</template>
+</v-data-iterator>
+</v-card-text>
+<v-dialog v-model="accDialog" max-width="50%" scrollable >
+  <template v-slot:activator="{ on, attrs }">
+    <v-btn color="red lighten-2" dark v-bind="attrs" v-on="on">
+      Accessorials
+    </v-btn>
+  </template> -->
+
+    <!-- <v-card height="500px">
+
+      <v-card-title>
+        Charges
+      </v-card-title>
+      <v-divider></v-divider>
+      <v-card-text>
+        <div v-for="(key, index) in accCharges" :key="index">
+         
+          <v-list dense style="max-height: 100%" class="overflow-y-auto">
+            <v-list-item v-for="(k, i) in key" :key="i">
+             
+              <v-list-item-content> {{ i}}:
+              </v-list-item-content>
+              <v-list-item-content class="align-end">
+                {{ k }}
+              </v-list-item-content>
+            </v-list-item>
+          </v-list>
+        </div>
+      </v-card-text>
+
+      <v-divider></v-divider>
+
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn color="primary" text @click="accDialog = false">
+          Close
+        </v-btn>
+
+      </v-card-actions>
+    </v-card>
+    </v-dialog>
+    <v-dialog v-model="orderDialog" max-width="50%" scrollable>
+
+
+      <v-card height="500px">
+
+        <v-card-title>
+          Order Header
+        </v-card-title>
+        <v-divider></v-divider>
+        <v-card-text>
+
+          <v-list dense style="max-height: 100%" class="overflow-y-auto">
+            <v-list-item v-for="(k, i) in selectedOrderHeader" :key="i">
+
+              <v-list-item-content> {{ i}}:
+              </v-list-item-content>
+              <v-list-item-content class="align-end">
+                {{ k }}
+              </v-list-item-content>
+            </v-list-item>
+          </v-list>
+
+        </v-card-text>
+
+        <v-divider></v-divider>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="primary" text @click="orderDialog = false">
+            Close
+          </v-btn>
+
+        </v-card-actions>
+      </v-card>
+    </v-dialog> -->
+  </v-card> 
+
+  <v-card v-else  class="mb-1 mt-2 main-card" >
+    <!-- <template v-slot:heading>
+  <div class="display-2 font-weight-light">Orders</div>
+</template> -->
+    <v-card-title class="pt-1 pb-1">
+
+      <v-toolbar flat dense>
+        <!-- <v-menu ref="menu" dense :close-on-content-click="false" :return-value.sync="pickupStart"
+  transition="scale-transition" offset-y min-width="auto" >
+  <template v-slot:activator="{ on, attrs }">
+    <v-text-field v-model="pickupStart" dense outlined hide-details label="Pickup" prepend-icon="mdi-calendar" readonly v-bind="attrs"
+    v-on="on"></v-text-field>
+  </template>
+  <v-date-picker v-model="pickupStart"   @input="menu = false ;$refs.menu.save(pickupStart)"> 
+  </v-date-picker>
+</v-menu> -->
+        <v-spacer></v-spacer>
+        <!-- <v-btn dense @click="onBtExport">
+          <v-icon>mdi-excel</v-icon>
+          Export
+        </v-btn> -->
+        <v-spacer></v-spacer>
+        <v-menu offset-y>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn v-bind="attrs" v-on="on">
+              <v-icon>mdi-dots-vertical</v-icon>
+            </v-btn>
+          </template>
+          <v-list>
+            <v-list-item-group>
+              <v-list-item @click="sizeEm">
+                <v-list-item-icon>
+                  <v-icon>fas fa-text-width</v-icon>
+                </v-list-item-icon>
+                <v-list-item-title>Auto Size Columns</v-list-item-title>
+              </v-list-item>
+              <v-list-item @click="onBtExport">
+                <v-list-item-icon>
+                  <v-icon>far fa-file-excel</v-icon>
+                </v-list-item-icon>
+                <v-list-item-content>
+                  <v-list-item-title> Export </v-list-item-title>
+                </v-list-item-content>
+                <!-- <v-btn dense @click="onBtExport"> -->
+                <!-- Export -->
+                </v-btn>
+              </v-list-item>
+            </v-list-item-group>
+          </v-list>
+        </v-menu>
+      </v-toolbar>
+    </v-card-title>
+    <v-card-text v-resize="onResize" style="height: 90%;">
+
+      <ag-grid-vue style="height: 100%;width: 100%;" :class="themeClass" :columnDefs="columnDefs" :rowData="rowData"
+        :defaultColDef="defaultColDef" :pagination="true"  :paginationAutoPageSize="true" :gridOptions="gridOptions" @first-data-rendered="onFirstDataRendered">
+      </ag-grid-vue>
+      <!-- <v-data-table dense :height="windowSize.y - (75 + 81 + 32 + 24 + 59 + 45)" fixed-header :headers="headers" :items="items" :loading="loading" loading-text="Loading... Please wait"
+  >
+  <template  v-slot:top> -->
+
+      <!-- <v-toolbar dense class="mb-4">
+    <v-text-field dense v-model="search" clearable flat  hide-details
+    prepend-inner-icon="md-text-box-search" label="Search"></v-text-field>
+    <template v-if="$vuetify.breakpoint.mdAndUp">
+      <v-spacer></v-spacer>
+      <v-select dense v-model="sortBy" flat hide-details :items="keys"
+      prepend-inner-icon="md-select-search" label="Sort by"></v-select>
+      <v-spacer></v-spacer>
+      <v-btn-toggle dense v-model="sortDesc" mandatory>
+        <v-btn depressed :value="false">
+          <v-icon>mdi-arrow-up</v-icon>
+        </v-btn>
+        <v-btn dense depressed :value="true">
+          <v-icon>mdi-arrow-down</v-icon>
+        </v-btn>
+      </v-btn-toggle>
+    </template>
+  </v-toolbar> -->
+      <!-- <v-divider></v-divider>
+</template> -->
+      <!-- <template v-slot:item="row">
+  
+  <tr>
+    <td v-for="data in row.item">{{data}}</td>
+  </tr>
+</template> -->
+      <!-- <template v-slot:item.Acc_Misc="{ item }">
+  <v-btn v-if="item['Acc_Misc']" color="success" @click="accessorials(item.DETAIL_LINE_ID)">{{ item['Acc_Misc'] }}</v-btn> -->
+      <!-- <v-button v-if="item['Acc_Misc']" dark>{{ item['Acc_Misc'] }}</v-button> -->
+      <!-- </template> -->
+      <!-- <template v-slot:item.WHS_NO="{ item }">
+  <v-btn v-if="item['WHS_NO']" small color="info" @click="getOrderHeader(item['WHS_NO'])">{{ item['WHS_NO'] }} </v-btn>  -->
+      <!-- <v-button v-if="item['Acc_Misc']" dark>{{ item['Acc_Misc'] }}</v-button> -->
+      <!-- </template>
+</v-data-table>  -->
+
+    </v-card-text>
+    <v-dialog v-model="accDialog" max-width="50%" scrollable>
+      <!-- <template v-slot:activator="{ on, attrs }">
+    <v-btn color="red lighten-2" dark v-bind="attrs" v-on="on">
+      Accessorials
+    </v-btn>
+  </template> -->
+
+
+      <v-card height="500px">
+
+        <v-card-title>
+          Charges
+        </v-card-title>
+        <v-divider></v-divider>
+        <v-card-text>
+          <div v-for="(key, index) in accCharges" :key="index">
+            <!-- {{key}} -->
+            <v-list dense style="max-height: 100%" class="overflow-y-auto">
+              <v-list-item v-for="(k, i) in key" :key="i">
+                <!-- {{ key[k] }} -->
+                <v-list-item-content> {{ i}}:
+                </v-list-item-content>
+                <v-list-item-content class="align-end">
+                  {{ k }}
+                </v-list-item-content>
+              </v-list-item>
+            </v-list>
+          </div>
+        </v-card-text>
+
+        <v-divider></v-divider>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="primary" text @click="accDialog = false">
+            Close
+          </v-btn>
+
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <v-dialog v-model="orderDialog" max-width="50%" scrollable>
+
+
+      <v-card height="500px">
+
+        <v-card-title>
+          Order Header
+        </v-card-title>
+        <v-divider></v-divider>
+        <v-card-text>
+
+          <v-list dense style="max-height: 100%" class="overflow-y-auto">
+            <v-list-item v-for="(k, i) in selectedOrderHeader" :key="i">
+
+              <v-list-item-content> {{ i}}:
+              </v-list-item-content>
+              <v-list-item-content class="align-end">
+                {{ k }}
+              </v-list-item-content>
+            </v-list-item>
+          </v-list>
+
+        </v-card-text>
+
+        <v-divider></v-divider>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="primary" text @click="orderDialog = false">
+            Close
+          </v-btn>
+
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </v-card>
+
+
+</div>

@@ -10,7 +10,11 @@ import Vuelidate from 'vuelidate';
 import vuetify from './plugins/vuetify';
 import '@mdi/font/css/materialdesignicons.css';
 import api from './providers/apiProvider';
-
+import 'ag-grid-community/dist/styles/ag-grid.css';
+import 'ag-grid-community/dist/styles/ag-theme-alpine-dark.css'
+import 'ag-grid-community/dist/styles/ag-theme-alpine.css'
+//import "../node_modules/ag-grid-community/dist/styles/ag-grid.css";
+//import "../node_modules/ag-grid-community/dist/styles/ag-theme-alpine.css";
 
 //Vue.use(VueColumnsResizable);
 

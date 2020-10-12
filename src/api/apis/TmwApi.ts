@@ -42,6 +42,10 @@ export interface PostTmwOrdersRequest {
     body?: Model3;
 }
 
+export interface PostTmwOrdersDawgRequest {
+    body?: Model2;
+}
+
 export interface PostTmwOtdssRequest {
     body?: Model2;
 }
@@ -190,6 +194,41 @@ export class TmwApi extends runtime.BaseAPI {
      */
     async postTmwOrders(requestParameters: PostTmwOrdersRequest): Promise<Array<string>> {
         const response = await this.postTmwOrdersRaw(requestParameters);
+        return await response.value();
+    }
+
+    /**
+     * Filtered to the company baseed on the BILL_TO_CODE
+     * DAWG Report
+     */
+    async postTmwOrdersDawgRaw(requestParameters: PostTmwOrdersDawgRequest): Promise<runtime.ApiResponse<Array<object>>> {
+        const queryParameters: runtime.HTTPQuery = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        if (this.configuration && this.configuration.apiKey) {
+            headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // jwt authentication
+        }
+
+        const response = await this.request({
+            path: `/tmw/orders/dawg`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: Model2ToJSON(requestParameters.body),
+        });
+
+        return new runtime.JSONApiResponse<any>(response);
+    }
+
+    /**
+     * Filtered to the company baseed on the BILL_TO_CODE
+     * DAWG Report
+     */
+    async postTmwOrdersDawg(requestParameters: PostTmwOrdersDawgRequest): Promise<Array<object>> {
+        const response = await this.postTmwOrdersDawgRaw(requestParameters);
         return await response.value();
     }
 

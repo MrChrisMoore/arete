@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar id="app-bar" absolute app color="transparent" flat dense >
+  <v-app-bar id="app-bar" fixed  app  flat dense >
     <!-- <v-btn class="mr-3" elevation="1" fab small @click="setDrawer(!drawer)">
       <v-icon v-if="value">mdi-view-quilt</v-icon>
 

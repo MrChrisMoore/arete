@@ -1,5 +1,5 @@
 <template>
-  <v-app>
+  <v-app  style="max-height:100vh">
     <dashboard-core-app-bar />
 
     <dashboard-core-drawer />
