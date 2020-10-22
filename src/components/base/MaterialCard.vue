@@ -15,16 +15,16 @@
       </v-avatar>
 
       <v-sheet
-        v-if="!avatar &&( $slots.heading || $slots.image || (title && !icon) || text)"
+        v-else
         :class="{
-          'pa-5': !$slots.image
+          'pa-7': !$slots.image
         }"
         :color="color"
         :max-height="icon ? 90 : undefined"
         :width="icon ? 'auto' : '100%'"
         elevation="6"
         class="text-start v-card--material__heading mb-n6"
-        
+        dark
       >
         <slot
           v-if="$slots.heading"

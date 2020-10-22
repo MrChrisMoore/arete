@@ -8,8 +8,8 @@ module.exports = {
     themeColor: '#114474',
     appleMobileWebAppCapable: 'yes',
     appleMobileWebAppStatusBarStyle: 'black',
-    workboxOptions: {
-      swSrc: 'src/service-worker.js'
-    }
+    // workboxOptions: {
+    //   swSrc: 'src/service-worker.js'
+    // }
   }
 }

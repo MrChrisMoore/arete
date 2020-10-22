@@ -16,7 +16,7 @@ const router = new VueRouter({
         // Dashboard
 
         {
-          name: "Examples",
+          name: "Orders Overview",
           path: "",
           
           component: () => import("@/views/dashboard/Dashboard.vue"),
@@ -104,8 +104,8 @@ const router = new VueRouter({
           },
         },
         {
-          name: "Warehouse Overview",
-          path: "/sisense/wh-overview",
+          name: "Overview",
+          path: "wh-overview",
           component: () =>
             import("@/views/dashboard/pages/WarehouseOverview.vue"),
           meta: {
@@ -167,7 +167,7 @@ const router = new VueRouter({
           },
         },
         {
-          name: "On Time Delivery and Sailing Schedule",
+          name: "On Time Deliveries",
           path: "/tmw/otd-ss",
           component: () =>
             import("@/views/dashboard/pages/tmw/otd-ss/index.vue"),
@@ -176,10 +176,19 @@ const router = new VueRouter({
           },
         },
         {
-          name: "Order Info",
+          name: "In Transit",
           path: "/tmw/orderinfo",
           component: () =>
             import("@/views/dashboard/pages/tmw/orderinfo/index.vue"),
+          meta: {
+            requiresAuth: true,
+          },
+        },
+        {
+          name: "On Time Analysis",
+          path: "/tmw/ota",
+          component: () =>
+            import("@/views/dashboard/pages/tmw/on-time-analytics/index.vue"),
           meta: {
             requiresAuth: true,
           },

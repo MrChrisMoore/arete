@@ -2,9 +2,10 @@
 import Vue from 'vue';
 import Component from 'vue-class-component';
 import { DataTableHeader } from 'vuetify';
+import {VDataTable} from 'vuetify/lib'
 import {Resize} from 'vuetify/lib/directives'
 @Component({
-  components: {
+  components: {VDataTable
   },
   name: 'tmw-otd-ss',
   directives:{Resize}

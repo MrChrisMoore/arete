@@ -1,0 +1,114 @@
+<section id="on-time-analytics" class="page">
+  <v-container >
+    <v-layout row justify-start>
+      <v-flex xs12 lg6>
+      <v-menu
+      ref="menu"
+      v-model="menu"
+      :close-on-content-click="false"
+      transition="scale-transition"
+      offset-y
+      min-width="290px"
+    >
+      <template v-slot:activator="{ on, attrs }">
+        
+          <v-text-field
+          v-model="dateRangeText"
+          label="Date range"
+          prepend-icon="mdi-calendar"
+          readonly
+          
+            v-bind="attrs"
+            v-on="on"
+          ></v-text-field>
+       
+      </template>
+      <v-date-picker
+      v-model="dates"
+      range
+    ></v-date-picker>
+    </v-menu>
+  </v-flex>
+      <!-- <v-flex xs6 lg4>
+        <v-date-picker
+        v-model="dates"
+        range
+      ></v-date-picker>
+   
+    
+      </v-flex>
+      <v-flex xs6 lg4>
+        <v-text-field
+        v-model="dateRangeText"
+        label="Date range"
+        prepend-icon="mdi-calendar"
+        readonly></v-text-field>
+      </v-flex> -->
+    </v-layout>
+    <!-- <v-layout row justify-space-around>
+      <v-flex xs12 lg6>
+        <base-material-stats-card
+        color="orange"
+        icon="fas fa-pallet"
+        title="Total Loads"
+        value="184"
+        sub-icon="mdi-alert"
+        sub-icon-color="red"
+        sub-text="Decrease Detected..."
+        />
+          
+      </v-flex>
+      <v-flex xs12 lg6>
+        <base-material-stats-card
+        color="orange"
+        icon="mdi-animation"
+        title="Total Loads"
+        value="184"
+        sub-icon="mdi-alert"
+        sub-icon-color="red"
+        sub-text="Decrease Detected..."
+        />
+          
+      </v-flex>
+    </v-layout> -->
+    <v-layout row justify-space-around wrap>
+      <v-flex xs12 md4 lg2>
+        
+        <base-material-stats-card
+        color="orange"
+        icon="fas fa-pallet"
+        title="Total Loads"
+        value="184"
+        sub-icon="mdi-alert"
+        sub-icon-color="red"
+        sub-text="Decrease Detected..."
+        >
+          <!-- <v-card-text>
+            <div class="caption grey--text"></div>
+          </v-card-text>   -->
+        </base-material-stats-card>
+      </v-flex>
+      <v-flex xs12 md4 lg2>
+        <v-card>
+         <v-card-text>2</v-card-text>  
+        </v-card>
+      </v-flex>
+      <v-flex xs12 md4 lg2>
+        <v-card>
+          <v-card-text>3</v-card-text>  
+        </v-card>
+      </v-flex>
+      <v-flex xs12 md4 lg2>
+        <v-card>
+          <v-card-text>4</v-card-text>  
+        </v-card>
+      </v-flex>
+      <v-flex xs12 md4 lg2>
+        <v-card>
+          <v-card-text>5</v-card-text>  
+        </v-card>
+      </v-flex>
+      
+    </v-layout>
+  </v-container>
+</section>

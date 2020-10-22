@@ -17,6 +17,7 @@
       "./src/types"
     ],
     "types": [
+      "googlemaps",
       "webpack-env",
       "jest",
       "vuetify"

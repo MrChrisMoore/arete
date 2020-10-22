@@ -5,7 +5,6 @@
     :expand-on-hover="expandOnHover"
     :right="$vuetify.rtl"
     mini-variant
-    mobile-breakpoint="960"
     app
     v-bind="$attrs"
    
@@ -91,8 +90,8 @@ export default {
       },
       {
         icon: "mdi-view-dashboard-variant",
-        title: "Examples",
-        to: "",
+        title: "Orders Overview",
+        to: "/",
       },
       // {
       //   icon: "mdi-view-dashboard-variant",

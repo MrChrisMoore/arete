@@ -9,6 +9,8 @@
     "gh-pages-deploy": "node scripts/gh-pages-deploy.js"
   },
   "dependencies": {
+    "@google/markerclusterer": "^2.0.9",
+    "@googlemaps/google-maps-services-js": "^3.1.13",
     "@mdi/font": "^3.6.95",
     "ag-grid-community": "^24.0.0",
     "ag-grid-vue": "^24.0.0",
@@ -17,6 +19,7 @@
     "lodash": "^4.17.19",
     "register-service-worker": "^1.7.1",
     "roboto-fontface": "*",
+    "ts-overlapping-marker-spiderfier": "^1.0.3",
     "vue": "^2.6.11",
     "vue-chartist": "^2.3.1",
     "vue-class-component": "^7.2.3",
@@ -30,6 +33,7 @@
     "vuex": "^3.4.0"
   },
   "devDependencies": {
+    "@types/googlemaps": "^3.40.0",
     "@types/jest": "^24.0.19",
     "@types/lodash": "^4.14.157",
     "@types/vuelidate": "^0.7.13",

@@ -1,10 +1,10 @@
 
-    <base-material-card color="success" >
+    <base-material-card class="main-material-card" color="success" >
     <template v-slot:heading>
       <div class="display-2 font-weight-light">On Time Delivery and Sailing Schedule</div>
     </template>
     <v-card-text v-resize="onResize">
-      <v-data-table :height="windowSize.y - (75 + 81 + 32 + 24 + 59 + 45)"  :headers="headers" :items="items" :loading="loading" loading-text="Loading... Please wait"
+      <v-data-table :max-height="windowSize.y - (75 + 80 + 32 + 24  + 45)"  :headers="headers" :items="items" :loading="loading" loading-text="Loading... Please wait"
        >
         <!-- <template v-slot:group.header="{ group, headers, toggle, isOpen }">
           <td :colspan="headers.length">

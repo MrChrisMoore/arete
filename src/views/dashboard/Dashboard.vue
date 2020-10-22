@@ -32,7 +32,7 @@
             </v-tooltip>
           </template>
 
-          <h4 class="card-title font-weight-light mt-2 ml-2">Quotes</h4>
+          <h4 class="card-title font-weight-light mt-2 ml-2">Orders by Month</h4>
 
           <p class="d-inline-flex font-weight-light ml-2 mt-1">Last Campaign Performance</p>
 
@@ -73,12 +73,12 @@
             </v-tooltip>
           </template>
 
-          <h4 class="card-title font-weight-light mt-2 ml-2">Daily Sales</h4>
+          <h4 class="card-title font-weight-light mt-2 ml-2">Orders by Day</h4>
 
           <p class="d-inline-flex font-weight-light ml-2 mt-1">
             <v-icon color="green" small>mdi-arrow-up</v-icon>
             <span class="green--text">55%</span>&nbsp;
-            increase in today's sales
+            increase in today's orders
           </p>
 
           <template v-slot:actions>
@@ -118,9 +118,9 @@
             </v-tooltip>
           </template>
 
-          <h3 class="card-title font-weight-light mt-2 ml-2">Completed Tasks</h3>
+          <h3 class="card-title font-weight-light mt-2 ml-2">Orders Daily</h3>
 
-          <p class="d-inline-flex font-weight-light ml-2 mt-1">Last Last Campaign Performance</p>
+          <p class="d-inline-flex font-weight-light ml-2 mt-1">past 21 hours</p>
 
           <template v-slot:actions>
             <v-icon class="mr-1" small>mdi-clock-outline</v-icon>
@@ -132,7 +132,7 @@
       <v-col cols="12" sm="6" lg="3">
         <base-material-stats-card
           color="info"
-          icon="mdi-amazon"
+          icon="fas fa-pallet"
           title="Orders Today"
           value="+245"
           sub-icon="mdi-clock"
@@ -170,24 +170,24 @@
           value="184"
           sub-icon="mdi-alert"
           sub-icon-color="red"
-          sub-text="Get More Space..."
+          sub-text="Decrease Detected..."
         />
       </v-col>
 
-      <v-col cols="12" md="6">
+      <v-col cols="12" md="12" class="mt-2">
         <base-material-card color="warning" class="px-5 py-3">
-          <template v-slot:heading>
-            <div class="display-2 font-weight-light">CSR Stats</div>
+          <template v-slot:heading class="pa-2">
+            <div class="display-2 font-weight-light">Sales by Facility</div>
 
-            <div class="subtitle-1 font-weight-light">New accounts on {{new Date()}}</div>
+            <!-- <div class="subtitle-1 font-weight-light">New accounts on {{new Date()}}</div> -->
           </template>
-          <v-card-text>
+          <v-card-text class="pt-1">
             <v-data-table :headers="headers" :items="items" />
           </v-card-text>
         </base-material-card>
       </v-col>
 
-      <v-col cols="12" md="6">
+      <!-- <v-col cols="12" md="6" class="mt-2">
         <base-material-card class="px-5 py-3">
           <template v-slot:heading>
             <v-tabs v-model="tabs" background-color="transparent" slider-color="white">
@@ -229,7 +229,7 @@
             </v-tab-item>
           </v-tabs-items>
         </base-material-card>
-      </v-col>
+      </v-col> -->
     </v-row>
   </v-container>
 </template>
@@ -268,7 +268,7 @@ export default class Dash extends Vue {
       dataCompletedTasksChart= {
         data: {
           labels: ["12am", "3pm", "6pm", "9pm", "12pm", "3am", "6am", "9am"],
-          series: [[230, 750, 450, 300, 280, 240, 200, 190]]
+          series: [[20, 750, 450, 300, 280, 240, 200, 190]]
         },
         options: {
           lineSmooth: (this as any).$chartist.Interpolation.cardinal({
@@ -330,28 +330,28 @@ export default class Dash extends Vue {
         ]
       }
       headers=[
+        // {
+        //   sortable: false,
+        //   text: "ID",
+        //   value: "id",
+        // },
         {
           sortable: false,
-          text: "ID",
-          value: "id"
-        },
-        {
-          sortable: false,
-          text: "Name",
+          text: "Facility",
           value: "name"
         },
         {
           sortable: false,
-          text: "sales",
+          text: "Sales",
           value: "sales",
           align: "right"
         },
-        {
-          sortable: false,
-          text: "Country",
-          value: "country",
-          align: "right"
-        },
+        // {
+        //   sortable: false,
+        //   text: "Country",
+        //   value: "country",
+        //   align: "right"
+        // },
         {
           sortable: false,
           text: "City",
@@ -362,37 +362,37 @@ export default class Dash extends Vue {
       items=[
         {
           id: 1,
-          name: "Tony Stark",
-          country: "USA",
+          name: "LA Warehouse 1",
+        //  country: "USA",
           city: "Los Angelos",
           sales: "$35,738"
         },
         {
           id: 2,
-          name: "Danny Dorito",
-          country: "Canada",
+          name: "CA Toronto",
+         // country: "Canada",
           city: "Totonto",
           sales: "$23,738"
         },
         {
           id: 3,
-          name: "Steve Rogers",
-          country: "Netherlands",
-          city: "Overland Park",
+          name: "MI Detroit Fac1",
+        //  country: "Netherlands",
+          city: "Detroit",
           sales: "$56,142"
         },
         {
           id: 4,
-          name: "Druce Banner",
-          country: "Korea, South",
-          city: "Gloucester",
+          name: "MI Detroit Fac2",
+         // country: "Korea, South",
+          city: "Detroit",
           sales: "$38,735"
         },
         {
           id: 5,
-          name: "Daisy Johnson",
-          country: "Ireland",
-          city: "Dublin",
+          name: "OH Columbus Fac1",
+         // country: "Ireland",
+          city: "Columbus",
           sales: "$63,542"
         }
       ]
@@ -451,10 +451,6 @@ export default class Dash extends Vue {
   async mounted() {
     let user:UserJson = JSON.parse(localStorage.getItem('user'));
   
-    let response = await this.tmwApi.postTmwOrders({body:{tmwCodes:user.tmwCodes}})
-    if(response){
-      
-    }
 
   }
   

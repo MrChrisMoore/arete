@@ -1,8 +1,8 @@
 <div class="main-div">
 
-  <v-switch v-model="cards" class="pl-3 pt-0" label="Card View"></v-switch>
+  <!-- <v-switch v-model="cards" class="pl-3 pt-0" label="Card View"></v-switch> -->
   <!-- <v-card v-if="cards" height="87vh"> -->
-    <v-card v-if="cards" class="main-card">
+  <v-card v-if="cards" class="main-card">
     <v-data-iterator :items="items" :items-per-page.sync="ipp" :page.sync="page" hide-default-footer :search="search"
       :sort-by="sortBy" :sort-desc="sortDesc" :custom-filter="filterOrders"
       class="d-flex flex-column overflow-hidden card-iterator">
@@ -14,7 +14,7 @@
         </v-toolbar>
       </template> -->
       <template v-slot:default="props">
-        <v-row class=" overflow-auto"  id="container">
+        <v-row class=" overflow-auto" id="container">
           <v-col v-for="(item,idx) in props.items" :key="item['FB#']" :cols="(12/itemsPerRow)" class="py-2">
             <v-card class="card ">
               <v-card-title>
@@ -26,15 +26,17 @@
               </v-card-title>
               <v-divider></v-divider>
               <v-card-text>
-                <v-list dense style="min-height:250px; max-height:250px;" class="overflow-y-auto">
+                <v-list dense  class="overflow-y-auto lock-height-250" >
                   <v-list-item v-for="(key, index) in filteredKeys" :key="index" v-if="item[key]">
-                    <v-list-item-content v-if="item[key]" class="text-small" :class="{ 'blue--text': sortBy === key }">{{ key }}:
+                    <v-list-item-content v-if="item[key]" class="text-small" :class="{ 'blue--text': sortBy === key }">
+                      {{ key }}:
                     </v-list-item-content>
-                    <v-list-item-content v-if="item[key] && key !=='WHS_NO'" class="align-end text-small" :class="{ 'blue--text': sortBy === key }">                  
+                    <v-list-item-content v-if="item[key] && key !=='WHS_NO'" class="align-end text-small"
+                      :class="{ 'blue--text': sortBy === key }">
                       {{ item[key] }}
                     </v-list-item-content>
-                    <v-list-item-content v-else-if="item[key] && key ==='WHS_NO'" class="align-end">                  
-                      <v-btn small color="info" @click="getOrderHeader(item[key])">{{ item[key] }} </v-btn> 
+                    <v-list-item-content v-else-if="item[key] && key ==='WHS_NO'" class="align-end">
+                      <v-btn small color="info" @click="getOrderHeader(item[key])">{{ item[key] }} </v-btn>
                     </v-list-item-content>
                   </v-list-item>
                 </v-list>
@@ -230,12 +232,10 @@
         </v-card-actions>
       </v-card>
     </v-dialog> -->
-  </v-card> 
+  </v-card>
 
-  <v-card v-else  class="mb-1 mt-2 main-card" >
-    <!-- <template v-slot:heading>
-  <div class="display-2 font-weight-light">Orders</div>
-</template> -->
+  <v-card v-else class="mb-1 mt-2 main-card">
+
     <v-card-title class="pt-1 pb-1">
 
       <v-toolbar flat dense>
@@ -248,19 +248,23 @@
   <v-date-picker v-model="pickupStart"   @input="menu = false ;$refs.menu.save(pickupStart)"> 
   </v-date-picker>
 </v-menu> -->
-        <v-spacer></v-spacer>
-        <!-- <v-btn dense @click="onBtExport">
-          <v-icon>mdi-excel</v-icon>
+        <v-btn v-if="$vuetify.breakpoint.mdAndUp" small text raised outlined @click="onBtExport">
+          <v-icon left>far fa-file-excel</v-icon>
           Export
-        </v-btn> -->
+        </v-btn>
         <v-spacer></v-spacer>
-        <v-menu offset-y>
+        <v-btn v-if="$vuetify.breakpoint.mdAndUp" small text raised outlined @click="sizeEm">
+          <v-icon left>fas fa-text-width</v-icon>
+          Auto Size Columns
+        </v-btn>
+        <!-- <v-spacer></v-spacer> -->
+        <v-menu  v-if="$vuetify.breakpoint.smAndDown"  offset-y>
           <template v-slot:activator="{ on, attrs }">
-            <v-btn v-bind="attrs" v-on="on">
+            <v-btn small v-bind="attrs" v-on="on">
               <v-icon>mdi-dots-vertical</v-icon>
             </v-btn>
           </template>
-          <v-list>
+          <v-list dense>
             <v-list-item-group>
               <v-list-item @click="sizeEm">
                 <v-list-item-icon>
@@ -268,15 +272,13 @@
                 </v-list-item-icon>
                 <v-list-item-title>Auto Size Columns</v-list-item-title>
               </v-list-item>
-              <v-list-item @click="onBtExport">
+              <v-list-item v-if="$vuetify.breakpoint.smAndDown" @click="onBtExport">
                 <v-list-item-icon>
                   <v-icon>far fa-file-excel</v-icon>
                 </v-list-item-icon>
                 <v-list-item-content>
                   <v-list-item-title> Export </v-list-item-title>
-                </v-list-item-content>
-                <!-- <v-btn dense @click="onBtExport"> -->
-                <!-- Export -->
+                </v-list-item-content>              
                 </v-btn>
               </v-list-item>
             </v-list-item-group>
@@ -284,11 +286,37 @@
         </v-menu>
       </v-toolbar>
     </v-card-title>
-    <v-card-text v-resize="onResize" style="height: 90%;">
+    <v-card-text v-resize="onResize" class="card-text-90">
+      <v-container fluid class="h-100 w-100">
+        <v-row class="h-100 w-100">
+      <v-col cols="12" md="6" class="mt-2">
+        <ag-grid-vue class="h-100 w-100" rowSelection='single'  @selection-changed="onSelectionChanged" :class="themeClass" :columnDefs="columnDefs" :rowData="rowData"
+          :defaultColDef="defaultColDef" :pagination="true"  @pagination-changed="onPaginationChanged" :paginationAutoPageSize="true" :gridOptions="gridOptions"
+          @first-data-rendered="onFirstDataRendered">
+        </ag-grid-vue>  
+      </v-col>
+    
 
-      <ag-grid-vue style="height: 100%;width: 100%;" :class="themeClass" :columnDefs="columnDefs" :rowData="rowData"
-        :defaultColDef="defaultColDef" :pagination="true"  :paginationAutoPageSize="true" :gridOptions="gridOptions" @first-data-rendered="onFirstDataRendered">
-      </ag-grid-vue>
+      <v-col cols="12" md="6" class="mt-2">
+        <div id="order_info_map_canvas"></div>
+        <v-card class="d-flex flex-row justify-space-around ma-1" flat tile>
+          <v-card flat tile class="d-flex justify-space-around pa-0 ma-0">
+           <span class="mr-1">
+            Consignee City
+           </span>  
+           <v-img src="http://maps.google.com/mapfiles/kml/pushpin/red-pushpin.png" max-height="1em" max-width="1em" ></v-img>
+          </v-card>
+          <v-card flat tile class=" d-flex justify-space-around pa-0 ma-0">
+            <span class="mr-1">Origin City </span>
+            <v-img src="http://maps.google.com/mapfiles/kml/pushpin/wht-pushpin.png" max-height="1em" max-width="1em" ></v-img>
+          </v-card>
+          
+        </v-card>
+            
+        
+      </v-col>
+    </v-row>
+    </v-container>
       <!-- <v-data-table dense :height="windowSize.y - (75 + 81 + 32 + 24 + 59 + 45)" fixed-header :headers="headers" :items="items" :loading="loading" loading-text="Loading... Please wait"
   >
   <template  v-slot:top> -->
@@ -347,7 +375,7 @@
         <v-card-text>
           <div v-for="(key, index) in accCharges" :key="index">
             <!-- {{key}} -->
-            <v-list dense style="max-height: 100%" class="overflow-y-auto">
+            <v-list dense  class="overflow-y-auto mh-100">
               <v-list-item v-for="(k, i) in key" :key="i">
                 <!-- {{ key[k] }} -->
                 <v-list-item-content> {{ i}}:
@@ -382,7 +410,7 @@
         <v-divider></v-divider>
         <v-card-text>
 
-          <v-list dense style="max-height: 100%" class="overflow-y-auto">
+          <v-list dense  class="overflow-y-auto mh-100">
             <v-list-item v-for="(k, i) in selectedOrderHeader" :key="i">
 
               <v-list-item-content> {{ i}}:
@@ -407,6 +435,5 @@
       </v-card>
     </v-dialog>
   </v-card>
-
 
 </div>

@@ -27,8 +27,8 @@ import Vuetify, {
   VProgressLinear,
   VDialog
 } from 'vuetify/lib';
-// import '@/sass/overrides.sass'
-//import '@mdi/font/css/materialdesignicons.css'
+ import '@/sass/overrides.sass'
+import '@mdi/font/css/materialdesignicons.css'
 Vue.use(Vuetify, {
   components: {
     VLayout,

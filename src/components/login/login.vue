@@ -45,7 +45,7 @@
 <script lang="ts">
 import Vue from "vue";
 import { AuthApi, PostAuthLoginRequest } from "../../api/apis/AuthApi";
-import Component from 'vue-class-component';
+import Component from "vue-class-component";
 // const googleLoginURL: string = `${process.env.VUE_APP_API_URL}/auth/google`;
 // const facebookLoginURL: string = `${process.env.VUE_APP_API_URL}/auth/facebook`;
 // const loginURL: string = `${process.env.VUE_APP_API_URL}/auth/login`;
@@ -64,6 +64,15 @@ export default class Login extends Vue {
   // loginFacebook() {
   //   window.location.href = facebookLoginURL;
   // }
+  getParameterByName(name, url) {
+    if (!url) url = window.location.href;
+    name = name.replace(/[\[\]]/g, "\\$&");
+    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+      results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return "";
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
+  }
   async login() {
     let auth: AuthApi = this.auth;
     try {
@@ -73,19 +82,29 @@ export default class Login extends Vue {
         })
         .catch((err) => {
           if (process.env.LOG_ERROR !== "false") console.log(err);
-        });        
+        });
       if (authResponse) {
         localStorage.token = authResponse.token;
         localStorage.user = JSON.stringify(authResponse.userJson);
         if (!authResponse.userJson.verified) {
-          
           this.$router.push("/verify");
         } else {
-          if(authResponse.userJson.needsNewPassword){
-            this.$router.push('/change');
-          }else{
-
-            this.$router.push('/');
+          if (authResponse.userJson.needsNewPassword) {
+            this.$router.push("/change");
+          } else {
+            if (
+              window.location.search &&
+              window.location.search.indexOf("return_to") !== -1
+            ) {
+              window.location.href = `https://fst.sisense.com/jwt?jwt=${
+                localStorage.token
+              }&return_to=${this.getParameterByName(
+                "return_to",
+                window.location.search
+              )}`;
+            } else {
+              this.$router.push('/');
+            }
           }
         }
       }

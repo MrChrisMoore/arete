@@ -1,0 +1,1 @@
+vgcx --script ts --postfix page --dest "src/views/dashboard/pages/" orders
