@@ -21,6 +21,12 @@ import {
     Model3,
     Model3FromJSON,
     Model3ToJSON,
+    Model4,
+    Model4FromJSON,
+    Model4ToJSON,
+    Model5,
+    Model5FromJSON,
+    Model5ToJSON,
     NotFoundResponse,
     NotFoundResponseFromJSON,
     NotFoundResponseToJSON,
@@ -43,7 +49,7 @@ export interface PostTmwOrdersRequest {
 }
 
 export interface PostTmwOrdersDawgRequest {
-    body?: Model2;
+    body?: Model4;
 }
 
 export interface PostTmwOtdssRequest {
@@ -201,7 +207,7 @@ export class TmwApi extends runtime.BaseAPI {
      * Filtered to the company baseed on the BILL_TO_CODE
      * DAWG Report
      */
-    async postTmwOrdersDawgRaw(requestParameters: PostTmwOrdersDawgRequest): Promise<runtime.ApiResponse<Array<object>>> {
+    async postTmwOrdersDawgRaw(requestParameters: PostTmwOrdersDawgRequest): Promise<runtime.ApiResponse<Model5>> {
         const queryParameters: runtime.HTTPQuery = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -217,17 +223,17 @@ export class TmwApi extends runtime.BaseAPI {
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
-            body: Model2ToJSON(requestParameters.body),
+            body: Model4ToJSON(requestParameters.body),
         });
 
-        return new runtime.JSONApiResponse<any>(response);
+        return new runtime.JSONApiResponse(response, (jsonValue) => Model5FromJSON(jsonValue));
     }
 
     /**
      * Filtered to the company baseed on the BILL_TO_CODE
      * DAWG Report
      */
-    async postTmwOrdersDawg(requestParameters: PostTmwOrdersDawgRequest): Promise<Array<object>> {
+    async postTmwOrdersDawg(requestParameters: PostTmwOrdersDawgRequest): Promise<Model5> {
         const response = await this.postTmwOrdersDawgRaw(requestParameters);
         return await response.value();
     }

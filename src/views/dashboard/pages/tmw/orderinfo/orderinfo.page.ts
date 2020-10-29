@@ -15,7 +15,7 @@ const MAPS_API_KEY = process.env.VUE_APP_MAPS_API_KEY;
 
 const CALLBACK_NAME = 'gmapsCallback';
 
-let initialized = !!window.google;
+let initialized = !!window.google && !!window.google.maps;
 let resolveInitPromise;
 let rejectInitPromise;
 // This promise handles the initialization
@@ -233,14 +233,12 @@ export default class OrderinfoPage extends Vue {
     let params: PostTmwOrdersDawgRequest = {
       body: { tmwCodes: user.tmwCodes }
     }
-    // if(this.pickupStart){
-    //   params.body.pickup =this.pickupStart;
-    // }
+  
     let response = await this.tmwApi.postTmwOrdersDawg(params);
-    if (response && response.length) {
+    if (response /* && response.length */) {
       this.loading = false;
 
-      Object.keys(response[0]).map((v) => {
+      Object.keys(response.rangeResult[0]).map((v) => {
         let colDef: ColDef = {
           headerName: v,
           field: v
@@ -250,7 +248,7 @@ export default class OrderinfoPage extends Vue {
           colDef.type = 'numericColumn'
         }
 
-        if (['misc', 'total charges', 'lumper admin', 'nyc', 'lumper', 'linehaul', 'fuel'].indexOf(v.toLowerCase()) !== -1) {
+        if (['misc', 'total charges', 'lumper admin', 'nyc', 'lumper', 'linehaul', 'fuel','detention'].indexOf(v.toLowerCase()) !== -1) {
           colDef.valueFormatter = (params) => {
 
             let data = params.data[v];
@@ -289,8 +287,8 @@ export default class OrderinfoPage extends Vue {
 
       });
 
-      this.items = response;
-      this.rowData = response;
+      this.items = response.rangeResult;
+      this.rowData = response.rangeResult;
     }
   }
 

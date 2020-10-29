@@ -34,10 +34,14 @@
     </v-icon>
 
     <span
-      :class="subTextColor"
-      class="caption grey--text font-weight-light"
+      :class="subTextColor? subTextColor:'grey--text'"
+      class="caption font-weight-light"
       v-text="subText"
     />
+    
+      <v-spacer v-if="subText2" />
+      <span v-if="subText2" v-text="subText2" :class="subTextColor? subTextColor:'grey--text'" class="caption font-weight-light"></span>
+  
   </base-material-card>
 </template>
 
@@ -68,6 +72,10 @@
         default: undefined,
       },
       subText: {
+        type: String,
+        default: undefined,
+      },
+      subText2: {
         type: String,
         default: undefined,
       },

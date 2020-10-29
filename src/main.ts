@@ -8,6 +8,7 @@ import router from './router';
 import store from './store';
 import Vuelidate from 'vuelidate';
 import vuetify from './plugins/vuetify';
+// import './plugins/googleCharts';
 import '@mdi/font/css/materialdesignicons.css';
 import api from './providers/apiProvider';
 import 'ag-grid-community/dist/styles/ag-grid.css';
@@ -17,7 +18,10 @@ import 'ag-grid-community/dist/styles/ag-theme-alpine.css'
 //import "../node_modules/ag-grid-community/dist/styles/ag-theme-alpine.css";
 
 //Vue.use(VueColumnsResizable);
+import VueApexCharts from 'vue-apexcharts'
+Vue.use(VueApexCharts)
 
+Vue.component('apexchart', VueApexCharts)
 
 
 Vue.use(Vuelidate);

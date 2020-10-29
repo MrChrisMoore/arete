@@ -1,7 +1,7 @@
 <section id="on-time-analytics" class="page">
-  <v-container >
-    <v-layout row justify-start>
-      <v-flex xs12 lg6>
+  <v-container fluid>
+    <v-row  justify-start>
+      <v-col cols="12" lg6>
       <v-menu
       ref="menu"
       v-model="menu"
@@ -26,27 +26,13 @@
       <v-date-picker
       v-model="dates"
       range
+      @change="onDatesChanged"
     ></v-date-picker>
     </v-menu>
-  </v-flex>
-      <!-- <v-flex xs6 lg4>
-        <v-date-picker
-        v-model="dates"
-        range
-      ></v-date-picker>
-   
-    
-      </v-flex>
-      <v-flex xs6 lg4>
-        <v-text-field
-        v-model="dateRangeText"
-        label="Date range"
-        prepend-icon="mdi-calendar"
-        readonly></v-text-field>
-      </v-flex> -->
-    </v-layout>
-    <!-- <v-layout row justify-space-around>
-      <v-flex xs12 lg6>
+  </v-col>   
+    </v-row>
+    <!-- <v-row row justify-space-around>
+      <v-flex cols="12" lg6>
         <base-material-stats-card
         color="orange"
         icon="fas fa-pallet"
@@ -58,7 +44,7 @@
         />
           
       </v-flex>
-      <v-flex xs12 lg6>
+      <v-flex cols="12" lg6>
         <base-material-stats-card
         color="orange"
         icon="mdi-animation"
@@ -70,45 +56,202 @@
         />
           
       </v-flex>
-    </v-layout> -->
-    <v-layout row justify-space-around wrap>
-      <v-flex xs12 md4 lg2>
+    </v-row> -->
+    <v-row v-if="!loading"  justify-space-around wrap>
+      <v-col cols="12" md="4" lg="auto">
         
         <base-material-stats-card
-        color="orange"
-        icon="fas fa-pallet"
+        color="warning"
+        icon="fas fa-truck"
         title="Total Loads"
-        value="184"
-        sub-icon="mdi-alert"
-        sub-icon-color="red"
-        sub-text="Decrease Detected..."
+        :value="totalLoads"
         >
-          <!-- <v-card-text>
-            <div class="caption grey--text"></div>
-          </v-card-text>   -->
+        <!-- sub-icon="mdi-alert"
+        sub-icon-color="red"
+        sub-text="Decrease Detected..." -->
+         
         </base-material-stats-card>
-      </v-flex>
-      <v-flex xs12 md4 lg2>
+      </v-col>
+      <v-col cols="12" md="4" lg="auto">
+        <base-material-stats-card
+        color="success"
+        icon="fas fa-dollar-sign"
+        title="Total Cost"
+        :value="totalCost"
+        sub-icon-color="red"
+        subTextColor="green--text"
+        :sub-text="'High ' + highCost"
+        :sub-text2="'  Low  ' + lowCost"
+        >
+              
+        </base-material-stats-card>
+      </v-col>
+      <v-col cols="12" md="4" lg="auto">
+        <base-material-stats-card
+        color="black"
+        icon="fas fa-road"
+        title="Total Distance"
+        :value="totalDistance"
+        sub-icon-color="red"
+        :sub-text="'High ' + highMiles"
+        :sub-text2="'  Low  ' + lowMiles"
+        >
+        
+        </base-material-stats-card>
+      </v-col>
+      <v-col cols="12" md="4" lg="auto">
+        <base-material-stats-card
+        color="yellow"
+        icon="fas fa-pallet"
+        title="Total Pallets"
+        :value="totalPallets"
+        sub-icon-color="blue"
+        :sub-text="'High ' + highPallets"
+        :sub-text2="'  Low  ' + lowPallets"
+        >
+        
+        </base-material-stats-card>
+      </v-col>
+      <v-col cols="12" md="4" lg="auto">
+        <base-material-stats-card
+        color="secondary"
+        icon="fas fa-weight"
+        title="Average Weight Per Load"
+        :value="averageWeight"
+        sub-icon-color="blue"
+        :sub-text="'High ' + highWeight"
+        :sub-text2="'  Low  ' + lowWeight"
+        >
+        
+        </base-material-stats-card>
+      </v-col>
+      <v-col cols="12" md="4" lg="auto">
+        <base-material-stats-card
+        color="purple"
+        icon="fas fa-suitcase"
+        title="Average Cases Per Load"
+        :value="averageCases"
+        sub-icon-color="blue"
+        :sub-text="'High ' + highCases"
+        :sub-text2="'  Low  ' + lowCases"
+        >
+        
+        </base-material-stats-card>
+      </v-col>
+    </v-row>
+    <v-row row justify-space-around wrap>
+      <v-col cols="12" >
+        <!-- <base-material-stats-card
+        color=""
+        icon=""
+        title=""
+        :value=""
+        sub-icon="n"
+        sub-icon-color=""
+        sub-text=""
+        >        
+        </base-material-stats-card> -->
         <v-card>
-         <v-card-text>2</v-card-text>  
-        </v-card>
-      </v-flex>
-      <v-flex xs12 md4 lg2>
-        <v-card>
-          <v-card-text>3</v-card-text>  
-        </v-card>
-      </v-flex>
-      <v-flex xs12 md4 lg2>
-        <v-card>
-          <v-card-text>4</v-card-text>  
-        </v-card>
-      </v-flex>
-      <v-flex xs12 md4 lg2>
-        <v-card>
-          <v-card-text>5</v-card-text>  
-        </v-card>
-      </v-flex>
+        <v-card-text>
+          <div id='costChart'></div>
+          <!-- <apexchart v-if="!loading" type="scatter" height="350" :options="linechartOptions" :series="costSeries"></apexchart> -->
+          <!-- <div id="costChart" ></div> -->
+       </v-card-text>
+      </v-card>
+       
+
+
+        <!-- <GChart v-if="!loading"
+        type="Line"
+        :settings="{ packages: ['line', 'table', 'map'] }"
+        @ready="onChartReady"
+        :createChart="(el, google) => new google.charts.Line(el)"
+      /> -->
+<!-- 
+      <GChart v-if="!loading"
+      type="Line"
+      :data="costChartData"
+      :options="costChartOptions"
+      :settings="{ packages: ['line', 'table', 'map'] }"
+      :createChart="(el, google) => new google.charts.Line(el)"
+      @ready="onChartReady"
+    /> -->
+
+        <!-- <base-material-chart-card
+        color="success"
+        :data="costChartData"        
+        :options="costChartOptions"        
+        type="Line"
+       
+        >
       
-    </v-layout>
+        <template v-slot:reveal-actions>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ attrs, on }">
+              <v-btn v-bind="attrs" color="info" icon v-on="on">
+                <v-icon color="info">mdi-refresh</v-icon>
+              </v-btn>
+            </template>
+
+            <span>Refresh</span>
+          </v-tooltip>
+
+          <v-tooltip bottom>
+            <template v-slot:activator="{ attrs, on }">
+              <v-btn v-bind="attrs" light icon v-on="on">
+                <v-icon>mdi-pencil</v-icon>
+              </v-btn>
+            </template>
+
+            <span>Change Date</span>
+          </v-tooltip>
+        </template>
+
+        <h3 class="card-title font-weight-light mt-2 ml-2">Orders Daily</h3>
+
+        <p class="d-inline-flex font-weight-light ml-2 mt-1">past 21 hours</p>
+
+        <template v-slot:actions>
+          <v-icon class="mr-1" small>mdi-clock-outline</v-icon>
+          <span class="caption grey--text font-weight-light">campaign sent 26 minutes ago</span>
+        </template>
+        </base-material-chart-card> -->
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="12">
+        <v-card>
+        <v-card-text>
+          <!-- <div id="dtdChart"></div> -->
+          <div id= 'dtdChart'  ></div>
+          <!-- <apexchart v-if="!loading" type="rangeBar"  :options="chartOptions" :series="dtdSeries"></apexchart> -->
+
+        </v-card-text>
+      </v-card>
+      </v-col>
+    </v-row>
+
+    <v-snackbar
+    v-model="snackbar"
+    timeout="10000"
+    absolute
+    left
+    shaped
+    top
+    color="warning"
+  >
+    {{ snackText }}
+
+    <template v-slot:action="{ attrs }">
+      <v-btn
+        color="blue"
+        text
+        v-bind="attrs"
+        @click="snackbar = false"
+      >
+        Dismiss
+      </v-btn>
+    </template>
+  </v-snackbar>
   </v-container>
 </section>

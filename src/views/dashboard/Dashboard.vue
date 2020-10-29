@@ -9,6 +9,7 @@
           color="#E91E63"
           hover-reveal
           type="Bar"
+          
         >
           <template v-slot:reveal-actions>
             <v-tooltip bottom>

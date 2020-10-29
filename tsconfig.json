@@ -12,12 +12,13 @@
     "sourceMap": true,
     "baseUrl": ".",
     "typeRoots": [
-      "./node_modules/@types",
-      "./node_modules/vuetify/types",
-      "./src/types"
+      "node_modules/@types",     
+      "node_modules/vuetify/types",
+      "src/types"
     ],
     "types": [
       "googlemaps",
+      "google.visualization",      
       "webpack-env",
       "jest",
       "vuetify"
