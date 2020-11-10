@@ -18,7 +18,7 @@ import {Resize} from 'vuetify/lib/directives'
 export default class OrdersPage extends Vue {
   headers: DataTableHeader[] = [];
   items = [];
-  pickupStart=`${new Date().getFullYear()}-0${new Date().getMonth()}-01`;
+  pickupStart=`${new Date().getFullYear()}-${new Date().getMonth()<10?`0${new Date().getMonth()}`:new Date().getMonth()}-01`;
   pickupEnd='';
   loading = true;
   windowSize = {

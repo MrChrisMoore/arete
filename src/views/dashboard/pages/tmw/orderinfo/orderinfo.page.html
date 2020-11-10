@@ -289,15 +289,15 @@
     <v-card-text v-resize="onResize" class="card-text-90">
       <v-container fluid class="h-100 w-100">
         <v-row class="h-100 w-100">
-      <v-col cols="12" md="6" class="mt-2">
+      <v-col cols="12" md="12" class="mt-2" v-if="!loading">
         <ag-grid-vue class="h-100 w-100" rowSelection='single'  @selection-changed="onSelectionChanged" :class="themeClass" :columnDefs="columnDefs" :rowData="rowData"
-          :defaultColDef="defaultColDef" :pagination="true"  @pagination-changed="onPaginationChanged" :paginationAutoPageSize="true" :gridOptions="gridOptions"
-          @first-data-rendered="onFirstDataRendered">
+          :defaultColDef="defaultColDef" :pagination="true" :sideBar="sideBar" :modules="modules"  @pagination-changed="onPaginationChanged" :paginationAutoPageSize="true" :gridOptions="gridOptions"
+          @first-data-rendered="onFirstDataRendered" :statusBar="statusBar"   :enableRangeSelection="true">
         </ag-grid-vue>  
       </v-col>
     
 
-      <v-col cols="12" md="6" class="mt-2">
+      <!-- <v-col cols="12" md="6" class="mt-2" v-if="!loading">
         <div id="order_info_map_canvas"></div>
         <v-card class="d-flex flex-row justify-space-around ma-1" flat tile>
           <v-card flat tile class="d-flex justify-space-around pa-0 ma-0">
@@ -314,7 +314,7 @@
         </v-card>
             
         
-      </v-col>
+      </v-col> -->
     </v-row>
     </v-container>
       <!-- <v-data-table dense :height="windowSize.y - (75 + 81 + 32 + 24 + 59 + 45)" fixed-header :headers="headers" :items="items" :loading="loading" loading-text="Loading... Please wait"

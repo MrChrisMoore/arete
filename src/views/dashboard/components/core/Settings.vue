@@ -118,8 +118,8 @@
   // Mixins
   import Proxyable from 'vuetify/lib/mixins/proxyable'
   import { mapMutations, mapState } from 'vuex'
-
-  export default {
+  import {UserJson} from '../../../../api/models/UserJson';
+   export default {
     name: 'DashboardCoreSettings',
 
     mixins: [Proxyable],
@@ -165,15 +165,15 @@
       dark (val){
         this.$vuetify.theme.dark = val;
         if(this.user && this.user.uiSettings) {
-            if(this.user.uiSettings.darkMode !== val){
+           // if(this.user.uiSettings.darkMode !== val){
              this.user.uiSettings.darkMode === val;
              localStorage.setItem('user',JSON.stringify(this.user));
              this.updateDarkMode(val);
-            }
-          } else{
-            
+           // }
+          } else{            
             this.updateDarkMode(val)
           }
+         
           
       }
       
@@ -183,6 +183,14 @@
      async updateDarkMode(val){
        
       let response = await this.userApi.postUserUpdate({body:{key:'darkMode', value:val}});
+      let user = localStorage.getItem('user');
+      if (user){
+        let userjson = JSON.parse(user);      
+        userjson.uiSettings.darkMode = val;
+        localStorage.setItem('user',JSON.stringify(userjson));
+      }
+      
+      this.$store.commit('SET_THEMEDARK', val)
       
       }
     },

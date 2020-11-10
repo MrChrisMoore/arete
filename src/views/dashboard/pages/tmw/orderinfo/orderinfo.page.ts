@@ -1,13 +1,17 @@
-import { PostTmwOrdersDawgRequest } from '@/api';
+import { PostTmwOrderIdRequest, PostTmwOrdersDawgRequest } from '@/api';
 
 import Vue from 'vue';
 import { VCard, VImg, VCardActions, VCardText, VContainer, VCardTitle, VSwitch, VDataTable, VChip, VList, VListItemTitle, VListGroup, VListItem, VListItemIcon, VListItemGroup } from 'vuetify/lib';
 import Component from 'vue-class-component';
 import { Watch } from 'vue-property-decorator';
-import { DataTableHeader } from 'vuetify';
-import { Resize } from 'vuetify/lib/directives'
-import { AgGridVue } from 'ag-grid-vue';
-import { ColDef, GridApi, GridOptions, GridReadyEvent, CsvExportParams, PaginationChangedEvent, SelectionChangedEvent } from 'ag-grid-community';
+// import { DataTableHeader } from 'vuetify';
+import { Resize } from 'vuetify/lib/directives';
+// import 'ag-grid-enterprise';
+// import { AgGridVue } from 'ag-grid-vue';
+import { SelectionChangedEvent,PaginationChangedEvent,GridReadyEvent,GridOptions,GridApi,SideBarModule,MenuModule, ClientSideRowModelModule, ColumnsToolPanelModule, FiltersToolPanelModule, RowGroupingModule, StatusBarModule,RangeSelectionModule, ColDef, CsvExportParams } from '@ag-grid-enterprise/all-modules'
+// import { AgGridVue } from 'ag-grid-vue';
+import {AgGridVue} from '@ag-grid-community/vue';
+// import { ColDef,  GridOptions, GridReadyEvent, CsvExportParams, PaginationChangedEvent, SelectionChangedEvent } from 'ag-grid-community';
 import MarkerClusterer from '@google/markerclusterer';
 import {OverlappingMarkerSpiderfier} from 'ts-overlapping-marker-spiderfier';
 // import {Client} from "@googlemaps/google-maps-services-js";
@@ -63,7 +67,19 @@ function gmapsInit() {
 })
 
 export default class OrderinfoPage extends Vue {
-
+  sideBar = true;
+  statusBar = {
+    statusPanels: [
+      {
+        statusPanel: 'agAggregationComponent',
+        // statusPanelParams: {
+        //   aggFuncs: ['sum', 'avg'],
+        // },
+      },
+    ],
+  };
+  modules =[SideBarModule,MenuModule, ClientSideRowModelModule,ColumnsToolPanelModule, FiltersToolPanelModule,RangeSelectionModule, RowGroupingModule,StatusBarModule]
+  //frameworkComponents = { customStatsToolPanel: CustomStatsToolPanel };
   /* Test Card Section   */
   bottom = false
   rowsPerPageArray = [3, 4, 6]
@@ -116,7 +132,7 @@ export default class OrderinfoPage extends Vue {
   /*End Test  */
 
 
-  headers: DataTableHeader[] = [];
+  // headers: DataTableHeader[] = [];
   items = [];
   pickupStart = `${new Date().getFullYear()}-0${new Date().getMonth()}-01`;
   pickupEnd = '';
@@ -147,14 +163,29 @@ export default class OrderinfoPage extends Vue {
   gridOptions: GridOptions = {};
   gridApi: GridApi = null;
   defaultColDef = {
+    // sortable: true,
+    // filter: true,
+    // resizable: true,
+    // minWidth: 100,
+    // flex: 1,
+    resizable: true,
+    flex: 1,
+    minWidth: 100,
+    enableValue: true,
+    enableRowGroup: true,
+    enablePivot: true,
     sortable: true,
     filter: true,
-    resizable: true,
-    minWidth: 100,
-    flex: 1,
+    menuTabs: ['filterMenuTab', 'generalMenuTab', 'columnsMenuTab'],
   };
+  dateFields =['delivery appt', 'pickup', 'arrcons', 'depcons', 'arrship', 'depship']
+  dateTimeFields = ['delivery appt', 'arrcons', 'depcons', 'arrship', 'depship'];
+  numericFields =['weight', 'cs', 'pallet', 'lead time'];
+  currencyFields =['misc', 'total charges', 'lumper admin', 'nyc', 'lumper', 'linehaul', 'fuel','detention','afterhours'];
   geoCoder: google.maps.Geocoder;
-
+  // getMainMenuItems(params) {
+  //   return params.defaultItems
+  // }
   map: google.maps.Map<HTMLElement>;
   onResize() {
     this.windowSize = { x: window.innerWidth, y: window.innerHeight };
@@ -165,10 +196,10 @@ export default class OrderinfoPage extends Vue {
       fileName: 'test',
       processCellCallback: function (params) {
         if (!params.value) return ''
-        if (['delivery appt', 'pickup', 'arrcons', 'depcons'].indexOf(params.column.getId().toLowerCase()) !== -1) {
+        if (this.dateFields.indexOf(params.column.getId().toLowerCase()) !== -1) {
 
           let data = params.value;
-          if (['delivery appt', 'arrcons', 'depcons'].indexOf(params.column.getId().toLowerCase()) !== -1 && data) {
+          if (this.dateTimeFields.indexOf(params.column.getId().toLowerCase()) !== -1 && data) {
             let date = new Date(data);
 
             return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`
@@ -202,7 +233,7 @@ export default class OrderinfoPage extends Vue {
     this.gridApi = this.gridOptions.api;
     this.gridOptions.onRowClicked
     await this.GetOrders();
-    this.loadMap();
+  //  this.loadMap();
   }
   // @Watch('pickupStart')
   // onPickupChanged(){
@@ -233,10 +264,10 @@ export default class OrderinfoPage extends Vue {
     let params: PostTmwOrdersDawgRequest = {
       body: { tmwCodes: user.tmwCodes }
     }
-  
+
     let response = await this.tmwApi.postTmwOrdersDawg(params);
     if (response /* && response.length */) {
-      this.loading = false;
+
 
       Object.keys(response.rangeResult[0]).map((v) => {
         let colDef: ColDef = {
@@ -244,23 +275,25 @@ export default class OrderinfoPage extends Vue {
           field: v
         }
 
-        if (['weight', 'cs', 'pallet'].indexOf(v.toLowerCase()) !== -1) {
+        if (this.numericFields.indexOf(v.toLowerCase()) !== -1) {
           colDef.type = 'numericColumn'
         }
 
-        if (['misc', 'total charges', 'lumper admin', 'nyc', 'lumper', 'linehaul', 'fuel','detention'].indexOf(v.toLowerCase()) !== -1) {
+        if (this.currencyFields.indexOf(v.toLowerCase()) !== -1) {
           colDef.valueFormatter = (params) => {
-
-            let data = params.data[v];
-            return data ? `$${data}` : ''
+            if(!params.value) return;
+            let data:number = params.value || params.data[v] ;
+            return data.toLocaleString(window.navigator.language, { minimumFractionDigits: 2, maximumFractionDigits: 2, style: 'currency', currency: 'USD' })
+            //return data ? `$${data}` : ''
           }
           colDef.type = 'numericColumn'
         }
 
-        if (['delivery appt', 'pickup', 'arrcons', 'depcons'].indexOf(v.toLowerCase()) !== -1) {
+        if (this.dateFields.indexOf(v.toLowerCase()) !== -1) {
           colDef.valueFormatter = (params) => {
-            let data = params.data[v] || params.data[v];
-            if (['delivery appt', 'arrcons', 'depcons'].indexOf(v.toLowerCase()) !== -1 && data) {
+            if(!params.value) return;
+            let data = params.value || params.data[v] ;
+            if (this.dateTimeFields.indexOf(v.toLowerCase()) !== -1 && data) {
               let date = new Date(data);
 
               return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`
@@ -271,24 +304,44 @@ export default class OrderinfoPage extends Vue {
         }
         this.columnDefs.push(colDef);
 
-        let width = v.length * 3;
+        // let width = v.length * 3;
 
-        let header: DataTableHeader = {
-          sortable: true,
-          text: v,
-          value: v,
-          width: width,
-          groupable: true,
-          filterable: true,
-          divider: true
-        };
-        this.keys.push(v);
-        this.headers.push(header);
+        // let header: DataTableHeader = {
+        //   sortable: true,
+        //   text: v,
+        //   value: v,
+        //   width: width,
+        //   groupable: true,
+        //   filterable: true,
+        //   divider: true
+        // };
+        // this.keys.push(v);
+        // this.headers.push(header);
 
       });
-
-      this.items = response.rangeResult;
+// this.sideBar ={
+//   toolPanels: [
+//     {
+//       id: 'columns',
+//       labelDefault: 'Columns',
+//       labelKey: 'columnDefs',
+//       iconKey: 'columns',
+//       toolPanel: 'agColumnsToolPanel',
+//     },
+//     {
+//       id: 'filters',
+//       labelDefault: 'Filters',
+//       labelKey: 'filters',
+//       iconKey: 'filter',
+//       toolPanel: 'agFiltersToolPanel',
+//     },
+//  ,
+//   ],
+//   defaultToolPanel: 'columns',
+// };
+      // this.items = response.rangeResult;
       this.rowData = response.rangeResult;
+      this.loading = false;
     }
   }
 
@@ -330,7 +383,7 @@ spiderfier:OverlappingMarkerSpiderfier;
 
         } else {
           setTimeout(() => {
-            
+
             OIpage.geoCoder.geocode({ region: 'US', address: `${val['CONSIGNEE ZIP']}` }, (results, status1) => {
               if (results && results.length && results[0].geometry && results[0].geometry.location) {
 
@@ -378,7 +431,7 @@ spiderfier:OverlappingMarkerSpiderfier;
                 OriginMarker.addListener('click', () => {
                   infowindow.open(map, val['_ORIGIN_MARKER']);
                 });
-                
+
               }
             });
           }, 500 * counter);
@@ -458,29 +511,37 @@ spiderfier:OverlappingMarkerSpiderfier;
 
   onSelectionChanged(event:SelectionChangedEvent){
     let OIpage = this;
-    debugger
-    const directionsService = new google.maps.DirectionsService();
-    const directionsRenderer = new google.maps.DirectionsRenderer();
-    directionsRenderer.setMap(OIpage.map);
-    var selectedRows = OIpage.gridApi.getSelectedRows();
-    directionsService.route(
-      {
-        origin: {
-          query: `${selectedRows[0]["ORIGIN CITY"]}, ${selectedRows[0]["ORIGIN STATE"]}`,
-        },
-        destination: {
-          query: `${selectedRows[0]["CONSIGNEE CITY"]}, ${selectedRows[0]["CONSIGNEE STATE"]}`,
-        },
-        travelMode: google.maps.TravelMode.DRIVING,
-      },
-      (response, status) => {
-        if (status === "OK") {
-          directionsRenderer.setDirections(response);
-        } else {
-          window.alert("Directions request failed due to " + status);
-        }
-      }
-    );
+    let selectedRows = event.api.getSelectedRows();
+    let params: PostTmwOrderIdRequest ={id:selectedRows[0]['FB#']}
+     this.tmwApi.postTmwOrderId(params).then((response)=>{
+       debugger
+     })
+
+    // const directionsService = new google.maps.DirectionsService();
+    // const directionsRenderer = new google.maps.DirectionsRenderer();
+    // directionsRenderer.setMap(OIpage.map);
+    // let selectedRows = event.api.getSelectedRows();
+
+
+
+    // directionsService.route(
+    //   {
+    //     origin: {
+    //       query: `${selectedRows[0]["ORIGIN CITY"]}, ${selectedRows[0]["ORIGIN STATE"]}`,
+    //     },
+    //     destination: {
+    //       query: `${selectedRows[0]["CONSIGNEE CITY"]}, ${selectedRows[0]["CONSIGNEE STATE"]}`,
+    //     },
+    //     travelMode: google.maps.TravelMode.DRIVING,
+    //   },
+    //   (response, status) => {
+    //     if (status === "OK") {
+    //       directionsRenderer.setDirections(response);
+    //     } else {
+    //       window.alert("Directions request failed due to " + status);
+    //     }
+    //   }
+    // );
   }
   onPaginationChanged(event: PaginationChangedEvent) {
     if (!event.newPage) return;

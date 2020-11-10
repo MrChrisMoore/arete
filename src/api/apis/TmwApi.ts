@@ -44,6 +44,10 @@ export interface PostTmwAccessorialsRequest {
     body?: Model2;
 }
 
+export interface PostTmwOrderIdRequest {
+    id: string;
+}
+
 export interface PostTmwOrdersRequest {
     body?: Model3;
 }
@@ -165,6 +169,42 @@ export class TmwApi extends runtime.BaseAPI {
      */
     async postTmwAccessorials(requestParameters: PostTmwAccessorialsRequest): Promise<Array<object>> {
         const response = await this.postTmwAccessorialsRaw(requestParameters);
+        return await response.value();
+    }
+
+    /**
+     * Filtered to the company baseed on the BILL_TO_CODE
+     * Returns Order history for the comapany associated with this login
+     */
+    async postTmwOrderIdRaw(requestParameters: PostTmwOrderIdRequest): Promise<runtime.ApiResponse<Array<string>>> {
+        if (requestParameters.id === null || requestParameters.id === undefined) {
+            throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling postTmwOrderId.');
+        }
+
+        const queryParameters: runtime.HTTPQuery = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.apiKey) {
+            headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // jwt authentication
+        }
+
+        const response = await this.request({
+            path: `/tmw/order/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+        });
+
+        return new runtime.JSONApiResponse<any>(response);
+    }
+
+    /**
+     * Filtered to the company baseed on the BILL_TO_CODE
+     * Returns Order history for the comapany associated with this login
+     */
+    async postTmwOrderId(requestParameters: PostTmwOrderIdRequest): Promise<Array<string>> {
+        const response = await this.postTmwOrderIdRaw(requestParameters);
         return await response.value();
     }
 

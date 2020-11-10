@@ -57,22 +57,22 @@
           
       </v-flex>
     </v-row> -->
-    <v-row v-if="!loading"  justify-space-around wrap>
-      <v-col cols="12" md="4" lg="auto">
+    <v-row v-if="!loading"  justify="space-around" wrap>
+      <v-col cols="12" md="4" lg="3">
         
         <base-material-stats-card
         color="warning"
         icon="fas fa-truck"
         title="Total Loads"
         :value="totalLoads"
-        >
-        <!-- sub-icon="mdi-alert"
+        sub-icon="mdi-alert"
         sub-icon-color="red"
-        sub-text="Decrease Detected..." -->
+        :sub-text="totalCompareLoads"
+        >
          
         </base-material-stats-card>
       </v-col>
-      <v-col cols="12" md="4" lg="auto">
+      <v-col cols="12" md="4" lg="3">
         <base-material-stats-card
         color="success"
         icon="fas fa-dollar-sign"
@@ -86,7 +86,7 @@
               
         </base-material-stats-card>
       </v-col>
-      <v-col cols="12" md="4" lg="auto">
+      <v-col cols="12" md="4" lg="3">
         <base-material-stats-card
         color="black"
         icon="fas fa-road"
@@ -99,7 +99,7 @@
         
         </base-material-stats-card>
       </v-col>
-      <v-col cols="12" md="4" lg="auto">
+      <v-col cols="12" md="4" lg="3">
         <base-material-stats-card
         color="yellow"
         icon="fas fa-pallet"
@@ -112,11 +112,11 @@
         
         </base-material-stats-card>
       </v-col>
-      <v-col cols="12" md="4" lg="auto">
+      <v-col cols="12" md="4" lg="3">
         <base-material-stats-card
         color="secondary"
         icon="fas fa-weight"
-        title="Average Weight Per Load"
+        title="Average Weight"
         :value="averageWeight"
         sub-icon-color="blue"
         :sub-text="'High ' + highWeight"
@@ -125,11 +125,11 @@
         
         </base-material-stats-card>
       </v-col>
-      <v-col cols="12" md="4" lg="auto">
+      <v-col cols="12" md="4" lg="3">
         <base-material-stats-card
         color="purple"
         icon="fas fa-suitcase"
-        title="Average Cases Per Load"
+        title="Average Cases"
         :value="averageCases"
         sub-icon-color="blue"
         :sub-text="'High ' + highCases"
@@ -138,15 +138,118 @@
         
         </base-material-stats-card>
       </v-col>
+      <v-col cols="12" md="4" lg="3">
+        <base-material-stats-card
+        color="grey"
+        icon="fas fa-gas-pump"
+        title="Total Fuel"
+        :value="totalFuel"
+        sub-icon-color="blue"
+        :sub-text="'High ' + highFuel"
+        :sub-text2="'  Low  ' + lowFuel"
+        ></base-material-stats-card>
+      </v-col>
+        <v-col cols="12" md="4" lg="3">
+        <base-material-stats-card
+        color="teal"
+        icon="fas fa-truck-moving"
+        title="Total Lunehaul"
+        :value="totalLineHaul"
+        sub-icon=""
+        sub-icon-color=""
+        :sub-text="'High ' + highLineHaul"
+        :sub-text2="'  Low  ' + lowLineHaul"
+        >        
+        </base-material-stats-card>
+      </v-col>
+      <v-col cols="12" md="4" lg="3">
+        <base-material-stats-card
+        color="red"
+        icon="fas fa-people-carry"
+        title="Total Lumper"
+        :value="totalLumper"
+        sub-icon=""
+        sub-icon-color=""
+        :sub-text="'High ' + highLumper"
+        :sub-text2="'  Low  ' + LowLumper"
+        >        
+        <v-col cols="12" md="4" lg="3">
+          <base-material-stats-card
+          color="indigo"
+          icon="fas fa-clipboard-list"
+          title="Total Lumper Administration"
+          :value="totalLumperAdmin"
+          sub-icon=""
+          sub-icon-color=""
+          :sub-text="'High ' + highLumperAdmin"
+          :sub-text2="'  Low  ' + lowLumperAdmin"
+          >        
+          </base-material-stats-card>
+        </v-col>
+        <v-col cols="12" md="4" lg="3">
+          <base-material-stats-card
+          color="pink"
+          icon="fas fa-tags"
+          title="Total Miscellaneous"
+          :value="totalMisc"
+          sub-icon=""
+          sub-icon-color=""
+          :sub-text="'High ' + highMisc"
+          :sub-text2="'  Low  ' + lowMisc"
+          >        
+          </base-material-stats-card>
+        </v-col>
+        <v-col cols="12" md="4" lg="3">
+          <base-material-stats-card
+          color="red"
+          icon="mdi-food-apple"
+          title="Total NYC"
+          :value="totalNyc"
+          sub-icon=""
+          sub-icon-color=""
+          :sub-text="'High ' + highNyc"
+          :sub-text2="'  Low  ' + lowNyc"
+          >        
+          </base-material-stats-card>        
+        </v-col>
+        </base-material-stats-card>
+      </v-col>
+      <v-col cols="12" md="4" lg="3">
+        <base-material-stats-card
+        color="grey darken-1"
+        icon="fas fa-hourglass-end"
+        title="Total Afterhours"
+        :value="totalAfterHours"
+        sub-icon=""
+        sub-icon-color=""
+        :sub-text="'High ' + highAfterHours"
+        :sub-text2="'  Low  ' + lowAfterHours"
+        >        
+        </base-material-stats-card>        
+      </v-col>
+      <v-col cols="12" md="4" lg="3">
+        <base-material-stats-card
+        color="grey lighten-1"
+        icon="fas fa-stopwatch"
+        title="Total Detention"
+        :value="totalDetention"
+        sub-icon=""
+        sub-icon-color=""
+        :sub-text="'High ' + highDetention"
+        :sub-text2="'  Low  ' + lowDetention"
+        >        
+        </base-material-stats-card>        
+      </v-col>
     </v-row>
-    <v-row row justify-space-around wrap>
+    
+    <v-row row  wrap>
       <v-col cols="12" >
         <!-- <base-material-stats-card
         color=""
         icon=""
         title=""
         :value=""
-        sub-icon="n"
+        sub-icon=""
         sub-icon-color=""
         sub-text=""
         >        

@@ -118,6 +118,11 @@ export default {
         title: "Order Info",
         to: "/tmw/orderinfo",
       },
+        {
+        icon: "mdi-view-dashboard-variant",
+        title: "Order Analytics",
+        to: "/tmw/ota",
+      },
       //  {
       //   icon: "mdi-view-dashboard-variant",
       //   title: "SKU Activity",

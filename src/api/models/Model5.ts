@@ -14,10 +14,10 @@
 
 import { exists, mapValues } from '../runtime';
 import {
-    DateRange,
-    DateRangeFromJSON,
-    DateRangeFromJSONTyped,
-    DateRangeToJSON,
+    PickupRange,
+    PickupRangeFromJSON,
+    PickupRangeFromJSONTyped,
+    PickupRangeToJSON,
 } from './';
 
 /**
@@ -34,10 +34,22 @@ export interface Model5 {
     rangeResult?: Array<string>;
     /**
      * 
-     * @type {DateRange}
+     * @type {PickupRange}
      * @memberof Model5
      */
-    dateRange?: DateRange;
+    pickupRange?: PickupRange;
+    /**
+     * 
+     * @type {Array<string>}
+     * @memberof Model5
+     */
+    compareResult?: Array<string>;
+    /**
+     * 
+     * @type {PickupRange}
+     * @memberof Model5
+     */
+    compareRange?: PickupRange;
 }
 
 export function Model5FromJSON(json: any): Model5 {
@@ -51,7 +63,9 @@ export function Model5FromJSONTyped(json: any, ignoreDiscriminator: boolean): Mo
     return {
         
         'rangeResult': !exists(json, 'rangeResult') ? undefined : json['rangeResult'],
-        'dateRange': !exists(json, 'dateRange') ? undefined : DateRangeFromJSON(json['dateRange']),
+        'pickupRange': !exists(json, 'pickupRange') ? undefined : PickupRangeFromJSON(json['pickupRange']),
+        'compareResult': !exists(json, 'compareResult') ? undefined : json['compareResult'],
+        'compareRange': !exists(json, 'compareRange') ? undefined : PickupRangeFromJSON(json['compareRange']),
     };
 }
 
@@ -65,7 +79,9 @@ export function Model5ToJSON(value?: Model5 | null): any {
     return {
         
         'rangeResult': value.rangeResult,
-        'dateRange': DateRangeToJSON(value.dateRange),
+        'pickupRange': PickupRangeToJSON(value.pickupRange),
+        'compareResult': value.compareResult,
+        'compareRange': PickupRangeToJSON(value.compareRange),
     };
 }
 

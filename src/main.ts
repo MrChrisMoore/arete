@@ -14,6 +14,9 @@ import api from './providers/apiProvider';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine-dark.css'
 import 'ag-grid-community/dist/styles/ag-theme-alpine.css'
+
+
+// import  "ag-grid-enterprise";
 //import "../node_modules/ag-grid-community/dist/styles/ag-grid.css";
 //import "../node_modules/ag-grid-community/dist/styles/ag-theme-alpine.css";
 
@@ -32,7 +35,7 @@ const app = new Vue({
   router,
   store,
   i18n,  
-  vuetify,
+  vuetify,  
   validations: {},
   render: h => h(App)
 }).$mount('#app')
