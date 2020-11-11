@@ -28,6 +28,19 @@ export default class OnTimeAnalytics extends Vue {
   costSeries = null;
   dtdSeries = null;
   isDark = this.$vuetify.theme.dark;
+
+  kpis = [
+    {
+      title:'Total Fuel',
+      icon:'fas fa-gas-pump',
+      color:"grey",       
+        value:this.TotalFuel,
+        subiconcolor:"blue",
+        subtext:`High ${this.HighLineHaul}`,
+        subtext2:`Low ${this.LowFuel}`,
+    }
+  ]
+
   dtdChartOptions: ApexOptions = {
     theme: { mode: this.themeDark ? 'dark' : 'light' },
     title: {
@@ -80,9 +93,9 @@ export default class OnTimeAnalytics extends Vue {
     theme: { mode: this.themeDark ? 'dark' : 'light' },
     chart: {
 
-      type: 'scatter',
+      type: 'line',
       stacked: false,
-      height: 350,
+      height: 450,
       zoom: {
         type: 'xy',
         enabled: true,
@@ -103,6 +116,7 @@ export default class OnTimeAnalytics extends Vue {
         text: 'Charges'
       },
     },
+   
     // {
     //   height: 350,
     //   type: 'line',
@@ -117,7 +131,7 @@ export default class OnTimeAnalytics extends Vue {
     //   curve: 'straight'
     // },
     title: {
-      text: 'Charges (by pickup)',
+      text: 'Charges (by ARRCONS)',
       align: 'left'
     },
     // grid: {
@@ -127,9 +141,9 @@ export default class OnTimeAnalytics extends Vue {
     //   },
     // },
     xaxis: {
-      type: 'datetime',
-
-    },
+      type: 'category',
+      labels:{trim:true},
+    }
     // xaxis: {
     //   categories: [...this.items.map((val) => { return val['PICKUP'] !== '2020-03-23' ? new Intl.DateTimeFormat(window.navigator.language).format(new Date(val['PICKUP'])): null }).filter(x => x)],
     // }
@@ -172,11 +186,11 @@ export default class OnTimeAnalytics extends Vue {
 
   @Watch('themeDark')
   onThemeChanged(val) {
-    this.dtdChart.updateOptions({ theme: { mode: val ? 'dark' : 'light' } },true);
-    this.costChart.updateOptions({ theme: { mode: val ? 'dark' : 'light' } },true);
+    this.dtdChart.updateOptions({ theme: { mode: val ? 'dark' : 'light' } }, true);
+    this.costChart.updateOptions({ theme: { mode: val ? 'dark' : 'light' } }, true);
   }
 
-  res:Model5 =null;
+  res: Model5 = null;
   private async GetOrders() {
     let ota = this;
     let user = JSON.parse(localStorage.getItem('user'));
@@ -186,7 +200,7 @@ export default class OnTimeAnalytics extends Vue {
         pickupRange: ota.dates
       }
     }
-    
+
     ota.res = await ota.tmwApi.postTmwOrdersDawg(params);
 
     if (ota.res && ota.res.rangeResult && ota.res.rangeResult.length) {
@@ -197,7 +211,7 @@ export default class OnTimeAnalytics extends Vue {
       }
 
       if (ota.items.length) {
-        ota.calculate();
+        // ota.calculate();
         ota.createCharts();
         ota.loading = false;
       } else {
@@ -266,161 +280,110 @@ export default class OnTimeAnalytics extends Vue {
 
     this.costSeries = [
       {
-        name: 'Information',
+        name:`${this.res.pickupRange.start} to ${this.res.pickupRange.end}`,
         data: [
           ...this.items.map((val) => {
-            return val['PICKUP'] !== '2020-03-23' ?
-
-              {
+            return val['ARRCONS']?//val["TOTAL CHARGES"]
+            {
                 // x: new Intl.DateTimeFormat(window.navigator.language).format(new Date(val['PICKUP'])),
-                x: new Date(val['PICKUP']).getTime(),
+                x: val['CONSIGNEE NAME'],//new Date(val['ARRCONS']).toLocaleDateString(),
 
-                y: val['TOTAL CHARGES']
+                y: parseInt(val['TOTAL CHARGES'])
               }
+              :null
 
-              : null
+            
+            // return val['PICKUP'] !== '2020-03-23' ?
+
+            //   {
+            //     // x: new Intl.DateTimeFormat(window.navigator.language).format(new Date(val['PICKUP'])),
+            //     x: new Date(val['PICKUP']).getTime(),
+
+            //     y: val['TOTAL CHARGES']
+            //   }
+
+            //   : null
           }).filter(x => x)]
-      }]
+      },
+      {
+        name:`${this.res.compareRange.start} to ${this.res.compareRange.end}`,
+        data: [
+          ...this.res.compareResult.map((val) => {
+            return val['ARRCONS']?//val["TOTAL CHARGES"]
+            {
+                // x: new Intl.DateTimeFormat(window.navigator.language).format(new Date(val['PICKUP'])),
+              
+                x: val['CONSIGNEE NAME'],//new Date(val['ARRCONS']).toLocaleDateString(),
+                y: parseInt(val['TOTAL CHARGES'])
+              }
+              :null
+
+            
+            // return val['PICKUP'] !== '2020-03-23' ?
+
+            //   {
+            //     // x: new Intl.DateTimeFormat(window.navigator.language).format(new Date(val['PICKUP'])),
+            //     x: new Date(val['PICKUP']).getTime(),
+
+            //     y: val['TOTAL CHARGES']
+            //   }
+
+            //   : null
+          }).filter(x => x)]
+      },
+    ]
+    debugger
   }
 
-  calculate() {
-    this.calcAverageCases();
-    this.calcTotalPallets();
-    this.calcTotalLoads();
-    this.calcAverageWeight();
-    this.calcHighCases();
-    this.calcHighCost();
-    this.calcHighMiles();
-    this.calcHighPallets();
-    this.calcHighWeight();
-    this.calcLowCases();
-    this.calcLowCost();
-    this.calcLowMiles();
-    this.calcLowPallets();
-    this.calcLowWeight();
-    this.calcTotalCost();
-    this.calcTotalDistance();
-    this.calcLowFuel();
-    this.calcHighFuel();
-    this.calcTotalFuel();
-   // this.calcLowLumper()
-    this.calcHighLumper()
-    this.calcTotalLumper()
-    this.calcLowLumperAdmin()
-    this.calcHighLumperAdmin()
-    this.calcTotalLumperAdmin()
-    this.calcLowLineHaul()
-    this.calcHighLineHaul()
-    this.calcTotalLineHaul()
+  // calculate() {
+  //   this.calcAverageCases();
+  //   this.calcTotalPallets();
+  //   this.calcTotalLoads();
+  //   this.calcAverageWeight();
+  //   this.calcHighCases();
+  //   this.calcHighCost();
+  //   this.calcHighMiles();
+  //   this.calcHighPallets();
+  //   this.calcHighWeight();
+  //   this.calcLowCases();
+  //   this.calcLowCost();
+  //   this.calcLowMiles();
+  //   this.calcLowPallets();
+  //   this.calcLowWeight();
+  //   this.calcTotalCost();
+  //   this.calcTotalDistance();
+  //   this.calcLowFuel();
+  //   this.calcHighFuel();
+  //   this.calcTotalFuel();
+  //  // this.calcLowLumper()
+  //   this.calcHighLumper()
+  //   this.calcTotalLumper()
+  //   this.calcLowLumperAdmin()
+  //   this.calcHighLumperAdmin()
+  //   this.calcTotalLumperAdmin()
+  //   this.calcLowLineHaul()
+  //   this.calcHighLineHaul()
+  //   this.calcTotalLineHaul()
 
-    this.calcLowMisc()
-    this.calcHighMisc()
-    this.calcTotalMisc()
+  //   this.calcLowMisc()
+  //   this.calcHighMisc()
+  //   this.calcTotalMisc()
 
-    this.calcLowNyc()
-    this.calcHighNyc()
-    this.calcTotalNyc()
+  //   this.calcLowNyc()
+  //   this.calcHighNyc()
+  //   this.calcTotalNyc()
 
-    this.calcLowDetention()
-    this.calcHighDetention()
-    this.calcTotalDetention()
-    this.calcLowAfterHours()
-    this.calcHighAfterHours()
-    this.calcTotalAfterHours()
-    this.calcTotalCompareLoads()
-    // this.calcLow()
-    // this.calcHigh()
-    // this.calcTotal()
-  }
-
-  //lowLumper = '0';
- get LowLumper() {
-    //this.lowLumper = 
- return  this.getAggregateValue('LUMPER', 'currency', 'Min')
-  }
-  highLumper = '0';
-  calcHighLumper() {
-    this.highLumper = this.getAggregateValue('LUMPER', 'currency', 'Max')
-  }
-  totalLumper = '0';
-  calcTotalLumper() {
-    this.totalLumper = this.getAggregateValue('LUMPER', 'currency', 'Total')
-  }
-  lowLumperAdmin = '0';
-  calcLowLumperAdmin() {
-    this.lowLumperAdmin = this.getAggregateValue('LUMPER ADMIN', 'currency', 'Min')
-  }
-  highLumperAdmin = '0'
-  calcHighLumperAdmin() {
-    this.highLumperAdmin = this.getAggregateValue('LUMPER ADMIN', 'currency', 'Max')
-  }
-  totalLumperAdmin = '0'
-  calcTotalLumperAdmin() {
-    this.totalLumperAdmin = this.getAggregateValue('LUMPER ADMIN', 'currency', 'Total')
-  }
-  lowLineHaul = '0'
-  calcLowLineHaul() {
-    this.lowLineHaul = this.getAggregateValue('LINEHAUL', 'currency', 'Min')
-  }
-  highLineHaul = '0'
-  calcHighLineHaul() {
-    this.highLineHaul = this.getAggregateValue('LINEHAUL', 'currency', 'Max')
-  }
-  totalLineHaul = '0'
-  calcTotalLineHaul() {
-    this.totalLineHaul = this.getAggregateValue('LINEHAUL', 'currency', 'Total')
-  }
-  lowMisc = '0';
-  calcLowMisc() {
-    this.lowMisc = this.getAggregateValue('MISC', 'currency', 'Min')
-  }
-  highMisc = '0';
-  calcHighMisc() {
-    this.highMisc = this.getAggregateValue('MISC', 'currency', 'Max')
-  }
-  totalMisc = '0';
-  calcTotalMisc() {
-    this.totalMisc = this.getAggregateValue('MISC', 'currency', 'Total')
-  }
-  lowNyc = '0';
-  calcLowNyc() {
-    this.lowNyc = this.getAggregateValue('NYC', 'currency', 'Min')
-  }
-  highNyc = '0';
-  calcHighNyc() {
-    this.lowNyc = this.getAggregateValue('NYC', 'currency', 'Max')
-  }
-  totalNyc = '0';
-  calcTotalNyc() {
-    this.lowNyc = this.getAggregateValue('NYC', 'currency', 'Total')
-  }
-  lowDetention = '0';
-  calcLowDetention() {
-    this.lowDetention = this.getAggregateValue('DETENTION', 'currency', 'Min')
-  }
-  highDetention = '0';
-  calcHighDetention() {
-    this.highDetention = this.getAggregateValue('DETENTION', 'currency', 'Max')
-  }
-  totalDetention = '0';
-  calcTotalDetention() {
-    this.totalDetention = this.getAggregateValue('DETENTION', 'currency', 'Total')
-  }
-
-  lowAfterHours = '0';
-  calcLowAfterHours() {
-    this.lowAfterHours = this.getAggregateValue('AFTERHOURS', 'currency', 'Min')
-  }
-  highAfterHours = '0';
-  calcHighAfterHours() {
-    this.highAfterHours = this.getAggregateValue('AFTERHOURS', 'currency', 'Max')
-  }
-  totalAfterHours = '0';
-  calcTotalAfterHours() {
-    this.totalAfterHours = this.getAggregateValue('AFTERHOURS', 'currency', 'Total')
-  }
-
-
+  //   this.calcLowDetention()
+  //   this.calcHighDetention()
+  //   this.calcTotalDetention()
+  //   this.calcLowAfterHours()
+  //   this.calcHighAfterHours()
+  //   this.calcTotalAfterHours()
+  //   this.calcTotalCompareLoads()
+  //   // this.calcLow()
+  //   // this.calcHigh()
+  //   // this.calcTotal()
+  // }
 
   private getFieldValuesAsArray(field) {
     return this.items.map((val) => { return val[field]; });
@@ -480,100 +443,184 @@ export default class OnTimeAnalytics extends Vue {
     return this.currencyCode;
   }
 
-  totalLoads = '0';
-  calcTotalLoads() {
-    this.totalLoads = this.items.length.toString();
-  }
-  totalCompareLoads = '0';
-  calcTotalCompareLoads() {
-    this.totalCompareLoads = this.res.compareResult.length.toString();
+  get LowLumper() {
+    //this.lowLumper = 
+    return this.getAggregateValue('LUMPER', 'currency', 'Min')
   }
 
-  totalFuel = '0';
-  calcTotalFuel() {
-    this.totalFuel = this.getAggregateValue('FUEL', 'currency', 'Total')
-  }
-  highFuel = '0';
-  calcHighFuel() {
-    this.highFuel = this.getAggregateValue('FUEL', 'currency', 'Max')
-  }
-  lowFuel = '0';
-  calcLowFuel() {
-    this.lowFuel = this.getAggregateValue('FUEL', 'currency', 'Min')
+  get HighLumper() {
+    return this.getAggregateValue('LUMPER', 'currency', 'Max')
   }
 
-  highCost = '0';
-  calcHighCost() {
-    this.highCost = this.getAggregateValue('TOTAL CHARGES', 'currency', 'Max');
-  }
-  lowCost = '0';
-  calcLowCost() {
-    this.lowCost = this.getAggregateValue('TOTAL CHARGES', 'currency', 'Min');
+  get TotalLumper() {
+    return this.getAggregateValue('LUMPER', 'currency', 'Total')
   }
 
-  highMiles = '0';
-  calcHighMiles() {
-    this.highMiles = this.getAggregateValue('DISTANCE', 'unit', 'Max', 0, 'mile');
+  get LowLumperAdmin() {
+    return this.getAggregateValue('LUMPER ADMIN', 'currency', 'Min')
   }
 
-  lowMiles = '0';
-  calcLowMiles() {
-    this.lowMiles = this.getAggregateValue('DISTANCE', 'unit', 'Min', 0, 'mile');
+  get HighLumperAdmin() {
+    return this.getAggregateValue('LUMPER ADMIN', 'currency', 'Max')
+  }
+ 
+  get TotalLumperAdmin() {
+    return this.getAggregateValue('LUMPER ADMIN', 'currency', 'Total')
   }
 
-  highPallets = '0';
-  calcHighPallets() {
-    this.highPallets = this.getAggregateValue('PALLET', '', 'Max', 0);
+  get LowLineHaul() {
+    return this.getAggregateValue('LINEHAUL', 'currency', 'Min')
+  }
+ 
+  get HighLineHaul() {
+    return this.getAggregateValue('LINEHAUL', 'currency', 'Max')
+  }
+ 
+  get TotalLineHaul() {
+    return this.getAggregateValue('LINEHAUL', 'currency', 'Total')
   }
 
-  lowPallets = '0';
-  calcLowPallets() {
-    this.lowPallets = this.getAggregateValue('PALLET', '', 'Min', 0);
+  get LowMisc() {
+    return this.getAggregateValue('MISC', 'currency', 'Min')
   }
 
-  highWeight = '0';
-  calcHighWeight() {
-    this.highWeight = this.getAggregateValue('WEIGHT', 'unit', 'Max', 2, 'pound');
+  get HighMisc() {
+    return this.getAggregateValue('MISC', 'currency', 'Max')
   }
 
-  lowWeight = '0';
-  calcLowWeight() {
-    this.lowWeight = this.getAggregateValue('WEIGHT', 'unit', 'Min', 2, 'pound');
+  get TotalMisc() {
+    return this.getAggregateValue('MISC', 'currency', 'Total')
   }
 
-  highCases = '0';
-  calcHighCases() {
-    this.highCases = this.getAggregateValue('CS', '', 'Max', 0);
+  get LowNyc() {
+    return this.getAggregateValue('NYC', 'currency', 'Min')
   }
 
-  lowCases = '0';
-  calcLowCases() {
-    this.lowCases = this.getAggregateValue('CS', '', 'Min', 0);
+  get HighNyc() {
+    return this.getAggregateValue('NYC', 'currency', 'Max')
   }
 
-  totalCost = '0';
-  calcTotalCost() {
-    this.totalCost = this.getAggregateValue('TOTAL CHARGES', 'currency', 'Total');
+  get TotalNyc() {
+    return this.getAggregateValue('NYC', 'currency', 'Total')
   }
 
-  averageWeight = '0';
-  calcAverageWeight() {
-    this.averageWeight = this.getAggregateValue('WEIGHT', 'unit', 'Average', 2, 'pound');
+  get LowDetention() {
+    return this.getAggregateValue('DETENTION', 'currency', 'Min')
   }
 
-  averageCases = '0';
-  calcAverageCases() {
-    this.averageCases = this.getAggregateValue('CS', '', 'Average');
+  get HighDetention() {
+    return this.getAggregateValue('DETENTION', 'currency', 'Max')
   }
 
-  totalPallets = '0';
-  calcTotalPallets() {
-    this.totalPallets = this.getAggregateValue('PALLET', '', 'Total', 0);
+  get TotalDetention() {
+    return this.getAggregateValue('DETENTION', 'currency', 'Total')
   }
 
-  totalDistance = '0';
-  calcTotalDistance() {
-    this.totalDistance = this.getAggregateValue('DISTANCE', 'unit', 'Total', 2, 'mile');
+
+  get LowAfterHours() {
+    return this.getAggregateValue('AFTERHOURS', 'currency', 'Min')
+  }
+
+  get HighAfterHours() {
+    return this.getAggregateValue('AFTERHOURS', 'currency', 'Max')
+  }
+
+  get TotalAfterHours() {
+    return this.getAggregateValue('AFTERHOURS', 'currency', 'Total')
+  }
+
+  get TotalLoads() {
+    return this.items.length.toString();
+  }
+
+  get TotalCompareLoads() {
+    return this.res.compareResult.length.toString();
+  }
+
+  get TotalFuel() {
+    return this.getAggregateValue('FUEL', 'currency', 'Total')
+  }
+
+  get HighFuel() {
+    return this.getAggregateValue('FUEL', 'currency', 'Max')
+  }
+
+  get LowFuel() {
+    return this.getAggregateValue('FUEL', 'currency', 'Min')
+  }
+
+
+  get HighCost() {
+    return this.getAggregateValue('TOTAL CHARGES', 'currency', 'Max');
+  }
+
+  get LowCost() {
+    return this.getAggregateValue('TOTAL CHARGES', 'currency', 'Min');
+  }
+
+
+  get HighMiles() {
+    return this.getAggregateValue('DISTANCE', 'unit', 'Max', 0, 'mile');
+  }
+
+
+  get LowMiles() {
+    return this.getAggregateValue('DISTANCE', 'unit', 'Min', 0, 'mile');
+  }
+
+
+  get HighPallets() {
+    return this.getAggregateValue('PALLET', '', 'Max', 0);
+  }
+
+
+  get LowPallets() {
+    return this.getAggregateValue('PALLET', '', 'Min', 0);
+  }
+
+
+  get HighWeight() {
+    return this.getAggregateValue('WEIGHT', 'unit', 'Max', 2, 'pound');
+  }
+
+
+  get LowWeight() {
+    return this.getAggregateValue('WEIGHT', 'unit', 'Min', 2, 'pound');
+  }
+
+
+  get HighCases() {
+    return this.getAggregateValue('CS', '', 'Max', 0);
+  }
+
+
+  get LowCases() {
+    return this.getAggregateValue('CS', '', 'Min', 0);
+  }
+
+
+  get TotalCost() {
+    return this.getAggregateValue('TOTAL CHARGES', 'currency', 'Total');
+  }
+
+
+  get AverageWeight() {
+    return this.getAggregateValue('WEIGHT', 'unit', 'Average', 2, 'pound');
+  }
+
+
+  get AverageCases() {
+    return this.getAggregateValue('CS', '', 'Average');
+  }
+
+
+  get TotalPallets() {
+    return this.getAggregateValue('PALLET', '', 'Total', 0);
+  }
+
+
+  get TotalDistance() {
+    return this.getAggregateValue('DISTANCE', 'unit', 'Total', 2, 'mile');
   }
 
   sum(key): number {
