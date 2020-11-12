@@ -15,6 +15,7 @@ import { Model5 } from '@/api/models';
 })
 export default class OnTimeAnalytics extends Vue {
   dates = [];
+  compareDates = [];
   menu = false
   loading: boolean = true;
   columnDefs: any;
@@ -28,18 +29,7 @@ export default class OnTimeAnalytics extends Vue {
   costSeries = null;
   dtdSeries = null;
   isDark = this.$vuetify.theme.dark;
-
-  kpis = [
-    {
-      title:'Total Fuel',
-      icon:'fas fa-gas-pump',
-      color:"grey",       
-        value:this.TotalFuel,
-        subiconcolor:"blue",
-        subtext:`High ${this.HighLineHaul}`,
-        subtext2:`Low ${this.LowFuel}`,
-    }
-  ]
+ 
 
   dtdChartOptions: ApexOptions = {
     theme: { mode: this.themeDark ? 'dark' : 'light' },
@@ -117,13 +107,7 @@ export default class OnTimeAnalytics extends Vue {
       },
     },
    
-    // {
-    //   height: 350,
-    //   type: 'line',
-    //   zoom: {
-    //     enabled: false
-    //   }
-    // },
+    
     dataLabels: {
       enabled: false
     },
@@ -131,7 +115,7 @@ export default class OnTimeAnalytics extends Vue {
     //   curve: 'straight'
     // },
     title: {
-      text: 'Charges (by ARRCONS)',
+      text: 'Charges (by CONSIGNEE)',
       align: 'left'
     },
     // grid: {
@@ -142,7 +126,7 @@ export default class OnTimeAnalytics extends Vue {
     // },
     xaxis: {
       type: 'category',
-      labels:{trim:true},
+      labels:{show:false},
     }
     // xaxis: {
     //   categories: [...this.items.map((val) => { return val['PICKUP'] !== '2020-03-23' ? new Intl.DateTimeFormat(window.navigator.language).format(new Date(val['PICKUP'])): null }).filter(x => x)],
@@ -152,6 +136,10 @@ export default class OnTimeAnalytics extends Vue {
   get dateRangeText() {
     return this.dates.join(' ~ ')
   }
+  get compareRangeText(){
+    return this.compareDates.join(' ~ ');
+  }
+
   get themeDark() {
     return this.$store.state.themeDark;
   }
@@ -208,6 +196,13 @@ export default class OnTimeAnalytics extends Vue {
       ota.items = ota.res.rangeResult;
       if (!ota.dates.length) {
         ota.dates = [ota.res.pickupRange.start, ota.res.pickupRange.end];
+      }
+      if (!ota.compareDates.length) {
+        ota.compareDates = [ota.res.compareRange.start, ota.res.compareRange.end];
+      }else{
+        if(ota.compareDates[0] !== ota.res.compareRange.start){
+          ota.compareDates = [ota.res.compareRange.start, ota.res.compareRange.end];
+        }
       }
 
       if (ota.items.length) {
@@ -332,7 +327,7 @@ export default class OnTimeAnalytics extends Vue {
           }).filter(x => x)]
       },
     ]
-    debugger
+    
   }
 
   // calculate() {

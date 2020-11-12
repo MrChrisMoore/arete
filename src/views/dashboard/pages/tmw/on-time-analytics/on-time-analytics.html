@@ -1,7 +1,7 @@
 <section id="on-time-analytics" class="page">
   <v-container fluid>
     <v-row  justify-start>
-      <v-col cols="12" lg6>
+      <v-col cols="6">
       <v-menu
       ref="menu"
       v-model="menu"
@@ -29,7 +29,16 @@
       @change="onDatesChanged"
     ></v-date-picker>
     </v-menu>
+   
   </v-col>   
+  <v-col cols="6">
+    <v-text-field
+    v-model="compareRangeText"
+    label="Comparison"
+    prepend-icon="mdi-calendar"
+    readonly
+    ></v-text-field>
+  </v-col>
     </v-row>
     <!-- <v-row row justify-space-around>
       <v-flex cols="12" lg6>
