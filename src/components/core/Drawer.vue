@@ -28,7 +28,7 @@
       <div />
       <template v-for="(item, i) in computedItems">
         <base-item-group v-if="item.children" :key="`group-${i}`" :item="item"></base-item-group>
-        <base-item class="px-0" v-else :key="`item-${i}`" :item="item" />
+        <base-item  @click.stop="drawer = !drawer" class="px-0" v-else :key="`item-${i}`" :item="item" />
       </template>
 
       <!-- Style cascading bug  -->

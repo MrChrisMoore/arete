@@ -74,7 +74,7 @@ export default class Login extends Vue {
     return decodeURIComponent(results[2].replace(/\+/g, " "));
   }
   async login() {
-    let auth: AuthApi = this.auth;
+    let auth: AuthApi = this.$auth;
     try {
       let authResponse = await auth
         .postAuthLogin({

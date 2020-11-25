@@ -2,6 +2,8 @@
 
   <!-- <v-switch v-model="cards" class="pl-3 pt-0" label="Card View"></v-switch> -->
   <!-- <v-card v-if="cards" height="87vh"> -->
+    <v-btn v-if="viewSingleOrder" @click="viewSingleOrder = !viewSingleOrder"><v-icon> mdi-arrow-left</v-icon></v-btn>
+<div style="height:100%;" v-if="!viewSingleOrder">
   <v-card v-if="cards" class="main-card">
     <v-data-iterator :items="items" :items-per-page.sync="ipp" :page.sync="page" hide-default-footer :search="search"
       :sort-by="sortBy" :sort-desc="sortDesc" :custom-filter="filterOrders"
@@ -435,5 +437,8 @@
       </v-card>
     </v-dialog>
   </v-card>
-
+</div>
+<transition name='slide' appear>
+  <single-order-page  v-if="viewSingleOrder" :TMWOrder="selectedOrderInfo" :Additional="additionalOrderInfo"></single-order-page>
+</transition>
 </div>

@@ -118,14 +118,14 @@
   // Mixins
   import Proxyable from 'vuetify/lib/mixins/proxyable'
   import { mapMutations, mapState } from 'vuex'
-  import {UserJson} from '../../../../api/models/UserJson';
+  import {UserJson} from '../../api';
    export default {
     name: 'DashboardCoreSettings',
 
     mixins: [Proxyable],
     beforeMount:function(){
       this.user = JSON.parse(localStorage.getItem('user')); 
-      if(this.user.uiSettings && typeof this.user.uiSettings.darkMode === 'boolean' && this.dark !== this.user.uiSettings.darkMode){
+      if( this.user && this.user.uiSettings && typeof this.user.uiSettings.darkMode === 'boolean' && this.dark !== this.user.uiSettings.darkMode){
         this.dark = this.user.uiSettings.darkMode
       }
    

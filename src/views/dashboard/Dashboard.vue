@@ -236,7 +236,7 @@
 </template>
 
 <script lang='ts'>
-import {AuthApi} from '../../api/apis/AuthApi';
+import {AuthApi} from '../../api';
 import Vue from 'vue';
 import Component from 'vue-class-component'
 import { UserJson } from '@/api';

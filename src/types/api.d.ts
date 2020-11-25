@@ -11,11 +11,11 @@ import { TmwApi } from '@/api/apis/TmwApi';
 
 declare module 'vue/types/vue' {
   export interface Vue {
-    auth: AuthApi,
-    userApi:UserApi,
+    $auth: AuthApi,
+    $userApi:UserApi,
     //reportsApi?:ReportsApi, 
-    translationApi?:TranslationsApi,
-    tmwApi?:TmwApi
+    $translationApi?:TranslationsApi,
+    $tmwApi?:TmwApi
   }
 }
 
@@ -34,21 +34,3 @@ declare module 'vue/types/options' {
       tmwApi?:TmwApi
   }
 }
-
-// declare module 'vue/types/vue' {
-//   // Global properties can be declared
-//   // on the `VueConstructor` interface
-//  export interface VueConstructor {
-//     $auth: AuthApi,
-//     $user:UserApi
-//   }
-// }
-
-// // ComponentOptions is declared in types/options.d.ts
-// declare module 'vue/types/options' {
-//  export interface ComponentOptions<V extends Vue> {
-//     auth?: AuthApi,
-//     user?:UserApi
-//   }
-  
-// }

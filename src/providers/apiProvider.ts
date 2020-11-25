@@ -17,13 +17,13 @@ const apiConfig = new Configuration({
 export default {
   install(vue: VueConstructor) {
     if(process.env.LOG_VERBOSE !== 'false') console.log("Installing API Plugin");
-    vue.prototype.auth = new AuthApi(apiConfig);
-    vue.component.prototype.$auth = new AuthApi();
-    vue.prototype.userApi = new UserApi(apiConfig);
-    vue.component.prototype.$userApi = new UserApi();
-    vue.prototype.tmwApi = new TmwApi(apiConfig);
-    vue.component.prototype.$tmwApi = new TmwApi();
-    vue.prototype.translationApi = new TranslationsApi(apiConfig);
-    vue.component.prototype.$translationApi = new TranslationsApi();
+    vue.prototype.$auth = new AuthApi(apiConfig);
+//vue.component.prototype.$auth = new AuthApi();
+    vue.prototype.$userApi = new UserApi(apiConfig);
+//vue.component.prototype.$userApi = new UserApi();
+    vue.prototype.$tmwApi = new TmwApi(apiConfig);
+  //  vue.component.prototype.$tmwApi = new TmwApi();
+    vue.prototype.$translationApi = new TranslationsApi(apiConfig);
+  //  vue.component.prototype.$translationApi = new TranslationsApi();
   },
 };

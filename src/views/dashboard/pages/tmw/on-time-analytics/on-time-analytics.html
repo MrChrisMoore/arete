@@ -1,369 +1,204 @@
 <section id="on-time-analytics" class="page">
   <v-container fluid>
-    <v-row  justify-start>
+    <v-slide-x-transition>
+    <v-row justify-start>
       <v-col cols="6">
-      <v-menu
-      ref="menu"
-      v-model="menu"
-      :close-on-content-click="false"
-      transition="scale-transition"
-      offset-y
-      min-width="290px"
-    >
-      <template v-slot:activator="{ on, attrs }">
-        
-          <v-text-field
-          v-model="dateRangeText"
-          label="Date range"
-          prepend-icon="mdi-calendar"
-          readonly
-          
-            v-bind="attrs"
-            v-on="on"
-          ></v-text-field>
-       
-      </template>
-      <v-date-picker
-      v-model="dates"
-      range
-      @change="onDatesChanged"
-    ></v-date-picker>
-    </v-menu>
-   
-  </v-col>   
-  <v-col cols="6">
-    <v-text-field
-    v-model="compareRangeText"
-    label="Comparison"
-    prepend-icon="mdi-calendar"
-    readonly
-    ></v-text-field>
-  </v-col>
+        <v-menu ref="menu" v-model="menu" :close-on-content-click="false" transition="scale-transition" offset-y
+          min-width="290px">
+          <template v-slot:activator="{ on, attrs }">
+
+            <v-text-field v-model="dateRangeText" label="Date range" prepend-icon="mdi-calendar" readonly v-bind="attrs"
+              v-on="on"></v-text-field>
+
+          </template>
+          <v-date-picker v-model="dates" range @change="onDatesChanged"></v-date-picker>
+        </v-menu>
+
+      </v-col>
+      <v-col cols="6">
+        <v-text-field v-model="compareRangeText" label="Comparison" prepend-icon="mdi-calendar" readonly></v-text-field>
+      </v-col>
     </v-row>
-    <!-- <v-row row justify-space-around>
-      <v-flex cols="12" lg6>
-        <base-material-stats-card
-        color="orange"
-        icon="fas fa-pallet"
-        title="Total Loads"
-        value="184"
-        sub-icon="mdi-alert"
-        sub-icon-color="red"
-        sub-text="Decrease Detected..."
-        />
-          
-      </v-flex>
-      <v-flex cols="12" lg6>
-        <base-material-stats-card
-        color="orange"
-        icon="mdi-animation"
-        title="Total Loads"
-        value="184"
-        sub-icon="mdi-alert"
-        sub-icon-color="red"
-        sub-text="Decrease Detected..."
-        />
-          
-      </v-flex>
+  </v-slide-x-transition>
+
+    <v-row v-if="!loading" justify="space-around" wrap>
+      <v-col v-for="(kpi, index) in allKpis" cols="12" md="4" lg="3" :key="index">
+        <transition name="fade" mode="out-in" duratrion="1000" appear>
+          <base-material-stats-card :style="'--i:' + index" :color="getColor(kpi)" :icon="getIcon(kpi)" :decreaseIsBad="decreaseBad(kpi)"
+            :title="kpi | toUpperCase" :value="kpiValue(kpi)" :sub-text='kpiComparisonValue(kpi)'
+            :sub-text2="kpiValue(kpi, 'Min')" :sub-text3="kpiValue(kpi, 'Average')" :sub-text4="kpiValue(kpi,'Max')">
+          </base-material-stats-card>
+        </transition>
+      </v-col>
+    </v-row>
+    <!--     
+
+    <v-row v-if="!loading" justify="space-around" wrap>
+
+      <v-col cols="12" md="4" lg="3">
+        <transition   name="fade" mode="out-in" duratrion="1000" appear>
+          <base-material-stats-card style="--i:1;" color="warning" icon="fas fa-truck" title="Loads" :value="totalloads | toString"
+            sub-icon="mdi-alert" sub-icon-color="red" :sub-text="totalcompareloads | toString">
+
+          </base-material-stats-card>
+        </transition>
+      </v-col>
+      <v-col cols="12" md="4" lg="3">
+        <transition   name="fade" mode="out-in" duratrion="1000" appear>
+          <base-material-stats-card style="--i:2;" color="success" icon="fas fa-dollar-sign" title="Charges" :value="totaltotalcharges | toCurrency"
+            sub-icon-color="red" subTextColor="green--text" :sub-text="'High ' + maxtotalcharges | toCurrency"
+            :sub-text2="'  Low  ' + mintotalcharges | toCurrency">
+
+          </base-material-stats-card>
+        </transition>
+      </v-col>
+      <v-col cols="12" md="4" lg="3">
+        <transition   name="fade" style="--i:3;" mode="out-in" duratrion="1000" appear>
+          <base-material-stats-card color="black" icon="fas fa-road" title="Distance" :value="totaldistance | toMiles"
+            sub-icon-color="red" :sub-text="'High ' + maxdistance | toMiles" :sub-text2="'  Low  ' + mindistance | toMiles">
+
+          </base-material-stats-card>
+        </transition>
+      </v-col>
+      <v-col cols="12" md="4" lg="3">
+        <transition   name="fade" mode="out-in" duratrion="1000" appear>
+
+          <base-material-stats-card style="--i:4;" color="yellow" icon="fas fa-pallet" title="Pallets" :value="totalpallet | toString"
+            sub-icon-color="blue" :sub-text="'High ' + maxpallet | toString" :sub-text2="'  Low  ' + minpallet | toString">
+
+          </base-material-stats-card>
+        </transition>
+      </v-col>
+      <v-col cols="12" md="4" lg="3">
+        <transition   name="fade" mode="out-in" duratrion="1000" appear>
+          <base-material-stats-card style="--i:5;" color="secondary" icon="fas fa-weight" title="Average Weight" :value="averageweight | toWeight"
+            sub-icon-color="blue" :sub-text="'High ' + maxweight | toWeight" :sub-text2="'  Low  ' + minweight | toWeight">
+
+          </base-material-stats-card>
+        </transition>
+      </v-col>
+      <v-col cols="12" md="4" lg="3">
+        <transition   name="fade" mode="out-in" duratrion="1000" appear>
+
+          <base-material-stats-card style="--i:6;" color="purple" icon="fas fa-suitcase" title="Average Cases" :value="averagecs | toString"
+            sub-icon-color="blue" :sub-text="'High ' + maxcs | toString" :sub-text2="'  Low  ' + mincs | toString">
+
+          </base-material-stats-card>
+        </transition>
+      </v-col>
+      <v-col cols="12" md="4" lg="3">
+        <transition   name="fade" mode="out-in" duratrion="1000" appear>
+
+          <base-material-stats-card style="--i:7;" color="grey" icon="fas fa-gas-pump" title="Fuel" :value="totalfuel | toCurrency"
+            sub-icon-color="blue" :sub-text="'High ' + maxfuel | toCurrency" :sub-text2="'  Low  ' + minfuel | toCurrency">
+          </base-material-stats-card>
+        </transition>
+      </v-col>
+      <v-col cols="12" md="4" lg="3">
+        <transition   name="fade" mode="out-in" duratrion="1000" appear>
+
+          <base-material-stats-card style="--i:8;" color="teal" icon="fas fa-truck-moving" title="Linehaul"
+            :value="totallinehaul | toCurrency" sub-icon="" sub-icon-color="" :sub-text="'High ' + maxlinehaul | toCurrency"
+            :sub-text2="'  Low  ' + minlinehaul | toCurrency">
+          </base-material-stats-card>
+        </transition>
+      </v-col>
+      <v-col cols="12" md="4" lg="3">
+        <transition   name="fade" mode="out-in" duratrion="1000" appear>
+          <base-material-stats-card style="--i:9;" color="red" icon="fas fa-people-carry" title="Lumper" :value="totallumper | toCurrency"
+            sub-icon="" sub-icon-color="" :sub-text="'High ' + maxlumper | toCurrency" :sub-text2="'  Low  ' + minlumper | toCurrency">
+          </base-material-stats-card>
+        </transition>
+      </v-col>
+        <v-col cols="12" md="4" lg="3">
+          <transition   name="fade" mode="out-in" duratrion="1000" appear>
+
+            <base-material-stats-card style="--i:10" color="indigo" icon="fas fa-clipboard-list" title="Lumper Administration"
+              :value="totallumperadmin | toCurrency" sub-icon="" sub-icon-color="" :sub-text="'High ' + maxlumperadmin | toCurrency"
+              :sub-text2="'  Low  ' + minlumperadmin | toCurrency">
+            </base-material-stats-card>
+          </transition>
+        </v-col>
+        <v-col cols="12" md="4" lg="3">
+          <transition   name="fade" mode="out-in" duratrion="1000" appear>
+            <base-material-stats-card style="--i:11" color="pink" icon="fas fa-tags" title="Miscellaneous" :value="totalmisc | toCurrency"
+              sub-icon="" sub-icon-color="" :sub-text="'High ' + maxmisc | toCurrency" :sub-text2="'  Low  ' + minmisc | toCurrency">
+            </base-material-stats-card>
+          </transition>
+        </v-col>
+        <v-col cols="12" md="4" lg="3">
+          <transition   name="fade" mode="out-in" duratrion="1000" appear>
+            <base-material-stats-card style="--i:12" color="red" icon="mdi-food-apple" title="NYC" :value="totalnyc | toCurrency" sub-icon=""
+              sub-icon-color="" :sub-text="'High ' + maxnyc | toCurrency" :sub-text2="'  Low  ' + minnyc | toCurrency">
+            </base-material-stats-card>
+          </transition>
+        </v-col>
+        </base-material-stats-card>
+      </v-col>
+      <v-col cols="12" md="4" lg="3">
+        <transition  name="fade" mode="out-in" duratrion="1000" appear>
+          <base-material-stats-card  style="--i:13" color="grey darken-1" icon="fas fa-hourglass-end" title="Afterhours"
+            :value="totalafterhours | toCurrency" sub-icon="" sub-icon-color="" :sub-text="'High ' + maxafterhours | toCurrency"
+            :sub-text2="'  Low  ' + minafterhours | toCurrency">
+          </base-material-stats-card>
+        </transition>
+      </v-col>
+      <v-col cols="12" md="4" lg="3">
+        <transition   name="fade" mode="out-in" duratrion="1000" appear>
+          <base-material-stats-card style="--i:14" color="grey lighten-1" icon="fas fa-stopwatch" title="Detention"
+            :value="totaldetention | toCurrency" sub-icon="" sub-icon-color="" :sub-text="'High ' + maxdetention | toCurrency"
+            :sub-text2="'  Low  ' + mindetention | toCurrency">
+          </base-material-stats-card>
+        </transition>
+      </v-col>
     </v-row> -->
-    <v-row v-if="!loading"  justify="space-around" wrap>
-      <v-col cols="12" md="4" lg="3">
-        
-        <base-material-stats-card
-        color="warning"
-        icon="fas fa-truck"
-        title="Total Loads"
-        :value="TotalLoads"
-        sub-icon="mdi-alert"
-        sub-icon-color="red"
-        :sub-text="TotalCompareLoads"
-        >
-         
-        </base-material-stats-card>
+<!-- <v-slide-y-transition> -->
+    <base-material-apex-chart-card v-if="!loading" :options="costChartOptions" :series="costSeries" height="450"
+      type="line">
+      <h4 class="card-title font-weight-light mt-2 ml-2">Total Charges {{new Date(dates[0]).toDateString()}} to
+        {{new Date(dates[1]).toDateString()}} vs {{new Date(compareDates[0]).toDateString()}} to
+        {{new Date(compareDates[1]).toDateString()}}</h4>
+
+      <p class="d-inline-flex font-weight-light ml-2 mt-1">Last Campaign Performance</p>
+
+      <template v-slot:actions>
+        <v-icon class="mr-1" small>mdi-clock-outline</v-icon>
+        <span class="caption grey--text font-weight-light">updated 10 minutes ago</span>
+      </template>
+    </base-material-apex-chart-card>
+  <!-- </v-slide-y-transition> -->
+    <!-- <v-row row wrap>
+      <v-col cols="12">       
       </v-col>
-      <v-col cols="12" md="4" lg="3">
-        <base-material-stats-card
-        color="success"
-        icon="fas fa-dollar-sign"
-        title="Total Cost"
-        :value="TotalCost"
-        sub-icon-color="red"
-        subTextColor="green--text"
-        :sub-text="'High ' + HighCost"
-        :sub-text2="'  Low  ' + LowCost"
-        >
-              
-        </base-material-stats-card>
-      </v-col>
-      <v-col cols="12" md="4" lg="3">
-        <base-material-stats-card
-        color="black"
-        icon="fas fa-road"
-        title="Total Distance"
-        :value="TotalDistance"
-        sub-icon-color="red"
-        :sub-text="'High ' + HighMiles"
-        :sub-text2="'  Low  ' + LowMiles"
-        >
-        
-        </base-material-stats-card>
-      </v-col>
-      <v-col cols="12" md="4" lg="3">
-        <base-material-stats-card
-        color="yellow"
-        icon="fas fa-pallet"
-        title="Total Pallets"
-        :value="TotalPallets"
-        sub-icon-color="blue"
-        :sub-text="'High ' + HighPallets"
-        :sub-text2="'  Low  ' + LowPallets"
-        >
-        
-        </base-material-stats-card>
-      </v-col>
-      <v-col cols="12" md="4" lg="3">
-        <base-material-stats-card
-        color="secondary"
-        icon="fas fa-weight"
-        title="Average Weight"
-        :value="AverageWeight"
-        sub-icon-color="blue"
-        :sub-text="'High ' + HighWeight"
-        :sub-text2="'  Low  ' + LowWeight"
-        >
-        
-        </base-material-stats-card>
-      </v-col>
-      <v-col cols="12" md="4" lg="3">
-        <base-material-stats-card
-        color="purple"
-        icon="fas fa-suitcase"
-        title="Average Cases"
-        :value="AverageCases"
-        sub-icon-color="blue"
-        :sub-text="'High ' + HighCases"
-        :sub-text2="'  Low  ' + LowCases"
-        >
-        
-        </base-material-stats-card>
-      </v-col>
-      <v-col cols="12" md="4" lg="3">
-        <base-material-stats-card
-        color="grey"
-        icon="fas fa-gas-pump"
-        title="Total Fuel"
-        :value="TotalFuel"
-        sub-icon-color="blue"
-        :sub-text="'High ' + HighFuel"
-        :sub-text2="'  Low  ' + LowFuel"
-        ></base-material-stats-card>
-      </v-col>
-        <v-col cols="12" md="4" lg="3">
-        <base-material-stats-card
-        color="teal"
-        icon="fas fa-truck-moving"
-        title="Total Linehaul"
-        :value="TotalLineHaul"
-        sub-icon=""
-        sub-icon-color=""
-        :sub-text="'High ' + HighLineHaul"
-        :sub-text2="'  Low  ' + LowLineHaul"
-        >        
-        </base-material-stats-card>
-      </v-col>
-      <v-col cols="12" md="4" lg="3">
-        <base-material-stats-card
-        color="red"
-        icon="fas fa-people-carry"
-        title="Total Lumper"
-        :value="TotalLumper"
-        sub-icon=""
-        sub-icon-color=""
-        :sub-text="'High ' + HighLumper"
-        :sub-text2="'  Low  ' + LowLumper"
-        >        
-        <v-col cols="12" md="4" lg="3">
-          <base-material-stats-card
-          color="indigo"
-          icon="fas fa-clipboard-list"
-          title="Total Lumper Administration"
-          :value="TotalLumperAdmin"
-          sub-icon=""
-          sub-icon-color=""
-          :sub-text="'High ' + HighLumperAdmin"
-          :sub-text2="'  Low  ' + LowLumperAdmin"
-          >        
-          </base-material-stats-card>
-        </v-col>
-        <v-col cols="12" md="4" lg="3">
-          <base-material-stats-card
-          color="pink"
-          icon="fas fa-tags"
-          title="Total Miscellaneous"
-          :value="TotalMisc"
-          sub-icon=""
-          sub-icon-color=""
-          :sub-text="'High ' + HighMisc"
-          :sub-text2="'  Low  ' + LowMisc"
-          >        
-          </base-material-stats-card>
-        </v-col>
-        <v-col cols="12" md="4" lg="3">
-          <base-material-stats-card
-          color="red"
-          icon="mdi-food-apple"
-          title="Total NYC"
-          :value="TotalNyc"
-          sub-icon=""
-          sub-icon-color=""
-          :sub-text="'High ' + HighNyc"
-          :sub-text2="'  Low  ' + LowNyc"
-          >        
-          </base-material-stats-card>        
-        </v-col>
-        </base-material-stats-card>
-      </v-col>
-      <v-col cols="12" md="4" lg="3">
-        <base-material-stats-card
-        color="grey darken-1"
-        icon="fas fa-hourglass-end"
-        title="Total Afterhours"
-        :value="TotalAfterHours"
-        sub-icon=""
-        sub-icon-color=""
-        :sub-text="'High ' + HighAfterHours"
-        :sub-text2="'  Low  ' + LowAfterHours"
-        >        
-        </base-material-stats-card>        
-      </v-col>
-      <v-col cols="12" md="4" lg="3">
-        <base-material-stats-card
-        color="grey lighten-1"
-        icon="fas fa-stopwatch"
-        title="Total Detention"
-        :value="TotalDetention"
-        sub-icon=""
-        sub-icon-color=""
-        :sub-text="'High ' + HighDetention"
-        :sub-text2="'  Low  ' + LowDetention"
-        >        
-        </base-material-stats-card>        
-      </v-col>
-    </v-row>
-    
-    <v-row row  wrap>
-      <v-col cols="12" >
-        <!-- <base-material-stats-card
-        color=""
-        icon=""
-        title=""
-        :value=""
-        sub-icon=""
-        sub-icon-color=""
-        sub-text=""
-        >        
-        </base-material-stats-card> -->
+      <v-col cols="12">
         <v-card>
-        <v-card-text>
-          <div id='costChart'></div>
-          <!-- <apexchart v-if="!loading" type="scatter" height="350" :options="linechartOptions" :series="costSeries"></apexchart> -->
-          <!-- <div id="costChart" ></div> -->
-       </v-card-text>
-      </v-card>
-       
-
-
-        <!-- <GChart v-if="!loading"
-        type="Line"
-        :settings="{ packages: ['line', 'table', 'map'] }"
-        @ready="onChartReady"
-        :createChart="(el, google) => new google.charts.Line(el)"
-      /> -->
-<!-- 
-      <GChart v-if="!loading"
-      type="Line"
-      :data="costChartData"
-      :options="costChartOptions"
-      :settings="{ packages: ['line', 'table', 'map'] }"
-      :createChart="(el, google) => new google.charts.Line(el)"
-      @ready="onChartReady"
-    /> -->
-
-        <!-- <base-material-chart-card
-        color="success"
-        :data="costChartData"        
-        :options="costChartOptions"        
-        type="Line"
-       
-        >
-      
-        <template v-slot:reveal-actions>
-          <v-tooltip bottom>
-            <template v-slot:activator="{ attrs, on }">
-              <v-btn v-bind="attrs" color="info" icon v-on="on">
-                <v-icon color="info">mdi-refresh</v-icon>
-              </v-btn>
-            </template>
-
-            <span>Refresh</span>
-          </v-tooltip>
-
-          <v-tooltip bottom>
-            <template v-slot:activator="{ attrs, on }">
-              <v-btn v-bind="attrs" light icon v-on="on">
-                <v-icon>mdi-pencil</v-icon>
-              </v-btn>
-            </template>
-
-            <span>Change Date</span>
-          </v-tooltip>
-        </template>
-
-        <h3 class="card-title font-weight-light mt-2 ml-2">Orders Daily</h3>
-
-        <p class="d-inline-flex font-weight-light ml-2 mt-1">past 21 hours</p>
-
-        <template v-slot:actions>
-          <v-icon class="mr-1" small>mdi-clock-outline</v-icon>
-          <span class="caption grey--text font-weight-light">campaign sent 26 minutes ago</span>
-        </template>
-        </base-material-chart-card> -->
+          <v-card-text>
+            <div id='costChart'></div>
+          </v-card-text>
+        </v-card>
       </v-col>
-    </v-row>
-    <v-row>
+    </v-row> -->
+    <!-- <v-row>
       <v-col cols="12">
         <v-card>
         <v-card-text>
-          <!-- <div id="dtdChart"></div> -->
+         
           <div id= 'dtdChart'  ></div>
-          <!-- <apexchart v-if="!loading" type="rangeBar"  :options="chartOptions" :series="dtdSeries"></apexchart> -->
+         
 
         </v-card-text>
       </v-card>
       </v-col>
-    </v-row>
+    </v-row> -->
 
-    <v-snackbar
-    v-model="snackbar"
-    timeout="10000"
-    absolute
-    left
-    shaped
-    top
-    color="warning"
-  >
-    {{ snackText }}
+    <v-snackbar v-model="snackbar" timeout="10000" absolute left shaped top color="warning">
+      {{ snackText }}
 
-    <template v-slot:action="{ attrs }">
-      <v-btn
-        color="blue"
-        text
-        v-bind="attrs"
-        @click="snackbar = false"
-      >
-        Dismiss
-      </v-btn>
-    </template>
-  </v-snackbar>
+      <template v-slot:action="{ attrs }">
+        <v-btn color="blue" text v-bind="attrs" @click="snackbar = false">
+          Dismiss
+        </v-btn>
+      </template>
+    </v-snackbar>
   </v-container>
 </section>

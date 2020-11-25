@@ -85,6 +85,14 @@ const router = new VueRouter({
             requiresAuth: true,
           },
         },
+        {
+          name: "Tabs",
+          path: "tabs/tabs",
+          component: () => import("@/views/dashboard/component/Tabs.vue"),
+          meta: {
+            requiresAuth: true,
+          },
+        },
         // Tables
         {
           name: "Regular Tables",

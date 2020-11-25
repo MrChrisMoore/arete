@@ -279,7 +279,7 @@ export default class UserProfile extends Vue {
     this.headingText = "Add user";
     this.headingSubtitle =
       "Please fill in the required information to add a user";
-    this.companies = await this.translationApi.getTranslationsCompanies();
+    this.companies = await this.$translationApi.getTranslationsCompanies();
      if(this.companies){
        let foundCompany = this.companies.filter((v) =>{return v['CADENCE ID'] === this.user.company.cADENCEID});
        if(foundCompany && foundCompany.length ===1)        this.newUser.company = foundCompany[0];
@@ -351,7 +351,7 @@ export default class UserProfile extends Vue {
       nUser.phone = this.phoneObject.formattedNumber
     }
     // debugger
-    let response = await this.userApi
+    let response = await this.$userApi
       .postUserAdd({ body: nUser })
       .catch((err) => {
         console.log(err);

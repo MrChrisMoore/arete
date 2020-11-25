@@ -3,7 +3,9 @@
     <v-container fluid class="main-container">
       <v-layout class="main-layout">
         <v-flex class="main-flex">
+          <transition name="page" mode="out-in">
           <router-view />
+          </transition>
           <!-- <dashboard-core-footer /> -->
         </v-flex>
       </v-layout>
@@ -55,5 +57,11 @@ export default class Main extends Vue {}
     height: 100%;
     max-height: calc(100vh - 117px);
 }
-
+.page-enter-active, .page-leave-active {
+  transition: opacity 1s, transform 1s;
+}
+.page-enter, .page-leave-to {
+  opacity: 0;
+  transform: translateX(-30%);
+}
 </style>

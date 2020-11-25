@@ -99,7 +99,7 @@ export default class ChangePage extends Vue {
      this.message = 'Please correct all errors'
      return 
    }
-    let response = await this.auth.postAuthReset({ body: { password: this.current, newPassword: this.newPass } });
+    let response = await this.$auth.postAuthReset({ body: { password: this.current, newPassword: this.newPass } });
     if(response && response === 'Password Updated'){
       localStorage.removeItem('tempVerification');
       localStorage.removeItem('user');

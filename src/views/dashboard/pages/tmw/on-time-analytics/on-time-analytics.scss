@@ -1,3 +1,18 @@
-#on-time-analytics {
-
+.fade-enter{
+    opacity: 0;
+    transform: scale(.5);
 }
+
+.fade-enter-active{
+    transition: all .4s ease;
+     transition-delay: calc(.08s * var(--i));
+}
+
+
+// @for $i from 1 through 14 {
+//     .fade-enter-active:nth-of-type(#{$i}) {
+//      // animation: 3s intro infinite;
+//       transition-delay: random() + s;
+//       //animation-delay: random() + s;
+//     }
+//  }

@@ -16,21 +16,68 @@ import 'ag-grid-community/dist/styles/ag-theme-alpine-dark.css'
 import 'ag-grid-community/dist/styles/ag-theme-alpine.css'
 
 
-// import  "ag-grid-enterprise";
-//import "../node_modules/ag-grid-community/dist/styles/ag-grid.css";
-//import "../node_modules/ag-grid-community/dist/styles/ag-theme-alpine.css";
-
-//Vue.use(VueColumnsResizable);
 import VueApexCharts from 'vue-apexcharts'
 Vue.use(VueApexCharts)
-
 Vue.component('apexchart', VueApexCharts)
-
-
 Vue.use(Vuelidate);
-Vue.config.productionTip = false;
-Vue.use(api);
 
+Vue.config.productionTip = false;
+
+Vue.use(api);
+Vue.filter('toCurrency', function (value) {
+  if (typeof value !== "number") {
+      return value;
+  }
+  let formatter = new Intl.NumberFormat(window.navigator.language, {
+      style: 'currency',
+      currency: 'USD',
+      maximumFractionDigits: 2
+  });
+  return formatter.format(value);
+});
+Vue.filter('toMiles', function (value) {
+  if (typeof value !== "number") {
+      return value;
+  }
+  let formatter = new Intl.NumberFormat(window.navigator.language,<any> {
+      style: 'unit',
+      unit:'mile',
+      maximumFractionDigits: 2
+  });
+  return formatter.format(value);
+});
+Vue.filter('toWeight', function (value) {
+  if (typeof value !== "number") {
+      return value;
+  }
+  let formatter = new Intl.NumberFormat(window.navigator.language,<any> {
+      style: 'unit',
+      unit:'pound',
+      maximumFractionDigits: 2
+  });
+  return formatter.format(value);
+});
+Vue.filter('toString', function (value) {
+  if (typeof value !== "number") {
+      return value;
+  }
+  let formatter: any = new Intl.NumberFormat(window.navigator.language, {  
+    maximumFractionDigits: 2
+});
+return formatter.format(value);
+  
+});
+Vue.filter('toUpperCase',function(value){
+  return value.toUpperCase();
+});
+Vue.filter('toDateString',function(value){
+  return new Date(value).toLocaleString(navigator.language);
+})
+
+Vue.prototype.$dateFields =['delivery appt', 'pickup', 'arrcons', 'depcons', 'arrship', 'depship'];
+Vue.prototype.$dateTimeFields = ['delivery appt', 'arrcons', 'depcons', 'arrship', 'depship'];
+Vue.prototype.$numericFields =['weight', 'cs', 'pallet', 'lead time', 'distance'];
+Vue.prototype.$currencyFields =['misc', 'total charges', 'lumper admin', 'nyc', 'lumper', 'linehaul', 'fuel','detention','afterhours'];
 const app = new Vue({
   router,
   store,

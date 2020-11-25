@@ -21,7 +21,7 @@ export default class VerificationPage extends Vue {
   async verifyGetCode() {
     let phone = this.phoneObject.formattedNumber.replace('+', '');
     
-    let response = await this.auth.getAuthSms({ phone: phone }).catch((err) => {
+    let response = await this.$auth.getAuthSms({ phone: phone }).catch((err) => {
       if (process.env.LOG_ERROR !== 'false') console.log(err);
     });
 
@@ -33,7 +33,7 @@ export default class VerificationPage extends Vue {
   async verifySendCode() {
     let phone = this.phoneObject.formattedNumber.replace('+', '');
     
-    let response = await this.auth.postAuthSms({ body: { code: this.code, phone: phone } }).catch((err) => {
+    let response = await this.$auth.postAuthSms({ body: { code: this.code, phone: phone } }).catch((err) => {
       if (process.env.LOG_ERROR !== 'false') console.log(err);
     });
     if(typeof response === 'string')

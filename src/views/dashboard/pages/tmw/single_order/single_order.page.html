@@ -1,5 +1,98 @@
-
 <section id="single-order" class="page">
-  <h1>single-order Component</h1>
-</section>
+  <v-row justify="space-around">
+    <v-col cols="3">
 
+      <v-card>
+        <base-material-tabs v-model="currentTab" color="accent">
+          <v-tab v-for="item in orderTabs" :key="item.tab">
+            {{ item.tab }}
+          </v-tab>
+        </base-material-tabs>
+
+        <v-tabs-items v-model="currentTab">
+          <v-tab-item v-for="item in orderTabs" :key="item.tab">
+            <v-card color="primary">
+              <v-card-title class="white--text">
+                Freight Bill #{{item.content['FB#']}}
+              </v-card-title>
+              <v-card>
+                <v-card-title>
+                  Origin
+                </v-card-title>
+                <v-card-text>
+                  <v-row justify="space-between">
+                    <v-col cols="6" class="pb-1"> {{item.content['ORIGIN CITY']}}</v-col>
+                    <v-col cols="6" class="pb-1 "><span class="grey--text darken-1">Arrive </span>
+                      {{item.content.ARRSHIP | toDateString}}</v-col>
+                  </v-row>
+                  <v-row justify="space-between">
+                    <v-col cols="6" class="pb-1 pt-1"> {{item.content['ORIGIN STATE']}} </v-col>
+                    <v-col cols="6" class="pb-1 pt-1"> <span class="grey--text darken-1">Depart </span>
+                      {{item.content.DEPSHIP | toDateString}}</v-col>
+                  </v-row>
+                </v-card-text>
+              </v-card>
+              <v-card>
+                <v-card-title>
+                  Consignee
+                </v-card-title>
+                <v-card-text>
+                  <v-row justify="space-between">
+                    <v-col cols="6" class="pb-1"> {{item.content['CONSIGNEE NAME']}} </v-col>
+                  </v-row>
+                  <v-row justify="space-between">
+                    <v-col cols="6" class="pb-1 pt-1"> {{item.content['CONSIGNEE STATE']}} </v-col>
+                    <v-col cols="6" class="pb-1 pt-1"><span class="grey--text darken-1">Arrive </span>
+                      {{item.content.ARRCONS | toDateString}}</v-col>
+                  </v-row>
+                  <v-row justify="space-between">
+                    <v-col cols="6" class="pb-1 pt-1"> {{item.content['CONSIGNEE CITY']}}
+                      {{item.content['CONSIGNEE ZIP']}} </v-col>
+                      <v-col cols="6" class="pb-1"><span class="grey--text darken-1">Arrive </span>
+                        {{item.content.DEPCONS | toDateString}}</v-col>
+                  </v-row>
+                </v-card-text>
+              </v-card>
+              <v-card>
+                <v-card-title>
+                  Details
+                </v-card-title>
+                <v-card-text>
+                  <v-row justify="space-between">
+                    <v-col v-for="(detail, i) in details" cols="6" :key="i">
+                      <v-row> {{i}}</v-row>
+                      <v-row>{{ detail }}</v-row></span>
+                    </v-col>
+                    <!-- <span  v-for="(rest, i) of item.content">
+
+             <v-col  v-if="rest" cols="6" :key="i" class="pb-1 pt-1"><span v-if="['CONSIGNEE NAME', 'CONSIGNEE STATE', 'CONSIGNEE CITY', 'CONSIGNEE ZIP', 'ORIGIN CITY', 'ORIGIN STATE','CURRENCY', 'LEAD TIME'].indexOf(i) === -1 && rest"> 
+               <v-row> {{i}}</v-row>
+               <v-row>{{ rest }}</v-row></span>
+              </v-col>
+            </span> -->
+                  </v-row>
+
+                </v-card-text>
+              </v-card>
+            </v-card>
+            <v-card>
+
+
+            </v-card>
+          </v-tab-item>
+        </v-tabs-items>
+      </v-card>
+    </v-col>
+    <!-- <v-col cols="1"> -->
+    <v-divider vertical></v-divider>
+    <!-- </v-col> -->
+    <v-col cols="8">
+
+      <v-card>
+        <v-card-title>
+          Map
+        </v-card-title>
+      </v-card>
+    </v-col>
+  </v-row>
+</section>

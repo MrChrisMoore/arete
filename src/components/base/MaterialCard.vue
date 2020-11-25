@@ -21,7 +21,7 @@
         }"
         :color="color"
         :max-height="icon ? 90 : undefined"
-        :width="icon ? 'auto' : '100%'"
+        :width="inline || icon ? 'auto' : '100%'"
         elevation="6"
         class="text-start v-card--material__heading mb-n6"
         dark
@@ -62,6 +62,14 @@
         <slot name="after-heading" />
       </div>
 
+      <v-col
+        v-if="hoverReveal"
+        cols="12"
+        class="text-center py-0 mt-n12"
+      >
+        <slot name="reveal-actions" />
+      </v-col>
+
       <div
         v-else-if="icon && title"
         class="ml-4"
@@ -99,11 +107,19 @@
         type: String,
         default: 'success',
       },
+      hoverReveal: {
+        type: Boolean,
+        default: false,
+      },
       icon: {
         type: String,
         default: undefined,
       },
       image: {
+        type: Boolean,
+        default: false,
+      },
+      inline: {
         type: Boolean,
         default: false,
       },
@@ -121,6 +137,7 @@
       classes () {
         return {
           'v-card--material--has-heading': this.hasHeading,
+          'v-card--material--hover-reveal': this.hoverReveal,
         }
       },
       hasHeading () {
@@ -145,4 +162,8 @@
       top: -40px
       transition: .3s ease
       z-index: 1
+
+    &.v-card--material--hover-reveal:hover
+      .v-card--material__heading
+        transform: translateY(-40px)
 </style>

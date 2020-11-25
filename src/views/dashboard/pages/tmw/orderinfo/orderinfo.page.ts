@@ -1,19 +1,20 @@
 import { PostTmwOrderIdRequest, PostTmwOrdersDawgRequest } from '@/api';
 
 import Vue from 'vue';
-import { VCard, VImg, VCardActions, VCardText, VContainer, VCardTitle, VSwitch, VDataTable, VChip, VList, VListItemTitle, VListGroup, VListItem, VListItemIcon, VListItemGroup } from 'vuetify/lib';
+import { VCard, VImg, VCardActions, VCardText, VContainer, VCardTitle, VSwitch, VDataTable, VChip, VList, VListItemTitle, VListGroup, VListItem, VListItemIcon, VListItemGroup,VSlideXTransition } from 'vuetify/lib';
 import Component from 'vue-class-component';
 import { Watch } from 'vue-property-decorator';
 // import { DataTableHeader } from 'vuetify';
 import { Resize } from 'vuetify/lib/directives';
 // import 'ag-grid-enterprise';
 // import { AgGridVue } from 'ag-grid-vue';
-import { SelectionChangedEvent,PaginationChangedEvent,GridReadyEvent,GridOptions,GridApi,SideBarModule,MenuModule, ClientSideRowModelModule, ColumnsToolPanelModule, FiltersToolPanelModule, RowGroupingModule, StatusBarModule,RangeSelectionModule, ColDef, CsvExportParams } from '@ag-grid-enterprise/all-modules'
+import { SelectionChangedEvent,PaginationChangedEvent,GridReadyEvent,GridOptions,GridApi,SideBarModule,MenuModule, ClientSideRowModelModule, ColumnsToolPanelModule, FiltersToolPanelModule, RowGroupingModule, StatusBarModule,RangeSelectionModule, ColDef,  ExcelExportParams, ExcelExportModule } from '@ag-grid-enterprise/all-modules'
 // import { AgGridVue } from 'ag-grid-vue';
 import {AgGridVue} from '@ag-grid-community/vue';
 // import { ColDef,  GridOptions, GridReadyEvent, CsvExportParams, PaginationChangedEvent, SelectionChangedEvent } from 'ag-grid-community';
 import MarkerClusterer from '@google/markerclusterer';
 import {OverlappingMarkerSpiderfier} from 'ts-overlapping-marker-spiderfier';
+import SingleOrderPage from '../single_order/index.vue'
 // import {Client} from "@googlemaps/google-maps-services-js";
 const MAPS_API_KEY = process.env.VUE_APP_MAPS_API_KEY;
 
@@ -60,14 +61,17 @@ function gmapsInit() {
 
 @Component({
   components: {
-    VCard, VContainer, VImg, VCardActions, VCardText, VCardTitle, VSwitch, VDataTable, VChip, AgGridVue, VList, VListItemTitle, VListGroup, VListItem, VListItemIcon, VListItemGroup
+    SingleOrderPage,VCard, VContainer, VImg, VCardActions, VCardText, VCardTitle, VSwitch, VDataTable, VChip, AgGridVue, VList, VListItemTitle, VListGroup, VListItem, VListItemIcon, VListItemGroup,VSlideXTransition
   },
   name: 'tmw-order-info',
   directives: { Resize }
 })
 
 export default class OrderinfoPage extends Vue {
-  sideBar = true;
+  sideBar = {
+    toolPanels: ['columns', 'filters'],
+    // hiddenByDefault:true
+};
   statusBar = {
     statusPanels: [
       {
@@ -78,7 +82,7 @@ export default class OrderinfoPage extends Vue {
       },
     ],
   };
-  modules =[SideBarModule,MenuModule, ClientSideRowModelModule,ColumnsToolPanelModule, FiltersToolPanelModule,RangeSelectionModule, RowGroupingModule,StatusBarModule]
+  modules =[SideBarModule,MenuModule, ClientSideRowModelModule,ColumnsToolPanelModule,ExcelExportModule, FiltersToolPanelModule,RangeSelectionModule, RowGroupingModule,StatusBarModule]
   //frameworkComponents = { customStatsToolPanel: CustomStatsToolPanel };
   /* Test Card Section   */
   bottom = false
@@ -180,8 +184,9 @@ export default class OrderinfoPage extends Vue {
   };
   dateFields =['delivery appt', 'pickup', 'arrcons', 'depcons', 'arrship', 'depship']
   dateTimeFields = ['delivery appt', 'arrcons', 'depcons', 'arrship', 'depship'];
-  numericFields =['weight', 'cs', 'pallet', 'lead time'];
+  numericFields =['weight', 'cs', 'pallet', 'lead time', 'distance'];
   currencyFields =['misc', 'total charges', 'lumper admin', 'nyc', 'lumper', 'linehaul', 'fuel','detention','afterhours'];
+  initiallyVisible = ['fb#','consignee name', 'arrcons', 'depship', 'weight', 'distance'];
   geoCoder: google.maps.Geocoder;
   // getMainMenuItems(params) {
   //   return params.defaultItems
@@ -192,14 +197,15 @@ export default class OrderinfoPage extends Vue {
   }
 
   onBtExport() {
-    let exportParams: CsvExportParams = {
+    let orderInfo= this;
+    let exportParams: ExcelExportParams = {
       fileName: 'test',
       processCellCallback: function (params) {
         if (!params.value) return ''
-        if (this.dateFields.indexOf(params.column.getId().toLowerCase()) !== -1) {
+        if (orderInfo.dateFields.indexOf(params.column.getId().toLowerCase()) !== -1) {
 
           let data = params.value;
-          if (this.dateTimeFields.indexOf(params.column.getId().toLowerCase()) !== -1 && data) {
+          if (orderInfo.dateTimeFields.indexOf(params.column.getId().toLowerCase()) !== -1 && data) {
             let date = new Date(data);
 
             return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`
@@ -209,7 +215,7 @@ export default class OrderinfoPage extends Vue {
         return params.value;
       }
     }
-    this.gridApi.exportDataAsCsv(exportParams);
+    orderInfo.gridOptions.api.exportDataAsExcel(exportParams);
   }
   onFirstDataRendered(params: GridReadyEvent) {
     this.sizeEm();
@@ -226,9 +232,7 @@ export default class OrderinfoPage extends Vue {
     });
     this.gridOptions.columnApi.autoSizeColumns(allColumnIds, false);
   }
-  beforeMount() {
-    // this.themeClass = this.$vuetify.theme.dark ? 'ag-theme-alpine-dark' : 'ag-theme-alpine'
-  }
+
   async mounted() {
     this.gridApi = this.gridOptions.api;
     this.gridOptions.onRowClicked
@@ -265,14 +269,15 @@ export default class OrderinfoPage extends Vue {
       body: { tmwCodes: user.tmwCodes }
     }
 
-    let response = await this.tmwApi.postTmwOrdersDawg(params);
+    let response = await this.$tmwApi.postTmwOrdersDawg(params);
     if (response /* && response.length */) {
 
 
       Object.keys(response.rangeResult[0]).map((v) => {
         let colDef: ColDef = {
           headerName: v,
-          field: v
+          field: v,
+          hide:true
         }
 
         if (this.numericFields.indexOf(v.toLowerCase()) !== -1) {
@@ -301,6 +306,10 @@ export default class OrderinfoPage extends Vue {
             return data ? new Date(data).toLocaleDateString() : '';
           }
           colDef.filter = 'agDateColumnFilter'
+        }
+
+        if(this.initiallyVisible.indexOf(v.toLowerCase()) > -1){
+          colDef.hide =false;
         }
         this.columnDefs.push(colDef);
 
@@ -508,13 +517,17 @@ spiderfier:OverlappingMarkerSpiderfier;
       // });
     }
   }
-
+  viewSingleOrder = false;
+  selectedOrderInfo:any =null;
+  additionalOrderInfo:any = null;
   onSelectionChanged(event:SelectionChangedEvent){
     let OIpage = this;
     let selectedRows = event.api.getSelectedRows();
+    OIpage.selectedOrderInfo = selectedRows[0];
     let params: PostTmwOrderIdRequest ={id:selectedRows[0]['FB#']}
-     this.tmwApi.postTmwOrderId(params).then((response)=>{
-       debugger
+    OIpage.$tmwApi.postTmwOrderId(params).then((response)=>{
+       OIpage.additionalOrderInfo = response[0];
+       OIpage.viewSingleOrder =true;
      })
 
     // const directionsService = new google.maps.DirectionsService();
@@ -597,7 +610,7 @@ spiderfier:OverlappingMarkerSpiderfier;
     this.itemsPerPage = number
   }
   async accessorials(id: number) {
-    let response = await this.tmwApi.getTmwAccessorialId({ id: id });
+    let response = await this.$tmwApi.getTmwAccessorialId({ id: id });
     if (response) {
       this.accCharges = response;
       this.accDialog = true
@@ -606,7 +619,7 @@ spiderfier:OverlappingMarkerSpiderfier;
 
   }
   async getOrderHeader(id) {
-    let response = await this.tmwApi.getTmwOrderHeaderId({ id: id })
+    let response = await this.$tmwApi.getTmwOrderHeaderId({ id: id })
     if (response && response.length) {
       this.selectedOrderHeader = response[0];
       this.orderDialog = true;

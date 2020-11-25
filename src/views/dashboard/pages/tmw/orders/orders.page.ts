@@ -60,7 +60,7 @@ onPickupChanged(){
     if(this.pickupStart){
       params.body.pickup =this.pickupStart;
     }
-    let response = await this.tmwApi.postTmwOrders(params);
+    let response = await this.$tmwApi.postTmwOrders(params);
     if (response && response.length) {
       this.loading = false;
 
@@ -112,7 +112,7 @@ filterOrders(items, search){
     this.itemsPerPage = number
   }
   async accessorials(id:number){
-    let response = await this.tmwApi.getTmwAccessorialId({id:id});
+    let response = await this.$tmwApi.getTmwAccessorialId({id:id});
     if(response){      
       this.accCharges = response;
       this.accDialog = true
@@ -121,7 +121,7 @@ filterOrders(items, search){
     
   }
       async getOrderHeader(id){
-        let response = await this.tmwApi.getTmwOrderHeaderId({id:id})
+        let response = await this.$tmwApi.getTmwOrderHeaderId({id:id})
         if(response && response.length ){
           this.selectedOrderHeader = response[0];
           this.orderDialog = true;

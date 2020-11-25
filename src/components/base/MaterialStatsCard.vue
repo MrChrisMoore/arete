@@ -7,10 +7,7 @@
   >
     <template v-slot:after-heading>
       <div class="ml-auto text-right">
-        <div
-          class="body-3 grey--text font-weight-light"
-          v-text="title"
-        />
+        <div class="body-3 grey--text font-weight-light" v-text="title" />
 
         <h3 class="display-2 font-weight-light text--primary">
           {{ value }} <small>{{ smallValue }}</small>
@@ -18,81 +15,145 @@
       </div>
     </template>
 
-    <v-col
-      cols="12"
-      class="px-0"
-    >
+    <v-col cols="12" class="px-0">
       <v-divider />
     </v-col>
 
-    <v-icon
-      :color="subIconColor"
-      size="16"
-      class="ml-2 mr-1"
-    >
-      {{ subIcon }}
+    <v-icon :color="subIconColorValue" size="16" class="ml-2 mr-1">
+      {{ subIconValue }}
     </v-icon>
 
     <span
-      :class="subTextColor? subTextColor:'grey--text'"
+      :class="subTextColorValue ? subTextColorValue : 'grey--text'"
       class="caption font-weight-light"
       v-text="subText"
     />
-    
-      <v-spacer v-if="subText2" />
-      <span v-if="subText2" v-text="subText2" :class="subTextColor? subTextColor:'grey--text'" class="caption font-weight-light"></span>
-  
+
+    <v-spacer v-if="subText2" />
+    <span
+      v-if="subText2"
+      v-text="subText2"
+      :class="subTextColor ? subTextColor : 'grey--text'"
+      class="caption font-weight-light"
+    ></span>
+    <v-spacer v-if="subText3" />
+    <span
+      v-if="subText3"
+      v-text="subText3"
+      :class="subTextColor ? subTextColor : 'grey--text'"
+      class="caption font-weight-light"
+    ></span>
+    <v-spacer v-if="subText4" />
+    <span
+      v-if="subText4"
+      v-text="subText4"
+      :class="subTextColor ? subTextColor : 'grey--text'"
+      class="caption font-weight-light"
+    ></span>
   </base-material-card>
 </template>
 
 <script>
-  import Card from './Card'
+import { boolean } from "joi";
+import Card from "./Card";
 
-  export default {
-    name: 'MaterialStatsCard',
+export default {
+  name: "MaterialStatsCard",
 
-    inheritAttrs: false,
-
-    props: {
-      ...Card.props,
-      icon: {
-        type: String,
-        required: true,
-      },
-      subIcon: {
-        type: String,
-        default: undefined,
-      },
-      subIconColor: {
-        type: String,
-        default: undefined,
-      },
-      subTextColor: {
-        type: String,
-        default: undefined,
-      },
-      subText: {
-        type: String,
-        default: undefined,
-      },
-      subText2: {
-        type: String,
-        default: undefined,
-      },
-      title: {
-        type: String,
-        default: undefined,
-      },
-      value: {
-        type: String,
-        default: undefined,
-      },
-      smallValue: {
-        type: String,
-        default: undefined,
+  inheritAttrs: false,
+  data() {
+    return {
+      subTextColorValue: this.$props.subTextColor,
+      subIconValue:this.$props.subIcon,
+      subIconColorValue:this.$props.subIconColor
+    };
+  },
+  props: {
+    ...Card.props,
+    icon: {
+      type: String,
+      required: true,
+    },
+    decreaseIsBad: {
+      type: Boolean,
+      default: false,
+    },
+    subIcon: {
+      type: String,
+      default: undefined,
+    },
+    subIconColor: {
+      type: String,
+      default: undefined,
+    },
+    subTextColor: {
+      type: String,
+      default: undefined,
+    },
+    subText: {
+      type: String,
+      default: undefined,
+    },
+    subText2: {
+      type: String,
+      default: undefined,
+    },
+    subText3: {
+      type: String,
+      default: undefined,
+    },
+    subText4: {
+      type: String,
+      default: undefined,
+    },
+    title: {
+      type: String,
+      default: undefined,
+    },
+    value: {
+      type: String,
+      default: undefined,
+    },
+    smallValue: {
+      type: String,
+      default: undefined,
+    },
+  },
+  watch: {
+    subText: {
+      // the callback will be called immediately after the start of the observation
+      immediate: true,
+      handler(val, oldVal) {
+        if(val.indexOf('$0.00') > -1) return
+        if (val.indexOf("Decrease") > -1 && this.decreaseIsBad) {
+          this.subTextColorValue = "red--text";
+          this.subIconValue = 'mdi mdi-alert';
+          this.subIconColorValue = 'red';
+        } else {
+          if (val.indexOf("Increase") > -1 && !this.decreaseIsBad) {
+            this.subTextColorValue = "red--text";
+            this.subIconValue = 'mdi mdi-alert';
+            this.subIconColorValue = 'red';
+          } else {
+            this.subTextColorValue = "green--text";
+            
+            this.subIconColorValue = 'green'
+            if(val.indexOf("Decrease") > -1 && !this.decreaseIsBad){
+              this.subIconValue = 'mdi mdi-arrow-down';
+            }
+            if(val.indexOf("Increase") > -1 && this.decreaseIsBad){
+              this.subIconValue = 'mdi mdi-arrow-up';
+            }
+          }
+        }
       },
     },
-  }
+    // subText(val){
+    //   debugger
+
+    // }
+  },
+};
 </script>
 
 <style lang="sass">
