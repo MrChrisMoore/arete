@@ -1,0 +1,12 @@
+.v-pagination {
+	.v-pagination__item {
+		&:focus {
+			outline: none;
+		}
+	}
+	.v-pagination__navigation {
+		&:focus {
+			outline: none;
+		}
+	}
+}

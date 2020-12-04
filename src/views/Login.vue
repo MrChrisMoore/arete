@@ -1,15 +1,17 @@
 <template>
   <v-container id="user-login" fluid tag="section">
     <v-row justify="center">
-      <v-col cols="12" md="8">
+      <v-col cols="12" md="8">  
         <transition name="fade" mode="in-out"  appear>
-        <v-img id="login-logo" src="../assets/logo.svg" height="50%" width="50%" contain></v-img>
+        <!-- <v-img id="login-logo" src="../assets/logo.svg" height="50%" width="50%" contain></v-img> -->
         </transition>
         <transition name="fade" mode="in-out"  appear>
+        
         <login></login>
         </transition>
       </v-col>
     </v-row>
+   
   </v-container>
 </template>
 

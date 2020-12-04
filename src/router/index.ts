@@ -14,16 +14,24 @@ const router = new VueRouter({
       component: () => import("@/views/dashboard/Index.vue"),
       children: [
         // Dashboard
-
         {
-          name: "Orders Overview",
+          name: "Order Analytics",
           path: "",
-          
-          component: () => import("@/views/dashboard/Dashboard.vue"),
+          component: () =>
+            import("@/views/dashboard/pages/tmw/on-time-analytics/index.vue"),
           meta: {
             requiresAuth: true,
           },
         },
+        // {
+        //   name: "Orders Overview",
+        //   path: "",
+          
+        //   component: () => import("@/views/dashboard/Dashboard.vue"),
+        //   meta: {
+        //     requiresAuth: true,
+        //   },
+        // },
         {
           path: "/login",
           name: "login",
@@ -111,51 +119,51 @@ const router = new VueRouter({
             requiresAuth: true,
           },
         },
-        {
-          name: "Overview",
-          path: "wh-overview",
-          component: () =>
-            import("@/views/dashboard/pages/WarehouseOverview.vue"),
-          meta: {
-            requiresAuth: true,
-          },
-        },
-        {
-          name: "Orders",
-          path: "/sisense/orders",
-          component: () =>
-            import("@/views/dashboard/pages/Orders.vue"),
-          meta: {
-            requiresAuth: true,
-          },
-        },
-        {
-          name: "Inventory",
-          path: "/reports/inventory",
-          component: () =>
-            import("@/views/dashboard/pages/inventory/index.vue"),
-          meta: {
-            requiresAuth: true,
-          },
-        },
-        {
-          name: "Orders",
-          path: "/reports/orders",
-          component: () =>
-            import("@/views/dashboard/pages/orders/index.vue"),
-          meta: {
-            requiresAuth: true,
-          },
-        },
-        {
-          name: "Inventory",
-          path: "/reports/sku",
-          component: () =>
-            import("@/views/dashboard/pages/sku/index.vue"),
-          meta: {
-            requiresAuth: true,
-          },
-        },
+        // {
+        //   name: "Overview",
+        //   path: "wh-overview",
+        //   component: () =>
+        //     import("@/views/dashboard/pages/WarehouseOverview.vue"),
+        //   meta: {
+        //     requiresAuth: true,
+        //   },
+        // },
+        // {
+        //   name: "Orders",
+        //   path: "/sisense/orders",
+        //   component: () =>
+        //     import("@/views/dashboard/pages/Orders.vue"),
+        //   meta: {
+        //     requiresAuth: true,
+        //   },
+        // },
+        // {
+        //   name: "Inventory",
+        //   path: "/reports/inventory",
+        //   component: () =>
+        //     import("@/views/dashboard/pages/inventory/index.vue"),
+        //   meta: {
+        //     requiresAuth: true,
+        //   },
+        // },
+        // {
+        //   name: "Orders",
+        //   path: "/reports/orders",
+        //   component: () =>
+        //     import("@/views/dashboard/pages/orders/index.vue"),
+        //   meta: {
+        //     requiresAuth: true,
+        //   },
+        // },
+        // {
+        //   name: "Inventory",
+        //   path: "/reports/sku",
+        //   component: () =>
+        //     import("@/views/dashboard/pages/sku/index.vue"),
+        //   meta: {
+        //     requiresAuth: true,
+        //   },
+        // },
         {
           name: "TruckMate Orders",
           path: "/tmw/orders",
@@ -184,7 +192,7 @@ const router = new VueRouter({
           },
         },
         {
-          name: "In Transit",
+          name: "Orders",
           path: "/tmw/orderinfo",
           component: () =>
             import("@/views/dashboard/pages/tmw/orderinfo/index.vue"),
@@ -192,15 +200,15 @@ const router = new VueRouter({
             requiresAuth: true,
           },
         },
-        {
-          name: "On Time Analysis",
-          path: "/tmw/ota",
-          component: () =>
-            import("@/views/dashboard/pages/tmw/on-time-analytics/index.vue"),
-          meta: {
-            requiresAuth: true,
-          },
-        },
+        // {
+        //   name: "Order Analytics",
+        //   path: "/tmw/ota",
+        //   component: () =>
+        //     import("@/views/dashboard/pages/tmw/on-time-analytics/index.vue"),
+        //   meta: {
+        //     requiresAuth: true,
+        //   },
+        // },
       ],
     },
   ],

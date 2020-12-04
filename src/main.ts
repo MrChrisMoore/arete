@@ -71,13 +71,17 @@ Vue.filter('toUpperCase',function(value){
   return value.toUpperCase();
 });
 Vue.filter('toDateString',function(value){
-  return new Date(value).toLocaleString(navigator.language);
+  return value? new Date(value).toLocaleString(navigator.language):'N/A';
 })
 
 Vue.prototype.$dateFields =['delivery appt', 'pickup', 'arrcons', 'depcons', 'arrship', 'depship'];
 Vue.prototype.$dateTimeFields = ['delivery appt', 'arrcons', 'depcons', 'arrship', 'depship'];
-Vue.prototype.$numericFields =['weight', 'cs', 'pallet', 'lead time', 'distance'];
+Vue.prototype.$numericFields =['weight',  'cases', 'pallet', /* 'lead time', */ 'distance'];
 Vue.prototype.$currencyFields =['misc', 'total charges', 'lumper admin', 'nyc', 'lumper', 'linehaul', 'fuel','detention','afterhours'];
+Vue.prototype.$unitTypes = {
+  weight: 'pound',
+  distance: 'mile',
+}
 const app = new Vue({
   router,
   store,

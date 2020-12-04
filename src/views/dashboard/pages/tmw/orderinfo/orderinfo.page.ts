@@ -159,7 +159,7 @@ export default class OrderinfoPage extends Vue {
   filter = {};
   sortDesc = false;
   page = 1;
-  itemsPerPage = 4;
+  itemsPerPage = 10;
   sortBy = 'FB#';
   columnDefs: ColDef[] = [];
   rowData = null;
@@ -182,10 +182,10 @@ export default class OrderinfoPage extends Vue {
     filter: true,
     menuTabs: ['filterMenuTab', 'generalMenuTab', 'columnsMenuTab'],
   };
-  dateFields =['delivery appt', 'pickup', 'arrcons', 'depcons', 'arrship', 'depship']
-  dateTimeFields = ['delivery appt', 'arrcons', 'depcons', 'arrship', 'depship'];
-  numericFields =['weight', 'cs', 'pallet', 'lead time', 'distance'];
-  currencyFields =['misc', 'total charges', 'lumper admin', 'nyc', 'lumper', 'linehaul', 'fuel','detention','afterhours'];
+  // dateFields =['delivery appt', 'pickup', 'arrcons', 'depcons', 'arrship', 'depship']
+  // dateTimeFields = ['delivery appt', 'arrcons', 'depcons', 'arrship', 'depship'];
+  // numericFields =['weight', 'cs', 'pallet', 'lead time', 'distance'];
+  // currencyFields =['misc', 'total charges', 'lumper admin', 'nyc', 'lumper', 'linehaul', 'fuel','detention','afterhours'];
   initiallyVisible = ['fb#','consignee name', 'arrcons', 'depship', 'weight', 'distance'];
   geoCoder: google.maps.Geocoder;
   // getMainMenuItems(params) {
@@ -202,10 +202,10 @@ export default class OrderinfoPage extends Vue {
       fileName: 'test',
       processCellCallback: function (params) {
         if (!params.value) return ''
-        if (orderInfo.dateFields.indexOf(params.column.getId().toLowerCase()) !== -1) {
+        if (orderInfo.$dateFields.indexOf(params.column.getId().toLowerCase()) !== -1) {
 
           let data = params.value;
-          if (orderInfo.dateTimeFields.indexOf(params.column.getId().toLowerCase()) !== -1 && data) {
+          if (orderInfo.$dateTimeFields.indexOf(params.column.getId().toLowerCase()) !== -1 && data) {
             let date = new Date(data);
 
             return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`
@@ -280,11 +280,11 @@ export default class OrderinfoPage extends Vue {
           hide:true
         }
 
-        if (this.numericFields.indexOf(v.toLowerCase()) !== -1) {
+        if (this.$numericFields.indexOf(v.toLowerCase()) !== -1) {
           colDef.type = 'numericColumn'
         }
 
-        if (this.currencyFields.indexOf(v.toLowerCase()) !== -1) {
+        if (this.$currencyFields.indexOf(v.toLowerCase()) !== -1) {
           colDef.valueFormatter = (params) => {
             if(!params.value) return;
             let data:number = params.value || params.data[v] ;
@@ -294,11 +294,11 @@ export default class OrderinfoPage extends Vue {
           colDef.type = 'numericColumn'
         }
 
-        if (this.dateFields.indexOf(v.toLowerCase()) !== -1) {
+        if (this.$dateFields.indexOf(v.toLowerCase()) !== -1) {
           colDef.valueFormatter = (params) => {
             if(!params.value) return;
             let data = params.value || params.data[v] ;
-            if (this.dateTimeFields.indexOf(v.toLowerCase()) !== -1 && data) {
+            if (this.$dateTimeFields.indexOf(v.toLowerCase()) !== -1 && data) {
               let date = new Date(data);
 
               return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`
@@ -518,15 +518,21 @@ spiderfier:OverlappingMarkerSpiderfier;
     }
   }
   viewSingleOrder = false;
-  selectedOrderInfo:any =null;
-  additionalOrderInfo:any = null;
+  singleOrderInfo:any = null;
+ // selectedOrderInfo:any =null;
+ // additionalOrderInfo:any = null;
   onSelectionChanged(event:SelectionChangedEvent){
     let OIpage = this;
     let selectedRows = event.api.getSelectedRows();
-    OIpage.selectedOrderInfo = selectedRows[0];
+    OIpage.singleOrderInfo = selectedRows[0];
+    
     let params: PostTmwOrderIdRequest ={id:selectedRows[0]['FB#']}
     OIpage.$tmwApi.postTmwOrderId(params).then((response)=>{
-       OIpage.additionalOrderInfo = response[0];
+      //  OIpage.additionalOrderInfo =
+        ['BOL','CURRENT_STATUS','STAGE','SUB_TYPE','TRIP_NUMBER','TYPE','WHS_NO','BILL_DATE','DETAIL_LINE_ID'].forEach(v =>{
+         return OIpage.singleOrderInfo[v] = response[0][v]
+       });
+       
        OIpage.viewSingleOrder =true;
      })
 

@@ -15,7 +15,11 @@ declare module 'vue/types/vue' {
     $userApi:UserApi,
     //reportsApi?:ReportsApi, 
     $translationApi?:TranslationsApi,
-    $tmwApi?:TmwApi
+    $tmwApi?:TmwApi,
+    $dateFields: string[],
+    $dateTimeFields: string[],
+    $numericFields: string[],
+    $currencyFields: string[],
   }
 }
 

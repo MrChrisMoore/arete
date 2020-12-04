@@ -31,14 +31,14 @@ export default class OnTimeAnalytics extends Vue {
   costSeries = null;
   dtdSeries = null;
   //dateTimeFields = ['delivery appt', 'arrcons', 'depcons', 'arrship', 'depship'];
-  numericFields = ['weight', 'cs', 'pallet', 'distance'];
-  currencyFields = ['total charges', 'misc', 'lumper admin', 'nyc', 'lumper', 'linehaul', 'fuel', 'detention', 'afterhours'];
+  // numericFields = ['weight', 'cs', 'pallet', 'distance'];
+  // currencyFields = ['total charges', 'misc', 'lumper admin', 'nyc', 'lumper', 'linehaul', 'fuel', 'detention', 'afterhours'];
   unitTypes = {
     weight: 'pound',
     distance: 'mile',
   }
 
-  allKpis = ['loads', ...this.currencyFields, ...this.numericFields]
+  allKpis = ['loads', ...this.$currencyFields, ...this.$numericFields]
 
   dtdChartOptions: ApexOptions = {
     theme: { mode: this.themeDark ? 'dark' : 'light' },
@@ -250,7 +250,7 @@ export default class OnTimeAnalytics extends Vue {
     distance: ['fas fa-road', 'black'],
     pallet: ['fas fa-pallet', 'yellow'],
     weight: ['fas fa-weight', 'secondary'],
-    cs: ['fas fa-suitcase', 'purple'],
+    cases: ['fas fa-suitcase', 'purple'],
     fuel: ['fas fa-gas-pump', 'grey'],
     linehaul: ['fas fa-truck', 'teal'],
     lumper: ['fas fa-people-carry', 'red'],
@@ -262,16 +262,16 @@ export default class OnTimeAnalytics extends Vue {
   }
   getIcon(str) {
     let icon = this.icons[str.replace(/\s/g, '')];
-    return icon[0];
+    return icon ? icon[0]:'';
   }
   getColor(str) {
     let color = this.icons[str.replace(/\s/g, '')];
 
-    return color[1];
+    return color? color[1]:'';
   }
   kpiValue(str, type: any = "Total") {
     let style = '';
-    if (this.currencyFields.indexOf(str) >= 0) {
+    if (this.$currencyFields.indexOf(str) >= 0) {
       style = 'currency'
     }
     if (this.unitTypes[str]) {
@@ -293,11 +293,11 @@ export default class OnTimeAnalytics extends Vue {
 
   }
   decreaseBad(kpi) {
-    return ['loads', 'weight', 'cs', 'pallet'].indexOf(kpi) > -1;
+    return ['loads', 'weight', 'cases', 'pallet'].indexOf(kpi) > -1;
   }
   kpiComparisonValue(str) {
     let style = '';
-    if (this.currencyFields.indexOf(str) >= 0) {
+    if (this.$currencyFields.indexOf(str) >= 0) {
       style = 'currency'
     }
     if (this.unitTypes[str]) {

@@ -2,6 +2,9 @@ module.exports = {
   "transpileDependencies": [
     "vuetify"
   ],
+  css: {
+    sourceMap: true
+  },
   'publicPath':'/',
   pwa: {
     name: 'Arete',

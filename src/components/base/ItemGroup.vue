@@ -4,9 +4,10 @@
     :prepend-icon="item.icon"
     :sub-group="subGroup"
     append-icon="mdi-menu-down"
-    :color="barColor !== 'rgba(255, 255, 255, 1), rgba(255, 255, 255, 0.7)' ? 'white' : 'grey darken-1'"
+    :color="barColor !== 'rgba(255, 255, 255, 1), rgba(255, 255, 255, 0.7)' ? 'grey darken-1' : 'grey darken-1'"
   >
     <template v-slot:activator>
+      <!-- <v-list-item-icon v-if="text" class="v-list-item__icon--text" v-text="computedText" /> -->
       <v-list-item-icon v-if="text" class="v-list-item__icon--text" v-text="computedText" />
 
       <v-list-item-avatar v-else-if="item.avatar" class="align-self-center" contain>
@@ -20,8 +21,8 @@
 
     <template v-for="(child, i) in children">
       <base-item-sub-group v-if="child.children" :key="`sub-group-${i}`" :item="child" />
-
-      <base-item v-else :key="`item-${i}`" :item="child" text />
+      <base-item v-else :key="`item-${i}`" :item="child"  />
+      <!-- <base-item v-else :key="`item-${i}`" :item="child" text /> -->
     </template>
   </v-list-group>
 </template>
