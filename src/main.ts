@@ -9,7 +9,8 @@ import store from './store';
 import Vuelidate from 'vuelidate';
 import vuetify from './plugins/vuetify';
 // import './plugins/googleCharts';
-import '@mdi/font/css/materialdesignicons.css';
+// import '@mdi/font/css/materialdesignicons.css';
+import '@mdi/font/scss/materialdesignicons.scss'
 import api from './providers/apiProvider';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine-dark.css'

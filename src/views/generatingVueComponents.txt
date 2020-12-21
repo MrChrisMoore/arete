@@ -1,1 +1,1 @@
-vgcx --script ts --postfix page --dest "src/views/dashboard/pages/" orders
+vgcx --script ts --dest "src/views/dashboard/pages/" orders

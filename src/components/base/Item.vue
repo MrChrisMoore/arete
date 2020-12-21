@@ -1,5 +1,5 @@
 <template>
-  <v-list-item
+  <v-list-item v-if="item.to"
     :href="href"
     :rel="href && href !== '#' ? 'noopener' : undefined"
     :target="href && href !== '#' ? '_blank' : undefined"
@@ -9,10 +9,35 @@
       v-if="text"
       class="v-list-item__icon--text"
       v-text="computedText"
+      color="green darken-2"
     />
 
     <v-list-item-icon v-else-if="item.icon">
-      <v-icon v-text="item.icon" />
+      <v-icon v-text="item.icon"  />
+    </v-list-item-icon>
+
+    <v-list-item-content v-if="item.title || item.subtitle">
+      <v-list-item-title v-text="item.title" />
+
+      <v-list-item-subtitle v-text="item.subtitle" />
+    </v-list-item-content>
+  </v-list-item>
+  <v-list-item
+  v-else
+   
+    :rel="href && href !== '#' ? 'noopener' : undefined"
+    :target="href && href !== '#' ? '_blank' : undefined"
+    
+  >
+    <v-list-item-icon
+      v-if="text"
+      class="v-list-item__icon--text"
+      v-text="computedText"
+      color="accent"
+    />
+
+    <v-list-item-icon v-else-if="item.icon">
+      <v-icon v-text="item.icon" color="accent" />
     </v-list-item-icon>
 
     <v-list-item-content v-if="item.title || item.subtitle">
@@ -39,7 +64,7 @@
           icon: undefined,
           subtitle: undefined,
           title: undefined,
-          to: undefined,
+          to: '',
         }),
       },
       text: {
@@ -61,7 +86,7 @@
         return text
       },
       href () {
-        return this.item.href || (!this.item.to ? '#' : undefined)
+        return this.item.href || (!this.item.to ? '#' : '')
       },
     },
   }

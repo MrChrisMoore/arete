@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import Component from 'vue-class-component';
-import { VCard, VCardTitle, VCardText, VChip, VCardSubtitle, VTabs, VContainer,VSkeletonLoader } from 'vuetify/lib'
+import { VCard, VCardTitle, VCardText, VChip, VCardSubtitle, VTabs, VContainer, VSkeletonLoader } from 'vuetify/lib'
 import { Prop } from 'vue-property-decorator';
 const MAPS_API_KEY = process.env.VUE_APP_MAPS_API_KEY;
 
@@ -46,7 +46,7 @@ function gmapsInit() {
 
 @Component({
   components: {
-    VCard, VCardTitle, VCardText, VChip, VCardSubtitle, VTabs, VContainer,VSkeletonLoader
+    VCard, VCardTitle, VCardText, VChip, VCardSubtitle, VTabs, VContainer, VSkeletonLoader
   },
   name: 'single-order-page',
 })
@@ -59,8 +59,8 @@ export default class SingleOrderPage extends Vue {
 
   tabs = [
     { tab: 'Shipping', content: this.TMWOrder },
-    { tab: 'Stats', content: this.getOrderStats() },  
-    { tab: 'Warehouse', content: 'Loading' } ,
+    { tab: 'Stats', content: this.getOrderStats() },
+    { tab: 'Warehouse', content: 'Loading' },
     { tab: 'Documents', content: 'Document Links' }
   ];
   // orderTabs = ;
@@ -109,25 +109,26 @@ export default class SingleOrderPage extends Vue {
   // return content
 
   // }
-  loading =true;
-  async getOrderHeader(id){
-    let response = await this.$tmwApi.getTmwOrderHeaderId({id:id})
-    if(response && response.length ){
+  loading = true;
+  async getOrderHeader(id) {
+    let response = await this.$tmwApi.getTmwOrderHeaderId({ id: id })
+    if (response && response.length) {
       setTimeout(() => {
-        
+
         this.loading = false
       }, 2000);
-    //  this.orderHeader = response[0];
+      //  this.orderHeader = response[0];
       this.tabs[2].content = response[0];
       // return response[0];
     }
-   
+
   }
   getOrderStats() {
     let costPerPound = this.TMWOrder['TOTAL CHARGES'] / this.TMWOrder['WEIGHT'];
     let costPerCase = this.TMWOrder['TOTAL CHARGES'] / this.TMWOrder['CASES'];
     let costPerMile = this.TMWOrder['TOTAL CHARGES'] / this.TMWOrder['DISTANCE'];
-    return {costPerCase, costPerMile,costPerPound}
+    let costPerPallet = this.TMWOrder['TOTAL CHARGES'] / this.TMWOrder['PALLET'];
+    return { costPerCase, costPerMile, costPerPound, costPerPallet }
     // return`
     //     Cost Per Pound: ${costPerPound} 
     //     Cost Per Case: ${costPerCase} 
@@ -137,11 +138,11 @@ export default class SingleOrderPage extends Vue {
   map: google.maps.Map<HTMLElement>;
   geoCoder: google.maps.Geocoder;
   mounted() {
-   
+
     this.loadMap();
   }
-  shouldI(tab){
-    if(tab === 'Warehouse'){
+  shouldI(tab) {
+    if (tab === 'Warehouse') {
       this.getOrderHeader(this.TMWOrder.WHS_NO)
     }
   }
@@ -157,51 +158,156 @@ export default class SingleOrderPage extends Vue {
     SOpage.geoCoder.geocode({ region: 'us', address: 'United States' }, (result, status) => {
       SOpage.map.setCenter(result[0].geometry.location);
       SOpage.map.fitBounds(result[0].geometry.viewport);
-      // this.addMarker();
+       this.addMarker();
 
     });
 
   }
-  get details() {
-    let sop = this;
-    let keys = [];
 
-    if (this.$props.TMWOrder) {
+  private addMarker() {
+    let SOpage = this;
 
-      keys = Object.keys(this.$props.TMWOrder).filter((v) => {
-        return v && ['CONSIGNEE NAME', 'CONSIGNEE STATE', 'CONSIGNEE CITY', 'CONSIGNEE ZIP', 'ORIGIN CITY', 'ORIGIN STATE', 'CURRENCY', 'LEAD TIME', 'DETAIL_LINE_ID', 'ARRCONS', 'DEPCONS', 'ARRSHIP', 'DEPSHIP', 'FB#', 'CURRENT_STATUS'].indexOf(v) === -1
-      });
+    let map = SOpage.map;
+    if (!map) {
+      SOpage.loadMap();
+      return;
     }
-    let it = {}
+    SOpage.geoCoder.geocode({ region: 'US', address: `${SOpage.TMWOrder['CONSIGNEE ZIP']}` }, (results, status1) => {
+      if (results) {
+        results.forEach((res) => {
+          new google.maps.Marker({ position: res.geometry.location,map:SOpage.map,icon: 'http://maps.google.com/mapfiles/kml/pushpin/red-pushpin.png' })
+        })
+        // let markers = results.map(x => {
+        //   if (x && x.geometry && x.geometry.location) {
+        //     // let marker = new google.maps.Marker({
+        //     //   position: x.geometry.location,
+        //     //   map
+        //     // });
+          
+        //   }
+        // })
+      }
+    });
+    SOpage.geoCoder.geocode({ region: 'US', address: `${SOpage.TMWOrder['ORIGIN CITY']},${SOpage.TMWOrder['ORIGIN STATE']}` }, (results, status1) => {
+      if (results) {
+        results.forEach((res) => {
+          new google.maps.Marker({ position: res.geometry.location,map:SOpage.map ,icon: 'http://maps.google.com/mapfiles/kml/pushpin/wht-pushpin.png'})
+        })
+        // let markers = results.map(x => {
+        //   if (x && x.geometry && x.geometry.location) {
+        //     // let marker = new google.maps.Marker({
+        //     //   position: x.geometry.location,
+        //     //   map
+        //     // });
+          
+        //   }
+        // })
+      }
+    })
 
-    keys.forEach(key => {
-      if (sop.$props.TMWOrder[key]) {
-        it[key] = sop.$props.TMWOrder[key];
-        if (this.$dateFields.indexOf(key.toLowerCase()) !== -1) {
-          it[key] = this.$options.filters['toDateString'](sop.$props.TMWOrder[key]);
-        }
-        if (this.$currencyFields.indexOf(key.toLowerCase()) !== -1) {
-          it[key] = this.$options.filters['toCurrency'](sop.$props.TMWOrder[key]);
-        }
-        if (this.$numericFields.indexOf(key.toLowerCase()) !== -1) {
-          switch (key.toLowerCase()) {
-            case 'weight':
-              it[key] = this.$options.filters['toWeight'](sop.$props.TMWOrder[key]);
-              break;
-            case 'distance':
-              it[key] = this.$options.filters['toMiles'](sop.$props.TMWOrder[key]);
-              break;
-            default:
-              it[key] = this.$options.filters['toString'](sop.$props.TMWOrder[key]);
-              break;
-          }
+
+    // OIpage.itemsOnPage.forEach((val) => {
+
+    // OIpage.geoCoder.geocode({ region: 'US', address: `${val['CONSIGNEE ZIP']}` }, (results, status1) => {
+    //   if (results) {
+    //     let markers = results.map(x => {
+
+    //       if (x && x.geometry && x.geometry.location) {
+
+    //         let infowindow = new google.maps.InfoWindow({
+    //           content: `${val['CONSIGNEE NAME']}`,
+    //         });
+    //         let marker = new google.maps.Marker({
+    //           position: x.geometry.location,
+    //           map,
+    //           /* label:`${val['TOTAL CHARGES']}`, */
+    //           icon: 'http://maps.google.com/mapfiles/kml/pushpin/red-pushpin.png'
+    //         });
+
+    //         marker.addListener('click', () => {
+    //           infowindow.open(OIpage.map, marker);
+    //         });
+    //         return marker;
+    //       }
+    //     });
+    //     markers = markers.filter(item => { return item; });
+    //     if (markers && markers.length)
+    //       new MarkerClusterer(OIpage.map, markers);
+    //   }
+    //   //  result.forEach((res)=>{
+    //   //    new google.maps.Marker({position:res.geometry.location})
+    //   //  })
+    // });
+    // OIpage.geoCoder.geocode({ region: 'US', address: `${val['ORIGIN CITY']}, ${val['ORIGIN STATE']}` }, (results, status) => {
+    //   if (results) {
+    //     let markers = results.map(x => {
+    //       if (x && x.geometry && x.geometry.location) {
+
+    //         let infowindow = new google.maps.InfoWindow({
+    //           content: `${val['CONSIGNEE NAME']}`,
+    //         });
+    //         let marker = new google.maps.Marker({
+    //           position: x.geometry.location,
+    //           map,
+    //           /* label:`${val['TOTAL CHARGES']}`, */
+    //           icon: 'http://maps.google.com/mapfiles/kml/pushpin/wht-pushpin.png'
+    //         });
+
+    //         marker.addListener('click', () => {
+    //           infowindow.open(map, marker);
+    //         });
+    //         return marker;
+    //       }
+    //     });
+    //     markers = markers.filter(item => { return item; });
+    //     if (markers && markers.length)
+    //       new MarkerClusterer(map, markers);
+    //   }
+    // });
+    // });
+  
+}
+
+get details() {
+  let sop = this;
+  let keys = [];
+
+  if (this.$props.TMWOrder) {
+
+    keys = Object.keys(this.$props.TMWOrder).filter((v) => {
+      return v && ['CONSIGNEE NAME', 'CONSIGNEE STATE', 'CONSIGNEE CITY', 'CONSIGNEE ZIP', 'ORIGIN CITY', 'ORIGIN STATE', 'CURRENCY', 'LEAD TIME', 'DETAIL_LINE_ID', 'ARRCONS', 'DEPCONS', 'ARRSHIP', 'DEPSHIP', 'FB#', 'CURRENT_STATUS'].indexOf(v) === -1
+    });
+  }
+  let it = {}
+
+  keys.forEach(key => {
+    if (sop.$props.TMWOrder[key]) {
+      it[key] = sop.$props.TMWOrder[key];
+      if (this.$dateFields.indexOf(key.toLowerCase()) !== -1) {
+        it[key] = this.$options.filters['toDateString'](sop.$props.TMWOrder[key]);
+      }
+      if (this.$currencyFields.indexOf(key.toLowerCase()) !== -1) {
+        it[key] = this.$options.filters['toCurrency'](sop.$props.TMWOrder[key]);
+      }
+      if (this.$numericFields.indexOf(key.toLowerCase()) !== -1) {
+        switch (key.toLowerCase()) {
+          case 'weight':
+            it[key] = this.$options.filters['toWeight'](sop.$props.TMWOrder[key]);
+            break;
+          case 'distance':
+            it[key] = this.$options.filters['toMiles'](sop.$props.TMWOrder[key]);
+            break;
+          default:
+            it[key] = this.$options.filters['toString'](sop.$props.TMWOrder[key]);
+            break;
         }
       }
+    }
 
-    });
+  });
 
-    return it
-  }
+  return it
+}
 
 }
 

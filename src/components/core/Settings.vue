@@ -182,7 +182,7 @@
     methods: {
      async updateDarkMode(val){
        
-      let response = await this.userApi.postUserUpdate({body:{key:'darkMode', value:val}});
+      let response = await this.$userApi.postUserUpdate({body:{key:'darkMode', value:val}});
       let user = localStorage.getItem('user');
       if (user){
         let userjson = JSON.parse(user);      

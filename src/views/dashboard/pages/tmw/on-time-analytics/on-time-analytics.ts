@@ -2,7 +2,7 @@
 import { PostTmwOrdersDawgRequest } from '@/api/apis/TmwApi';
 import Vue from 'vue';
 import Component from 'vue-class-component';
-import { VContainer, VSlideXTransition } from 'vuetify/lib';
+import { VContainer, VSlideXTransition, VChip } from 'vuetify/lib';
 import { ApexOptions } from 'apexcharts';
 import { Watch } from 'vue-property-decorator';
 import { Model5 } from '@/api/models';
@@ -11,7 +11,8 @@ import { object } from 'joi';
 @Component({
   components: {
     VContainer,
-    VSlideXTransition
+    VSlideXTransition,
+    VChip
   },
   name: 'on-time-analytics-',
 })
@@ -175,6 +176,32 @@ export default class OnTimeAnalytics extends Vue {
 
   }
 
+  setDateFilter(val) {
+    // let month = new Date().getMonth() +1;
+    // let year = new Date().getFullYear();
+    // let day = new Date().getDate();
+    let startDate =new Date();
+    let start = '';
+    let end = `${new Date().getFullYear()}-${new Date().getMonth() +1}-${new Date().getDate()}`
+    switch (val) {
+      case '90':
+        startDate = new Date(new Date().setDate(new Date().getDate() - 90));
+        start = `${startDate.getFullYear()}-${startDate.getMonth()+1}-${startDate.getDate()}`
+        break;
+      case '180':
+        startDate = new Date(new Date().setDate(new Date().getDate() - 180))
+        start = `${startDate.getFullYear()}-${startDate.getMonth()+1}-${startDate.getDate()}`
+        break;
+      default:
+        start = `${new Date().getFullYear()}-1-1`
+        break;
+    }
+    this.dates = [start, end];
+    this.GetOrders();
+
+
+  }
+
   onDatesChanged(val) {
     if (val && val.length && val.length === 2) {
       this.GetOrders();
@@ -262,12 +289,12 @@ export default class OnTimeAnalytics extends Vue {
   }
   getIcon(str) {
     let icon = this.icons[str.replace(/\s/g, '')];
-    return icon ? icon[0]:'';
+    return icon ? icon[0] : '';
   }
   getColor(str) {
     let color = this.icons[str.replace(/\s/g, '')];
 
-    return color? color[1]:'';
+    return color ? color[1] : '';
   }
   kpiValue(str, type: any = "Total") {
     let style = '';
@@ -630,187 +657,7 @@ export default class OnTimeAnalytics extends Vue {
     return this.currencyCode;
   }
 
-  // get totalcompareloads() {
-  //   return this.res.compareResult.length.toString();
-  // }
 
-  /*
-    //#region Lows
-    get lowlumper() {
-      //this.lowlumper = 
-      return this.getAggregateValueAsString('LUMPER', 'currency', 'Min')
-    }
-  
-    get lowlumperadmin() {
-      return this.getAggregateValueAsString('LUMPER ADMIN', 'currency', 'Min')
-    }
-  
-    get lowlinehaul() {
-      return this.getAggregateValueAsString('LINEHAUL', 'currency', 'Min')
-    }
-  
-    get lowmisc() {
-      return this.getAggregateValueAsString('MISC', 'currency', 'Min')
-    }
-  
-    get lownyc() {
-      return this.getAggregateValueAsString('NYC', 'currency', 'Min')
-    }
-  
-    get lowdetention() {
-      return this.getAggregateValueAsString('DETENTION', 'currency', 'Min')
-    }
-  
-    get lowafterhours() {
-      return this.getAggregateValueAsString('AFTERHOURS', 'currency', 'Min')
-    }
-  
-  
-    get lowfuel() {
-      return this.getAggregateValueAsString('FUEL', 'currency', 'Min')
-    }
-  
-  
-    get lowcharges() {
-      return this.getAggregateValueAsString('TOTAL CHARGES', 'currency', 'Min');
-    }
-  
-    get lowmiles() {
-      return this.getAggregateValueAsString('DISTANCE', 'unit', 'Min', 0, 'mile');
-    }
-  
-    get lowpallets() {
-      return this.getAggregateValueAsString('PALLET', '', 'Min', 0);
-    }
-  
-  
-    get lowcases() {
-      return this.getAggregateValueAsString('CS', '', 'Min', 0);
-    }
-  
-    get lowweight() {
-      return this.getAggregateValueAsString('WEIGHT', 'unit', 'Min', 2, 'pound');
-    }
-  
-    //#endregion
-  
-    //#region Highs
-    get highlumper() {
-      return this.getAggregateValueAsString('LUMPER', 'currency', 'Max')
-    }
-  
-    get highlumperadmin() {
-      return this.getAggregateValueAsString('LUMPER ADMIN', 'currency', 'Max')
-    }
-  
-    get highlinehaul() {
-      return this.getAggregateValueAsString('LINEHAUL', 'currency', 'Max')
-    }
-  
-    get highmisc() {
-      return this.getAggregateValueAsString('MISC', 'currency', 'Max')
-    }
-  
-    get highnyc() {
-      return this.getAggregateValueAsString('NYC', 'currency', 'Max')
-    }
-  
-    get highdetention() {
-      return this.getAggregateValueAsString('DETENTION', 'currency', 'Max')
-    }
-  
-    get highafterhours() {
-      return this.getAggregateValueAsString('AFTERHOURS', 'currency', 'Max')
-    }
-  
-    get highfuel() {
-      return this.getAggregateValueAsString('FUEL', 'currency', 'Max')
-    }
-    get highcost() {
-      return this.getAggregateValueAsString('TOTAL CHARGES', 'currency', 'Max');
-    }
-  
-    get highmiles() {
-      return this.getAggregateValueAsString('DISTANCE', 'unit', 'Max', 0, 'mile');
-    }
-  
-    get highpallets() {
-      return this.getAggregateValueAsString('PALLET', '', 'Max', 0);
-    }
-  
-    get highcases() {
-      return this.getAggregateValueAsString('CS', '', 'Max', 0);
-    }
-  
-    get highweight() {
-      return this.getAggregateValueAsString('WEIGHT', 'unit', 'Max', 2, 'pound');
-    }
-    //#endregion
-  
-    //#region Averages
-    get averageweight() {
-      return this.getAggregateValueAsString('WEIGHT', 'unit', 'Average', 2, 'pound');
-    }
-  
-  
-    get averagecases() {
-      return this.getAggregateValueAsString('CS', '', 'Average');
-    }
-  
-    //#endregion
-  
-    //#region Totals
-  
-   
-    get totalcharges() {
-      return this.getAggregateValueAsString('TOTAL CHARGES', 'currency', 'Total');
-    }
-  
-    get totalpallets() {
-      return this.getAggregateValueAsString('PALLET', '', 'Total', 0);
-    }
-  
-    get totaldistance() {
-      return this.getAggregateValueAsString('DISTANCE', 'unit', 'Total', 2, 'mile');
-    }
-  
-    get totallumper() {
-      return this.getAggregateValueAsString('LUMPER', 'currency', 'Total')
-    }
-    get totallumperadmin() {
-      return this.getAggregateValueAsString('LUMPER ADMIN', 'currency', 'Total')
-    }
-    get totallinehaul() {
-      return this.getAggregateValueAsString('LINEHAUL', 'currency', 'Total')
-    }
-  
-    get totalmisc() {
-      return this.getAggregateValueAsString('MISC', 'currency', 'Total')
-    }
-  
-    get totalnyc() {
-      return this.getAggregateValueAsString('NYC', 'currency', 'Total')
-    }
-    get totaldetention() {
-      return this.getAggregateValueAsString('DETENTION', 'currency', 'Total')
-    }
-  
-    get totalafterhours() {
-      return this.getAggregateValueAsString('AFTERHOURS', 'currency', 'Total')
-    }
-  
-   
-    get totalfuel() {
-      return this.getAggregateValueAsString('FUEL', 'currency', 'Total')
-    }
-    //#endregion
-  */
-
-  // get totalloads() {
-
-  //   //console.log(this.items.length)
-  //   return this.items ? this.items.length : -1;
-  // }
 
 }
 

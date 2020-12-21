@@ -200,6 +200,24 @@ const router = new VueRouter({
             requiresAuth: true,
           },
         },
+        {
+          name: "Shipped Orders",
+          path: "/wms/shipped-orders",
+          component: () =>
+            import("@/views/dashboard/pages/cdn/shipped_orders/index.vue"),
+          meta: {
+            requiresAuth: true,
+          },
+        },
+        {
+          name: "Short Orders",
+          path: "/wms/short-orders",
+          component: () =>
+            import("@/views/dashboard/pages/cdn/short_orders/index.vue"),
+          meta: {
+            requiresAuth: true,
+          },
+        },
         // {
         //   name: "Order Analytics",
         //   path: "/tmw/ota",

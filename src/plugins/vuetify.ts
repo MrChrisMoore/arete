@@ -64,6 +64,9 @@ export default new Vuetify({
   // icons: {
   //   iconfont: 'md', // default - only for display purposes
   // },
+  // icons: {
+  //   iconfont: 'mdiSvg',
+  // },
   theme: {
     dark: localStorage.user && JSON.parse(localStorage.user).uiSettings && JSON.parse(localStorage.user).uiSettings.darkMode || false,
     themes: {

@@ -1,5 +1,6 @@
 <template>
   <v-list-group
+
     :group="group"
     :prepend-icon="item.icon"
     :sub-group="subGroup"
@@ -62,10 +63,14 @@ export default {
   computed: {
     ...mapState(["barColor"]),
     children() {
-      return this.item.children.map((item) => ({
+      return this.item.children.map((item) => {
+        
+        return{
         ...item,
-        to: !item.to ? undefined : `${this.item.group}/${item.to}`,
-      }));
+        to: !item.to ? '' : `${item.to}`,
+      }
+    }
+      );
     },
     computedText() {
       if (!this.item || !this.item.title) return "";

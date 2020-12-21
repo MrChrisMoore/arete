@@ -9,7 +9,6 @@ import { Resize } from 'vuetify/lib/directives';
 // import 'ag-grid-enterprise';
 // import { AgGridVue } from 'ag-grid-vue';
 import { SelectionChangedEvent,PaginationChangedEvent,GridReadyEvent,GridOptions,GridApi,SideBarModule,MenuModule, ClientSideRowModelModule, ColumnsToolPanelModule, FiltersToolPanelModule, RowGroupingModule, StatusBarModule,RangeSelectionModule, ColDef,  ExcelExportParams, ExcelExportModule } from '@ag-grid-enterprise/all-modules'
-// import { AgGridVue } from 'ag-grid-vue';
 import {AgGridVue} from '@ag-grid-community/vue';
 // import { ColDef,  GridOptions, GridReadyEvent, CsvExportParams, PaginationChangedEvent, SelectionChangedEvent } from 'ag-grid-community';
 import MarkerClusterer from '@google/markerclusterer';
@@ -64,7 +63,7 @@ function gmapsInit() {
     SingleOrderPage,VCard, VContainer, VImg, VCardActions, VCardText, VCardTitle, VSwitch, VDataTable, VChip, AgGridVue, VList, VListItemTitle, VListGroup, VListItem, VListItemIcon, VListItemGroup,VSlideXTransition
   },
   name: 'tmw-order-info',
-  directives: { Resize }
+  //directives: { Resize }
 })
 
 export default class OrderinfoPage extends Vue {
@@ -83,6 +82,7 @@ export default class OrderinfoPage extends Vue {
     ],
   };
   modules =[SideBarModule,MenuModule, ClientSideRowModelModule,ColumnsToolPanelModule,ExcelExportModule, FiltersToolPanelModule,RangeSelectionModule, RowGroupingModule,StatusBarModule]
+ 
   //frameworkComponents = { customStatsToolPanel: CustomStatsToolPanel };
   /* Test Card Section   */
   bottom = false
@@ -144,10 +144,10 @@ export default class OrderinfoPage extends Vue {
   get themeClass() {
     return this.$vuetify.theme.dark ? 'ag-theme-alpine-dark' : 'ag-theme-alpine'
   }
-  windowSize = {
-    x: 0,
-    y: 0,
-  }
+  // windowSize = {
+  //   x: 0,
+  //   y: 0,
+  // }
   cards = false
   accDialog = false;
   accCharges = [];
@@ -192,9 +192,7 @@ export default class OrderinfoPage extends Vue {
   //   return params.defaultItems
   // }
   map: google.maps.Map<HTMLElement>;
-  onResize() {
-    this.windowSize = { x: window.innerWidth, y: window.innerHeight };
-  }
+ 
 
   onBtExport() {
     let orderInfo= this;

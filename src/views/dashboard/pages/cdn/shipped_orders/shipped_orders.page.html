@@ -1,0 +1,42 @@
+
+<section id="shipped-orders" class="page">
+  <v-slide-x-transition>
+    <v-row justify-start>
+      <v-col cols="6">
+        <v-menu ref="menu" v-model="menu" :close-on-content-click="false" transition="scale-transition" offset-y
+          min-width="290px">
+          <template v-slot:activator="{ on, attrs }">
+
+            <v-text-field v-model="dateRangeText" label="Date range" prepend-icon="mdi-calendar" readonly v-bind="attrs"
+              v-on="on"></v-text-field>
+
+          </template>
+          <v-date-picker v-model="dates" range @change="onDatesChanged"></v-date-picker>
+        </v-menu>
+
+      </v-col>
+      <!-- <v-col cols="6">
+        <v-text-field v-model="compareRangeText" label="Comparison" prepend-icon="mdi-calendar" readonly></v-text-field>
+      </v-col> -->
+    </v-row>
+  </v-slide-x-transition>
+  <v-card>
+    <v-card-text >
+      <v-container fluid >
+        <v-row >
+      <v-col cols="12" md="12" class="mt-2" v-if="!loading">
+        <ag-grid-vue  rowSelection='single'  @selection-changed="onSelectionChanged" domLayout="autoHeight" :class="themeClass" :columnDefs="columnDefs" :rowData="rowData"
+          :defaultColDef="defaultColDef" :pagination="true" :sideBar="sideBar" :modules="modules" :paginationPageSize="itemsPerPage" :gridOptions="gridOptions"
+          @first-data-rendered="onFirstDataRendered" :statusBar="statusBar"   :enableRangeSelection="true">
+        </ag-grid-vue>  
+      </v-col>
+    
+
+    </v-row>
+    </v-container>
+  
+
+    </v-card-text>
+  </v-card>
+</section>
+

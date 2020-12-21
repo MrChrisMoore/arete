@@ -1,0 +1,22 @@
+<section id="short-orders" class="page">
+
+
+  <v-card>
+    <v-card-text>
+      <v-container fluid>
+        <v-row>
+          <v-col cols="12" md="12" class="mt-2" v-if="!loading">
+            <ag-grid-vue rowSelection='single' @selection-changed="onSelectionChanged" domLayout="autoHeight"
+              :class="themeClass" :columnDefs="columnDefs" :rowData="rowData" :defaultColDef="defaultColDef"
+              :pagination="true" :sideBar="sideBar" :modules="modules" :paginationPageSize="itemsPerPage"
+              :gridOptions="gridOptions" @first-data-rendered="onFirstDataRendered" :statusBar="statusBar"
+              :enableRangeSelection="true">
+            </ag-grid-vue>
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-card-text>
+  </v-card>
+
+
+</section>

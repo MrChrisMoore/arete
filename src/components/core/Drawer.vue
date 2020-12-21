@@ -17,54 +17,12 @@
         </v-list-item-avatar>
 
         <v-list-item-content>
-          <v-list-item-title class="display-1" v-text="profile.title" />
+          <v-list-item-title class="text-h6" v-text="profile.title" />
         </v-list-item-content>
       </v-list-item>
     </v-list>
 
-    <v-divider class="mb-2" />
-
-    <!-- <v-list>
-    <div v-for="(link, i) in items" :key="i">
-
-        <v-list-item
-            v-if="!link.children"
-            :key="i"
-            :to="link.to"            
-            class="v-list-item"
-        >
-            <v-list-item-action>
-                <v-icon>{{ link.icon }}</v-icon>
-            </v-list-item-action>
-
-            <v-list-item-title v-text="link.title" />
-        </v-list-item>
-
-        <v-list-group
-            v-else
-            :key="link.title"
-            no-action
-        >
-            <template v-slot:activator>
-               <v-list-item>
-                 <v-list-item-content>
-                   <v-list-item-title>{{ link.title }}</v-list-item-title>
-                 </v-list-item-content>
-               </v-list-item>
-             </template>
-
-            <v-list-item
-                v-for="sublink in link.children"
-                :to="sublink.to"
-                :key="sublink.title"
-            >
-                <v-list-item-title v-text="sublink.title" />
-            </v-list-item>
-
-        </v-list-group>
-
-    </div>
-</v-list> -->
+    <v-divider class="mb-2" />   
 
     <v-list expand dense nav class="py-0">
       <div />
@@ -106,11 +64,11 @@ export default {
       //   title: "Warehouse",
       //   to: "/sisense/wh-overview",
       // },
-      {
-        icon: "mdi-account",
-        title: "user",
-        to: "/pages/user",
-      },
+      // {
+      //   icon: "mdi-account",
+      //   title: "user",
+      //   to: "/pages/user",
+      // },
       // {
       //   title: 'rtables',
       //   icon: 'mdi-clipboard-outline',
@@ -156,24 +114,35 @@ export default {
       //   title: "OTD-SS",
       //   to: "/tmw/otd-ss",
       // },
-      {
-        icon: "mdi-receipt",
-        title: "Order Info",
+       {
+       icon:'mdi-truck',
+       title:'Transportation',
+       children:[ {
+        icon: "mdi-table-search",
+        title: "Orders",
         to: "/tmw/orderinfo",
       },
         {
         icon: "mdi-view-dashboard-variant",
         title: "Order Analytics",
-        to: "",
-      },
+        to: "/",
+      },]
+     },
       {
         icon: "fas fa-warehouse",
-        title: "Warehouse",
-        children:[{
-          icon:'mdi-view-dashboard-variant',
-          title:'Shipped',
-          to:''
-        }]
+        title: "Warehouse",        
+        children:[
+          {
+          icon:'mdi-warehouse',
+          title:'Shipped Orders',
+          to:'/wms/shipped-orders'
+        },
+        {
+          icon:'mdi-garage-alert',
+          title:'Short Orders',
+          to:'/wms/short-orders'
+        }
+        ]
       },
       //  {
       //   icon: "mdi-view-dashboard-variant",
@@ -197,35 +166,7 @@ export default {
       // },
     ],
   }),
-  // mounted() {
-  //   fetch(`${URL}/reports/listreports`, {
-  //     method: "GET",
-  //     credentials: "include"
-  //   })
-  //     .then(response => {
-  //       if (response.ok) {
-  //         return response.json();
-  //       }
-  //       return response.json().then(error => {
-  //         throw new Error(error.message);
-  //       });
-  //     })
-  //     .then(result => {
-  //       if (result && result.length) {
-  //         //var t = [{title:'My Reports',icon:'mdi-file-table-box-multiple', children:result.map(this.mapReports)}].map(this.mapReports);
-
-  //         let t = this.items.filter(item => {
-  //           return item.title === "My Reports";
-  //         });
-  //         t[0].children = result.map(this.mapReports);
-  //         debugger;
-  //         //this.items.push(t);
-  //         // result.forEach(val => {
-  //         //   this.items.push({ icon: "", title: val.Name });
-  //         // });
-  //       }
-  //     });
-  // },
+  
   computed: {
     ...mapState(["barColor"]),
     drawer: {
@@ -272,6 +213,7 @@ export default {
 <style lang="sass">
 @import '~vuetify/src/styles/tools/_rtl.sass'
 
+
 #core-navigation-drawer
   .v-list-group__header.v-list-item
     padding:2px
@@ -301,7 +243,7 @@ export default {
     .v-list-item
       &__icon--text,
       &__icon:first-child
-        margin-top: 10px
+        margin-top: 5px
 
   .v-list-group--sub-group
     .v-list-item

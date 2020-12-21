@@ -1,6 +1,6 @@
 <section id="single-order" class="page">
   <v-row justify="space-around">
-    <v-col cols="4">
+    <v-col cols="12" lg="5" sm="12" xs="12">
 
       <v-card>
         <v-card-text>
@@ -10,7 +10,7 @@
               <v-chip label class="mt-n9 pa-9" color="accent">Status: {{TMWOrder['CURRENT_STATUS']}}</v-chip>
             </div>
           </div>
-          <v-tabs icons-and-text v-model="currentTab" color="accent" >
+          <v-tabs icons-and-text v-model="currentTab" color="accent" grow centered>
             <v-tab v-for="item in tabs" :key="item.tab" @click="shouldI(item.tab)">
               {{ item.tab }}
             </v-tab>
@@ -24,22 +24,29 @@
                     <v-col cols="12">
                       <v-card flat class="my-0">
                         <v-row>
-                          <div class="subtitle-3 text-decoration-underline text-left">
-                            Origin
-                          </div>
-                        </v-row>
+                      <v-col cols="12">
 
-                        <v-row justify="space-around">
+                        <div class="subtitle-3 text-decoration-underline text-left">
+                          Origin
+                        </div>
+                      </v-col>
+                        <!-- </v-row> -->
+
+                        <!-- <v-row justify="space-around"> -->
                           <v-col cols="6" class="pa-1"> {{item.content['ORIGIN CITY']}},
                             {{item.content['ORIGIN STATE']}} </v-col>
                           
                           <v-col cols="6" class="pa-1 "><span class="text--disabled">Arrive </span>
                             {{item.content.ARRSHIP | toDateString}}</v-col>
-                        </v-row>
-                        <v-row justify="space-around">
+                        <!-- </v-row> -->
+                        <!-- <v-row justify="space-around"> -->
                           <v-col cols="6" class="pa-1"></v-col>
                           <v-col cols="6" class="pa-1"> <span class="text--disabled">Depart </span>
                             {{item.content.DEPSHIP | toDateString}}</v-col>
+                          </div> 
+                          <!-- <v-col cols="3" offset="9">
+                            <v-chip  label>Per lb</v-chip>
+                          </v-col> -->
                         </v-row>
                       </v-card>
                     </v-col>
@@ -50,13 +57,13 @@
                             Consignee
                           </div>
                         </v-row>
-                        <v-row justify="space-around">
+                        <v-row justify="space-between">
                           <v-col cols="6" class="pa-1"> {{item.content['CONSIGNEE NAME']}} </v-col>
                           <v-col cols="6" class="pa-1"><span class="text--disabled">Arrive </span>
                             {{item.content.ARRCONS | toDateString}}</v-col>
                         </v-row>
 
-                        <v-row justify="space-around">
+                        <v-row justify="space-between">
                           <v-col cols="6" class="pa-1"> {{item.content['CONSIGNEE CITY']}},
                             {{item.content['CONSIGNEE STATE']}} {{item.content['CONSIGNEE ZIP']}} </v-col>
                           <v-col cols="6" class="pa-1"><span class="text--disabled">Depart </span>
@@ -71,7 +78,7 @@
                             Details
                           </div>
                         </v-row>
-                        <v-row justify="space-around">
+                        <v-row justify="space-between">
                           <v-col v-for="(detail, i) in details" cols="6" class="pa-2" :key="i">
                             <v-row dense><small class="text--disabled">{{i}}</small> </v-row>
                             <v-row dense>{{ detail }}</v-row>
@@ -88,6 +95,8 @@
                   <v-col cols="6">{{item.content.costPerCase | toCurrency}}</v-col>
                   <v-col cols="6"> <small class="text--disabled">Cost Per Mile</small></v-col>
                   <v-col cols="6">{{item.content.costPerMile | toCurrency}}</v-col>
+                  <v-col cols="6"> <small class="text--disabled">Cost Per Pallet</small></v-col>
+                  <v-col cols="6">{{item.content.costPerPallet | toCurrency}}</v-col>
                 </v-row>
                 <v-row v-else>
                   <v-col v-if='loading' cols="12">  
@@ -110,8 +119,8 @@
         </v-card-text>
       </v-card>
     </v-col>
-    <v-divider vertical></v-divider>
-    <v-col cols="7">
+    <!-- <v-divider vertical></v-divider> -->
+    <v-col cols="12" lg="6" sm="12" xs="12">
       <v-card>
         <v-card-title>
           Map

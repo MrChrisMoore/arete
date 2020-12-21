@@ -24,9 +24,9 @@
       <v-icon>mdi-view-dashboard</v-icon>
     </v-btn>
 
-    <v-menu bottom left offset-y origin="top right" transition="scale-transition">
+    <v-menu bottom left offset-y origin="top right"   transition="scale-transition">
       <template v-slot:activator="{ attrs, on }">
-        <v-btn class="ml-2" min-width="0" text v-bind="attrs" v-on="on">
+        <v-btn class="ml-2 d-none d-md-flex" min-width="0" text v-bind="attrs" v-on="on">
           <v-badge color="red" overlap bordered>
             <template v-slot:badge>
               <span>{{notifications.length}}</span>
