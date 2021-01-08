@@ -13,13 +13,6 @@
  */
 
 import { exists, mapValues } from '../runtime';
-import {
-    PickupRange,
-    PickupRangeFromJSON,
-    PickupRangeFromJSONTyped,
-    PickupRangeToJSON,
-} from './';
-
 /**
  * 
  * @export
@@ -31,25 +24,13 @@ export interface Model5 {
      * @type {Array<string>}
      * @memberof Model5
      */
-    rangeResult?: Array<string>;
-    /**
-     * 
-     * @type {PickupRange}
-     * @memberof Model5
-     */
-    pickupRange?: PickupRange;
+    tmwCodes?: Array<string>;
     /**
      * 
      * @type {Array<string>}
      * @memberof Model5
      */
-    compareResult?: Array<string>;
-    /**
-     * 
-     * @type {PickupRange}
-     * @memberof Model5
-     */
-    compareRange?: PickupRange;
+    pickupRange?: Array<string>;
 }
 
 export function Model5FromJSON(json: any): Model5 {
@@ -62,10 +43,8 @@ export function Model5FromJSONTyped(json: any, ignoreDiscriminator: boolean): Mo
     }
     return {
         
-        'rangeResult': !exists(json, 'rangeResult') ? undefined : json['rangeResult'],
-        'pickupRange': !exists(json, 'pickupRange') ? undefined : PickupRangeFromJSON(json['pickupRange']),
-        'compareResult': !exists(json, 'compareResult') ? undefined : json['compareResult'],
-        'compareRange': !exists(json, 'compareRange') ? undefined : PickupRangeFromJSON(json['compareRange']),
+        'tmwCodes': !exists(json, 'tmwCodes') ? undefined : json['tmwCodes'],
+        'pickupRange': !exists(json, 'pickupRange') ? undefined : json['pickupRange'],
     };
 }
 
@@ -78,10 +57,8 @@ export function Model5ToJSON(value?: Model5 | null): any {
     }
     return {
         
-        'rangeResult': value.rangeResult,
-        'pickupRange': PickupRangeToJSON(value.pickupRange),
-        'compareResult': value.compareResult,
-        'compareRange': PickupRangeToJSON(value.compareRange),
+        'tmwCodes': value.tmwCodes,
+        'pickupRange': value.pickupRange,
     };
 }
 

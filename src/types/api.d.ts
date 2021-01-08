@@ -9,6 +9,7 @@ import { UserApi } from '@/api/apis/UserApi';
 import { TmwApi } from '@/api/apis/TmwApi';
 
 
+
 declare module 'vue/types/vue' {
   export interface Vue {
     $auth: AuthApi,
@@ -16,7 +17,7 @@ declare module 'vue/types/vue' {
     //reportsApi?:ReportsApi, 
     $translationApi?:TranslationsApi,
     $tmwApi?:TmwApi,
-    $cdnApi?:CdnApi
+    $cdnApi?:CdnApi,
     $dateFields: string[],
     $dateTimeFields: string[],
     $numericFields: string[],

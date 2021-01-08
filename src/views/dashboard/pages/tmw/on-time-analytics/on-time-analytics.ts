@@ -2,22 +2,24 @@
 import { PostTmwOrdersDawgRequest } from '@/api/apis/TmwApi';
 import Vue from 'vue';
 import Component from 'vue-class-component';
-import { VContainer, VSlideXTransition, VChip } from 'vuetify/lib';
+import { VContainer, VSlideXTransition, VChip,VSpeedDial } from 'vuetify/lib';
 import { ApexOptions } from 'apexcharts';
 import { Watch } from 'vue-property-decorator';
-import { Model5 } from '@/api/models';
+import { OrdersByDateRange } from '@/api/models';
 import { object } from 'joi';
 
 @Component({
   components: {
     VContainer,
     VSlideXTransition,
-    VChip
+    VChip,
+    VSpeedDial
   },
   name: 'on-time-analytics-',
 })
 export default class OnTimeAnalytics extends Vue {
   dates = [];
+  fab=false;
   compareDates = [];
   menu = false
   loading: boolean = true;
@@ -30,15 +32,11 @@ export default class OnTimeAnalytics extends Vue {
   dtdChart: ApexCharts;
   costChart: ApexCharts;
   costSeries = null;
-  dtdSeries = null;
-  //dateTimeFields = ['delivery appt', 'arrcons', 'depcons', 'arrship', 'depship'];
-  // numericFields = ['weight', 'cs', 'pallet', 'distance'];
-  // currencyFields = ['total charges', 'misc', 'lumper admin', 'nyc', 'lumper', 'linehaul', 'fuel', 'detention', 'afterhours'];
+  dtdSeries = null;  
   unitTypes = {
     weight: 'pound',
     distance: 'mile',
   }
-
   allKpis = ['loads', ...this.$currencyFields, ...this.$numericFields]
 
   dtdChartOptions: ApexOptions = {
@@ -126,7 +124,7 @@ export default class OnTimeAnalytics extends Vue {
     //   curve: 'straight'
     // },
     title: {
-      text: 'Charges (by CONSIGNEE)',
+      text: 'Charges',
       align: 'left'
     },
     // grid: {
@@ -206,58 +204,7 @@ export default class OnTimeAnalytics extends Vue {
     if (val && val.length && val.length === 2) {
       this.GetOrders();
     }
-  }
-
-  // beforeMount(){
-  //   let ota =this;
-  //   ota.numericFields.forEach((val)=>{
-  //     ['Total','Min','Max','Average'].forEach((op:any)=>{
-  //      // console.log(`${op.toLowerCase()}${val.toLowerCase().trim().replace(' ','').replace('totaltotal', 'total')}`);
-  //       if(ota[`${op.toLowerCase()}${val.toLowerCase().trim().replace(' ','').replace('totaltotal', 'total')}`]){return}
-  //       Object.defineProperty(ota,`${op.toLowerCase()}${val.toLowerCase().trim().replace(' ','').replace('totaltotal', 'total')}`, {
-  //         get(){
-  //           return ota.getAggregateValue(val,op)
-  //         }
-  //       })
-  //     });
-  //     ['Total','Min','Max','Average'].forEach((op:any)=>{
-  //       //console.log(`${op.toLowerCase()}${val.toLowerCase().trim().replace(' ','').replace('totaltotal', 'total')}_compare`);
-  //       if(ota[`${op.toLowerCase()}${val.toLowerCase().trim().replace(' ','').replace('totaltotal', 'total')}_compare`]){return}
-  //       Object.defineProperty(ota,`${op.toLowerCase()}${val.toLowerCase().trim().replace(' ','').replace('totaltotal', 'total')}_compare`, {
-  //         get(){
-  //           return ota.getAggregateValue(val,op, true)
-  //         }
-  //       });
-
-  //     });
-  //   });
-  //   ota.currencyFields.forEach((val)=>{
-  //     ['Total','Min','Max','Average'].forEach((op:any)=>{
-  //       //console.log(`${op.toLowerCase()}${val.toLowerCase().trim().replace(' ','').replace('totaltotal', 'total')}`);
-  //       if(ota[`${op.toLowerCase()}${val.toLowerCase().trim().replace(' ','').replace('totaltotal', 'total')}`]){return}
-  //       Object.defineProperty(ota,`${op.toLowerCase()}${val.toLowerCase().trim().replace(' ','').replace('totaltotal', 'total')}`, {
-  //         get(){
-  //           return ota.getAggregateValue(val,op)
-  //         }
-  //       });
-
-  //     });
-
-  //     ['Total','Min','Max','Average'].forEach((op:any)=>{
-  //       //console.log(`${op.toLowerCase()}${val.toLowerCase().trim().replace(' ','').replace('totaltotal', 'total')}_compare`);
-  //       //if(ota[`${op.toLowerCase()}${val.toLowerCase().trim().replace(' ','').replace('totaltotal', 'total')}_compare`]){return}
-  //       Object.defineProperty(ota,`${op.toLowerCase()}${val.toLowerCase().trim().replace(' ','').replace('totaltotal', 'total')}_compare`, {
-  //         get(){
-  //           return ota.getAggregateValue(val,op, true)
-  //         }
-  //       });
-
-  //     });
-
-  //   });
-  // //  console.log(JSON.stringify(ota)) 
-  // // console.dir(ota)
-  // }
+  }  
 
   mounted() {
     this.GetOrders();
@@ -268,8 +215,6 @@ export default class OnTimeAnalytics extends Vue {
     if (this.dtdChart) this.dtdChart.updateOptions({ theme: { mode: val ? 'dark' : 'light' } }, true);
     if (this.costChart) this.costChart.updateOptions({ theme: { mode: val ? 'dark' : 'light' } }, true);
   }
-
-
 
   icons = {
     loads: ['fas fa-truck', 'warning'],
@@ -287,15 +232,18 @@ export default class OnTimeAnalytics extends Vue {
     afterhours: ['fas fa-hourglass', 'grey darken-1'],
     detention: ['fas fa-stopwatch', 'grey lighten-1']
   }
+
   getIcon(str) {
     let icon = this.icons[str.replace(/\s/g, '')];
     return icon ? icon[0] : '';
   }
+
   getColor(str) {
     let color = this.icons[str.replace(/\s/g, '')];
 
     return color ? color[1] : '';
   }
+
   kpiValue(str, type: any = "Total") {
     let style = '';
     if (this.$currencyFields.indexOf(str) >= 0) {
@@ -319,9 +267,11 @@ export default class OnTimeAnalytics extends Vue {
     return ` ${prefix} ${this.getAggregateValueAsString(str, style, type, 2, this.unitTypes[str])}`;
 
   }
+
   decreaseBad(kpi) {
     return ['loads', 'weight', 'cases', 'pallet'].indexOf(kpi) > -1;
   }
+
   kpiComparisonValue(str) {
     let style = '';
     if (this.$currencyFields.indexOf(str) >= 0) {
@@ -342,9 +292,7 @@ export default class OnTimeAnalytics extends Vue {
 
   }
 
-
-
-  res: Model5 = null;
+  res: OrdersByDateRange = null;
   private async GetOrders() {
     let ota = this;
     let user = JSON.parse(localStorage.getItem('user'));
@@ -456,52 +404,24 @@ export default class OnTimeAnalytics extends Vue {
         name: `${this.res.pickupRange.start} to ${this.res.pickupRange.end}`,
         data: [
           ...this.items.map((val) => {
-            return val['ARRCONS'] ?//val["TOTAL CHARGES"]
-              {
-                // x: new Intl.DateTimeFormat(window.navigator.language).format(new Date(val['PICKUP'])),
-                x: val['CONSIGNEE NAME'],//new Date(val['ARRCONS']).toLocaleDateString(),
-
+            return val['ARRCONS'] ?
+              {                
+                x: val['CONSIGNEE NAME'],
                 y: parseInt(val['TOTAL CHARGES'])
               }
-              : null
-
-
-            // return val['PICKUP'] !== '2020-03-23' ?
-
-            //   {
-            //     // x: new Intl.DateTimeFormat(window.navigator.language).format(new Date(val['PICKUP'])),
-            //     x: new Date(val['PICKUP']).getTime(),
-
-            //     y: val['TOTAL CHARGES']
-            //   }
-
-            //   : null
+              : null         
           }).filter(x => x)]
       },
       {
         name: `${this.res.compareRange.start} to ${this.res.compareRange.end}`,
         data: [
           ...this.res.compareResult.map((val) => {
-            return val['ARRCONS'] ?//val["TOTAL CHARGES"]
+            return val['ARRCONS'] ?
               {
-                // x: new Intl.DateTimeFormat(window.navigator.language).format(new Date(val['PICKUP'])),
-
                 x: val['CONSIGNEE NAME'],//new Date(val['ARRCONS']).toLocaleDateString(),
                 y: parseInt(val['TOTAL CHARGES'])
               }
               : null
-
-
-            // return val['PICKUP'] !== '2020-03-23' ?
-
-            //   {
-            //     // x: new Intl.DateTimeFormat(window.navigator.language).format(new Date(val['PICKUP'])),
-            //     x: new Date(val['PICKUP']).getTime(),
-
-            //     y: val['TOTAL CHARGES']
-            //   }
-
-            //   : null
           }).filter(x => x)]
       },
     ]
@@ -644,6 +564,34 @@ export default class OnTimeAnalytics extends Vue {
     return this.items.reduce((a, b) => a + (b[key.toUpperCase()] || 0), 0);
   }
 
+  totalCost=0;
+  costPer(val){
+    if(this.totalCost === 0){
+      this.totalCost = this.sum('total charges');
+    }
+    let cp = 0; 
+    switch (val) {
+      case 'Mile': 
+      cp = this.totalCost / this.sum('Distance')       
+        break;
+        case 'Case':  
+        cp = this.totalCost / this.sum('Cases')      
+        break;
+        case 'Pound':        
+        cp = this.totalCost / this.sum('Weight')
+        break;
+        case 'Pallet':        
+        cp = this.totalCost / this.sum('Pallet')
+        break;
+      
+    }
+
+    let numberFormatOptions: Intl.NumberFormatOptions | any = { minimumFractionDigits: 2, maximumFractionDigits: 2, style: 'currency', currency:this.getCurrencyCode() }
+  
+    return cp.toLocaleString(window.navigator.language, numberFormatOptions)
+
+  }
+  
   currencyCode: string = null;
   private getCurrencyCode(): string {
     if (!this.currencyCode) {
@@ -656,8 +604,6 @@ export default class OnTimeAnalytics extends Vue {
     }
     return this.currencyCode;
   }
-
-
 
 }
 

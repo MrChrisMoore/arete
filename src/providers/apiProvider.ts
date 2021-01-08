@@ -2,7 +2,7 @@ import { Configuration } from "../api/runtime";
 import { VueConstructor } from "vue/types/umd";
 import { AuthApi } from "../api/apis/AuthApi";
 import { UserApi, TranslationsApi, CdnApi, TmwApi } from '@/api';
-
+import store from '../store'
 const getApiKey = (name: string) => {
   if(process.env.LOG_VERBOSE !== 'false')  console.log("Getting token");
   return localStorage.getItem("token") || "";
@@ -11,12 +11,28 @@ const getApiKey = (name: string) => {
 const apiConfig = new Configuration({
   basePath: process.env.VUE_APP_API_URL,
   apiKey: getApiKey,
+  middleware:[{pre(context){
+    
+  return new Promise((res,rej)=>{
+    store.dispatch('loader/show')
+    res()
+  });
+  
+  },post(context){
+    
+  return new Promise((res,rej)=>{
+    store.dispatch('loader/hide')
+    res()
+  });
+  
+  }}]
 });
 
 export default {
   install(vue: VueConstructor) {
     if(process.env.LOG_VERBOSE !== 'false') console.log("Installing API Plugin");
-    vue.prototype.$auth = new AuthApi(apiConfig);
+    vue.prototype.$auth = new AuthApi(apiConfig)
+
 //vue.component.prototype.$auth = new AuthApi();
     vue.prototype.$userApi = new UserApi(apiConfig);
 //vue.component.prototype.$userApi = new UserApi();

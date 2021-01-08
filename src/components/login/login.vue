@@ -11,10 +11,13 @@
             </div>
           </template>
               <v-card-text>
-                <v-form @submit.prevent="submit" @keyup.native.enter="login">
+                <v-form @submit.prevent="submit" @keyup.native.enter="login"  ref="form"
+    v-model="valid"
+    lazy-validation>
                   <v-text-field
                   v-model="username"
                     label="Login"
+                    :rules="nameRules"
                     name="login"
                     prepend-icon="mdi-account"
                     type="text"
@@ -22,6 +25,7 @@
 
                   <v-text-field
                   v-model="password"
+                  :rules="passwordRules"
                     id="password"
                     label="Password"
                     name="password"
@@ -38,6 +42,8 @@
                 <v-btn color="primary" @click="loginFacebook()">Facebook Login</v-btn> -->
               </v-card-actions>
             </base-material-card>
+
+<v-snackbar v-model="snackbar">{{ message }}</v-snackbar>
   </section>
 
 </template>
@@ -46,18 +52,30 @@
 import Vue from "vue";
 import { AuthApi, PostAuthLoginRequest } from "../../api/apis/AuthApi";
 import Component from "vue-class-component";
+import {VSnackbar} from 'vuetify/lib'
 // const googleLoginURL: string = `${process.env.VUE_APP_API_URL}/auth/google`;
 // const facebookLoginURL: string = `${process.env.VUE_APP_API_URL}/auth/facebook`;
 // const loginURL: string = `${process.env.VUE_APP_API_URL}/auth/login`;
 // const authCheckURL: string = `${process.env.VUE_APP_API_URL}`;
 //import { AuthApi } from "../../api/apis/AuthApi";
-@Component
+@Component({components:{VSnackbar}})
 export default class Login extends Vue {
   name: "login";
-
+  snackbar = false;
   username: string = "";
   password: string = "";
-
+  message="Incorrect username or password.";
+  valid = true;
+  nameRules =[(v)=> {
+    debugger
+    return (!!v && this.valid) || 'Incorrect username or password'
+    }
+    ]
+  passwordRules =[(v)=> { 
+    debugger
+    return (!!v && this.valid) || 'Incorrect username or password'
+  }
+  ]
   // loginGoogle() {
   //   window.location.href = googleLoginURL;
   // }
@@ -81,6 +99,11 @@ export default class Login extends Vue {
           body: { username: this.username, password: this.password },
         })
         .catch((err) => {
+          this.snackbar = true;
+          this.username = '';
+          this.password = '';
+          this.valid=false;
+          (this as any).$refs.form.validate();
           if (process.env.LOG_ERROR !== "false") console.log(err);
         });
       if (authResponse) {
@@ -107,6 +130,13 @@ export default class Login extends Vue {
             }
           }
         }
+      }else{
+        this.snackbar = true;
+       
+        this.username = '';
+          this.password = '';
+           this.valid=false;
+          (this as any).$refs.form.validate();
       }
     } catch (error) {
       if (process.env.LOG_ERROR !== "false") console.log(error);

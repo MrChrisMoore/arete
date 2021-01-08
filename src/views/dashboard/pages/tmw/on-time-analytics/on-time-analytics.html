@@ -51,6 +51,26 @@
           </base-material-stats-card>
         </transition>
       </v-col>
+      <v-col cols="12" md="4" lg="3" class="pa-1" >
+        <base-material-stats-card  color="red" icon="fas fa-road"
+             title="Cost Per Mile" :value="costPer('Mile')">
+          </base-material-stats-card>
+      </v-col>
+      <v-col cols="12" md="4" lg="3" class="pa-1" >
+        <base-material-stats-card  color="red" icon="fas fa-weight"
+             title="Cost Per Pound" :value="costPer('Pound')">
+          </base-material-stats-card>
+      </v-col>
+      <v-col cols="12" md="4" lg="3" class="pa-1" >
+        <base-material-stats-card  color="red" icon="fas fa-suitcase"
+             title="Cost Per Case" :value="costPer('Case')">
+          </base-material-stats-card>
+      </v-col>
+      <v-col cols="12" md="4" lg="3" class="pa-1" >
+        <base-material-stats-card  color="red" icon="fas fa-pallet"
+             title="Cost Per Pallet" :value="costPer('Pallet')">
+          </base-material-stats-card>
+      </v-col>
     </v-row>
     <base-material-apex-chart-card class="d-none d-md-block"  v-if="!loading" :options="costChartOptions"
       :series="costSeries" height="450" type="line">
@@ -92,7 +112,54 @@
       </v-card>
       </v-col>
     </v-row> -->
+    <v-speed-dial
+    elevation="2"
+    v-model="fab"
+    fixed
+    color="primary"
+    class="mr-7"
+    bottom
+    right  >
+  
+  <template v-slot:activator>
+    <v-btn
+      v-model="fab"
+      color="primary"
+      dark
+      fab
+    >
+      <v-icon v-if="fab">
+        mdi-close
+      </v-icon>
+      <v-icon v-else>
+        mdi-plus
+      </v-icon>
+    </v-btn>
+  </template>
+  <v-btn
+    
+    dark
+    small
+    class="mr-10"
+    color="accent"
+  >
+  <v-icon left>mdi-filter</v-icon>
+    Filter Consignee
+  </v-btn>
 
+  <v-btn
+  class="mr-10" 
+  small    
+  color="red"
+>
+<v-icon left>mdi-delete</v-icon>
+ Remove Filter
+   
+  </v-btn>
+</v-speed-dial>
+  <!-- <v-icon>mdi-plus</v-icon></v-speedial> -->
+
+  <!-- <v-icon>mdi-plus</v-icon></v-speedial> -->
     <v-snackbar v-model="snackbar" timeout="10000" absolute left shaped top color="warning">
       {{ snackText }}
 

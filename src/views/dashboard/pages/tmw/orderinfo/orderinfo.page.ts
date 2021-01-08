@@ -233,7 +233,7 @@ export default class OrderinfoPage extends Vue {
 
   async mounted() {
     this.gridApi = this.gridOptions.api;
-    this.gridOptions.onRowClicked
+    // this.gridOptions.onRowClicked
     await this.GetOrders();
   //  this.loadMap();
   }

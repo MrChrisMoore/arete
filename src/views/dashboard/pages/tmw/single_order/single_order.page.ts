@@ -1,7 +1,11 @@
 import Vue from 'vue';
 import Component from 'vue-class-component';
-import { VCard, VCardTitle, VCardText, VChip, VCardSubtitle, VTabs, VContainer, VSkeletonLoader } from 'vuetify/lib'
+import { VCard, VCardTitle, VCardText, VChip, VCardSubtitle, VTabs, VContainer, VSkeletonLoader, VTooltip, VList, VListItem, VListItemSubtitle, VListItemTitle } from 'vuetify/lib'
 import { Prop } from 'vue-property-decorator';
+import { SelectionChangedEvent,PaginationChangedEvent,GridReadyEvent,GridOptions,GridApi,SideBarModule,MenuModule, ClientSideRowModelModule, ColumnsToolPanelModule, FiltersToolPanelModule, RowGroupingModule, StatusBarModule,RangeSelectionModule, ColDef,  ExcelExportParams, ExcelExportModule } from '@ag-grid-enterprise/all-modules'
+import {AgGridVue} from '@ag-grid-community/vue';
+import { object } from 'joi';
+
 const MAPS_API_KEY = process.env.VUE_APP_MAPS_API_KEY;
 
 const CALLBACK_NAME = 'gmapsCallback';
@@ -46,7 +50,7 @@ function gmapsInit() {
 
 @Component({
   components: {
-    VCard, VCardTitle, VCardText, VChip, VCardSubtitle, VTabs, VContainer, VSkeletonLoader
+    VCard, VCardTitle, VCardText, VChip, VCardSubtitle, VTabs, VContainer, VSkeletonLoader, VTooltip, VList, VListItem, VListItemSubtitle,AgGridVue, VListItemTitle
   },
   name: 'single-order-page',
 })
@@ -55,73 +59,69 @@ export default class SingleOrderPage extends Vue {
   @Prop({ default: {}, type: Object }) TMWOrder!: any;
   // @Prop({ default: {}, type: Object }) Additional!: any;
   currentTab = null;
-
-
+//  docurl = `http://192.168.9.10/cgi-bin/img-docfind.pl?qtype=Search%20On%20One%20Index&reftype=ORD&refnum=${this.TMWOrder['FB#']}`
+  columnDefs: ColDef[] = [];
+  defaultColDef = {
+    // sortable: true,
+    // filter: true,
+    // resizable: true,
+    // minWidth: 100,
+    // flex: 1,
+    resizable: true,
+    flex: 1,
+    minWidth: 100,
+    enableValue: true,
+    enableRowGroup: true,
+    enablePivot: true,
+    sortable: true,
+    filter: true,
+    menuTabs: ['filterMenuTab', 'generalMenuTab', 'columnsMenuTab'],
+  };
+  gridOptions: GridOptions = {/* onDisplayedColumnsChanged:this.onDisplayedColumnsChanged, */ onColumnVisible:this.onColumnVisible};
+  hidden=[];
+  onColumnVisible(e){
+   this.hidden.push(e.columns[0].colId);
+   console.log(this.hidden.join("','"));
+   
+    
+  }
+  sideBar = {
+    toolPanels: ['columns', 'filters'],
+    // hiddenByDefault:true
+};
+modules =[SideBarModule,MenuModule, ClientSideRowModelModule,ColumnsToolPanelModule,ExcelExportModule, FiltersToolPanelModule,RangeSelectionModule, RowGroupingModule,StatusBarModule]
   tabs = [
     { tab: 'Shipping', content: this.TMWOrder },
     { tab: 'Stats', content: this.getOrderStats() },
     { tab: 'Warehouse', content: 'Loading' },
     { tab: 'Documents', content: 'Document Links' }
   ];
-  // orderTabs = ;
-
-  // get detailContent() {
-
-  //   let content ={}
-  //    Object.keys(this.TMWOrder).forEach(k =>{
-  //     if(this.TMWOrder[k]  && ['CONSIGNEE NAME', 'CONSIGNEE STATE', 'CONSIGNEE CITY', 'FB#','CONSIGNEE ZIP', 'ORIGIN CITY', 'ORIGIN STATE', 'CURRENCY', 'LEAD TIME', 'ARRCONS', 'DEPCONS', 'ARRSHIP', 'DEPSHIP'].indexOf(k) === -1 )content[k] = this.TMWOrder[k];
-  //   });
-  //   for (var key in this.Additional) {
-  //     if (this.Additional.hasOwnProperty(key)) {
-  //       let theKey = key.replaceAll('_', ' ').replace(/acc/ig, '').trim();        
-  //       if (!this.TMWOrder.hasOwnProperty(theKey) &&
-  //         !this.TMWOrder.hasOwnProperty(theKey.toUpperCase()) && this.Additional[key] && 
-  //         (theKey.toLowerCase().indexOf('consignee') === -1 && theKey.toLowerCase().indexOf('origin')  === -1 ) &&
-  //         [ 'detail line id', 'bill to code', 'revenue group','carrier id','carrier name', 'fb#', 'site id', 'freightbill'].indexOf(theKey.toLowerCase()) === -1) {
-  //         content[theKey] = this.Additional[key];
-  //       }
-  //     }
-  //   }
-  //   for (var key in content) {
-
-  //     if (this.$dateFields.indexOf(key.toLowerCase()) !== -1) {
-  //       content[key] = this.$options.filters['toDateString'](content[key]);
-  //     }
-  //     if (this.$currencyFields.indexOf(key.toLowerCase()) !== -1) {
-  //       content[key] = this.$options.filters['toCurrency'](content[key]);
-  //     }
-  //     if (this.$numericFields.indexOf(key.toLowerCase()) !== -1) {
-  //       switch (key.toLowerCase()) {
-  //         case 'weight':
-  //           content[key] = this.$options.filters['toWeight'](content[key]);
-  //           break;
-  //         case 'distance':
-  //           content[key] = this.$options.filters['toMiles'](content[key]);
-  //           break;
-  //         default:
-  //           content[key] = this.$options.filters['toString'](content[key]);
-  //           break;
-  //       }
-  //     }
-
-  //   }
-
-  // return content
-
-  // }
-  loading = true;
+  get themeClass() {
+    return this.$vuetify.theme.dark ? 'ag-theme-alpine-dark' : 'ag-theme-alpine'
+  }
+  loading = this.$store.state;
   async getOrderHeader(id) {
     let response = await this.$tmwApi.getTmwOrderHeaderId({ id: id })
     if (response && response.length) {
-      setTimeout(() => {
+      
 
-        this.loading = false
-      }, 2000);
+     
+     Object.keys(response[0]).forEach(k=>{
+      let colDef:ColDef = {
+        headerName:k,
+        field:k
+      } 
+      this.columnDefs.push(colDef)
+     });
+     this.loading = false
       //  this.orderHeader = response[0];
-      this.tabs[2].content = response[0];
+      this.tabs[2].content = response;
       // return response[0];
     }
 
+  }
+  onSelectionChanged(event:SelectionChangedEvent){
+    // TODO: Get detail lines
   }
   getOrderStats() {
     let costPerPound = this.TMWOrder['TOTAL CHARGES'] / this.TMWOrder['WEIGHT'];
@@ -140,6 +140,7 @@ export default class SingleOrderPage extends Vue {
   mounted() {
 
     this.loadMap();
+    this.getDocList();
   }
   shouldI(tab) {
     if (tab === 'Warehouse') {
@@ -158,7 +159,7 @@ export default class SingleOrderPage extends Vue {
     SOpage.geoCoder.geocode({ region: 'us', address: 'United States' }, (result, status) => {
       SOpage.map.setCenter(result[0].geometry.location);
       SOpage.map.fitBounds(result[0].geometry.viewport);
-       this.addMarker();
+      this.addMarker();
 
     });
 
@@ -175,7 +176,7 @@ export default class SingleOrderPage extends Vue {
     SOpage.geoCoder.geocode({ region: 'US', address: `${SOpage.TMWOrder['CONSIGNEE ZIP']}` }, (results, status1) => {
       if (results) {
         results.forEach((res) => {
-          new google.maps.Marker({ position: res.geometry.location,map:SOpage.map,icon: 'http://maps.google.com/mapfiles/kml/pushpin/red-pushpin.png' })
+          new google.maps.Marker({ position: res.geometry.location, map: SOpage.map, icon: 'http://maps.google.com/mapfiles/kml/pushpin/red-pushpin.png' })
         })
         // let markers = results.map(x => {
         //   if (x && x.geometry && x.geometry.location) {
@@ -183,7 +184,7 @@ export default class SingleOrderPage extends Vue {
         //     //   position: x.geometry.location,
         //     //   map
         //     // });
-          
+
         //   }
         // })
       }
@@ -191,7 +192,7 @@ export default class SingleOrderPage extends Vue {
     SOpage.geoCoder.geocode({ region: 'US', address: `${SOpage.TMWOrder['ORIGIN CITY']},${SOpage.TMWOrder['ORIGIN STATE']}` }, (results, status1) => {
       if (results) {
         results.forEach((res) => {
-          new google.maps.Marker({ position: res.geometry.location,map:SOpage.map ,icon: 'http://maps.google.com/mapfiles/kml/pushpin/wht-pushpin.png'})
+          new google.maps.Marker({ position: res.geometry.location, map: SOpage.map, icon: 'http://maps.google.com/mapfiles/kml/pushpin/wht-pushpin.png' })
         })
         // let markers = results.map(x => {
         //   if (x && x.geometry && x.geometry.location) {
@@ -199,7 +200,7 @@ export default class SingleOrderPage extends Vue {
         //     //   position: x.geometry.location,
         //     //   map
         //     // });
-          
+
         //   }
         // })
       }
@@ -265,49 +266,104 @@ export default class SingleOrderPage extends Vue {
     //   }
     // });
     // });
-  
-}
 
-get details() {
-  let sop = this;
-  let keys = [];
-
-  if (this.$props.TMWOrder) {
-
-    keys = Object.keys(this.$props.TMWOrder).filter((v) => {
-      return v && ['CONSIGNEE NAME', 'CONSIGNEE STATE', 'CONSIGNEE CITY', 'CONSIGNEE ZIP', 'ORIGIN CITY', 'ORIGIN STATE', 'CURRENCY', 'LEAD TIME', 'DETAIL_LINE_ID', 'ARRCONS', 'DEPCONS', 'ARRSHIP', 'DEPSHIP', 'FB#', 'CURRENT_STATUS'].indexOf(v) === -1
-    });
   }
-  let it = {}
 
-  keys.forEach(key => {
-    if (sop.$props.TMWOrder[key]) {
-      it[key] = sop.$props.TMWOrder[key];
-      if (this.$dateFields.indexOf(key.toLowerCase()) !== -1) {
-        it[key] = this.$options.filters['toDateString'](sop.$props.TMWOrder[key]);
-      }
-      if (this.$currencyFields.indexOf(key.toLowerCase()) !== -1) {
-        it[key] = this.$options.filters['toCurrency'](sop.$props.TMWOrder[key]);
-      }
-      if (this.$numericFields.indexOf(key.toLowerCase()) !== -1) {
-        switch (key.toLowerCase()) {
-          case 'weight':
-            it[key] = this.$options.filters['toWeight'](sop.$props.TMWOrder[key]);
-            break;
-          case 'distance':
-            it[key] = this.$options.filters['toMiles'](sop.$props.TMWOrder[key]);
-            break;
-          default:
-            it[key] = this.$options.filters['toString'](sop.$props.TMWOrder[key]);
-            break;
+  get details() {
+    let sop = this;
+    let keys = [];
+
+    if (this.$props.TMWOrder) {
+
+      keys = Object.keys(this.$props.TMWOrder).filter((v) => {
+        return v && ['CONSIGNEE NAME', 'CONSIGNEE STATE', 'CONSIGNEE CITY', 'CONSIGNEE ZIP', 'ORIGIN CITY', 'ORIGIN STATE', 'CURRENCY', 'LEAD TIME', 'DETAIL_LINE_ID', 'ARRCONS', 'DEPCONS', 'ARRSHIP', 'DEPSHIP', 'FB#', 'CURRENT_STATUS'].indexOf(v) === -1
+      });
+    }
+    let it = {}
+
+    keys.forEach(key => {
+      if (sop.$props.TMWOrder[key]) {
+        it[key] = sop.$props.TMWOrder[key];
+        if (this.$dateFields.indexOf(key.toLowerCase()) !== -1) {
+          it[key] = this.$options.filters['toDateString'](sop.$props.TMWOrder[key]);
+        }
+        if (this.$currencyFields.indexOf(key.toLowerCase()) !== -1) {
+          it[key] = this.$options.filters['toCurrency'](sop.$props.TMWOrder[key]);
+        }
+        if (this.$numericFields.indexOf(key.toLowerCase()) !== -1) {
+          switch (key.toLowerCase()) {
+            case 'weight':
+              it[key] = this.$options.filters['toWeight'](sop.$props.TMWOrder[key]);
+              break;
+            case 'distance':
+              it[key] = this.$options.filters['toMiles'](sop.$props.TMWOrder[key]);
+              break;
+            default:
+              it[key] = this.$options.filters['toString'](sop.$props.TMWOrder[key]);
+              break;
+          }
         }
       }
+
+    });
+
+    return it
+  }
+  docInfo = null;
+  hasdocs =false;
+  async getDocList() {
+    let response = await this.$tmwApi.getTmwDocsIdsId({ id: this.TMWOrder['FB#'] }).catch(res =>{
+      
+    });
+
+    if (response && response.length) {
+      this.hasdocs = true;
+      this.docInfo = response;
+      this.docInfo.forEach(element => {
+        // let split = element.hdr_intdocid.match(/.{1,2}/g);
+        // let path = split.join('/');
+        element['path'] =`${process.env.VUE_APP_API_URL}/tmw/docs/${element.hdr_intdocid}`
+      });
+    }
+  }
+
+  async getDoc(item){
+   
+   let res:any =await this.$tmwApi.getTmwDocsId({id:item.hdr_intdocid}).catch(err =>{
+     debugger
+   });
+    if(res){
+debugger
+      // var blob = new Blob([res], { type: 'image/tif' });
+      // var link = document.createElement('a');
+      // link.href = window.URL.createObjectURL(blob);
+      // link.download = 'test.tif';
+
+      // document.body.appendChild(link);
+
+      // link.click();
+
+      // document.body.removeChild(link);
+
+      // var blob = new Blob([res], {type: 'image/tif'});
+
+      // //downloading the file depends on the browser
+      // //IE handles it differently than chrome/webkit
+      // if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+      //     window.navigator.msSaveOrOpenBlob(blob, 'test.tif');
+      // } else {
+      //     var objectUrl = URL.createObjectURL(blob);
+      //     window.open(objectUrl);
+      // }
+      // let src = `data:image/tiff;base64, ${res}`
+      // let el = document.getElementById('docimg');
+      // el.setAttribute('src',src);
+      // el.removeAttribute('style')
+
     }
 
-  });
 
-  return it
-}
+  }
 
 }
 

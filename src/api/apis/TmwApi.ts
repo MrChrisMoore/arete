@@ -24,16 +24,24 @@ import {
     Model4,
     Model4FromJSON,
     Model4ToJSON,
-    Model5,
-    Model5FromJSON,
-    Model5ToJSON,
     NotFoundResponse,
     NotFoundResponseFromJSON,
     NotFoundResponseToJSON,
+    OrdersByDateRange,
+    OrdersByDateRangeFromJSON,
+    OrdersByDateRangeToJSON,
 } from '../models';
 
 export interface GetTmwAccessorialIdRequest {
     id: number;
+}
+
+export interface GetTmwDocsIdRequest {
+    id: string;
+}
+
+export interface GetTmwDocsIdsIdRequest {
+    id: string;
 }
 
 export interface GetTmwOrderHeaderIdRequest {
@@ -98,6 +106,78 @@ export class TmwApi extends runtime.BaseAPI {
      */
     async getTmwAccessorialId(requestParameters: GetTmwAccessorialIdRequest): Promise<Array<object>> {
         const response = await this.getTmwAccessorialIdRaw(requestParameters);
+        return await response.value();
+    }
+
+    /**
+     * Doc by docid
+     * Return document
+     */
+    async getTmwDocsIdRaw(requestParameters: GetTmwDocsIdRequest): Promise<runtime.ApiResponse<string>> {
+        if (requestParameters.id === null || requestParameters.id === undefined) {
+            throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getTmwDocsId.');
+        }
+
+        const queryParameters: runtime.HTTPQuery = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.apiKey) {
+            headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // jwt authentication
+        }
+
+        const response = await this.request({
+            path: `/tmw/docs/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        });
+
+        return new runtime.TextApiResponse(response) as any;
+    }
+
+    /**
+     * Doc by docid
+     * Return document
+     */
+    async getTmwDocsId(requestParameters: GetTmwDocsIdRequest): Promise<string> {
+        const response = await this.getTmwDocsIdRaw(requestParameters);
+        return await response.value();
+    }
+
+    /**
+     * Doc Ids by freight bill number
+     * Return document ids, types, and names
+     */
+    async getTmwDocsIdsIdRaw(requestParameters: GetTmwDocsIdsIdRequest): Promise<runtime.ApiResponse<Array<string>>> {
+        if (requestParameters.id === null || requestParameters.id === undefined) {
+            throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getTmwDocsIdsId.');
+        }
+
+        const queryParameters: runtime.HTTPQuery = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.apiKey) {
+            headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // jwt authentication
+        }
+
+        const response = await this.request({
+            path: `/tmw/docs/ids/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        });
+
+        return new runtime.JSONApiResponse<any>(response);
+    }
+
+    /**
+     * Doc Ids by freight bill number
+     * Return document ids, types, and names
+     */
+    async getTmwDocsIdsId(requestParameters: GetTmwDocsIdsIdRequest): Promise<Array<string>> {
+        const response = await this.getTmwDocsIdsIdRaw(requestParameters);
         return await response.value();
     }
 
@@ -247,7 +327,7 @@ export class TmwApi extends runtime.BaseAPI {
      * Filtered to the company baseed on the BILL_TO_CODE
      * DAWG Report
      */
-    async postTmwOrdersDawgRaw(requestParameters: PostTmwOrdersDawgRequest): Promise<runtime.ApiResponse<Model5>> {
+    async postTmwOrdersDawgRaw(requestParameters: PostTmwOrdersDawgRequest): Promise<runtime.ApiResponse<OrdersByDateRange>> {
         const queryParameters: runtime.HTTPQuery = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -266,14 +346,14 @@ export class TmwApi extends runtime.BaseAPI {
             body: Model4ToJSON(requestParameters.body),
         });
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => Model5FromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => OrdersByDateRangeFromJSON(jsonValue));
     }
 
     /**
      * Filtered to the company baseed on the BILL_TO_CODE
      * DAWG Report
      */
-    async postTmwOrdersDawg(requestParameters: PostTmwOrdersDawgRequest): Promise<Model5> {
+    async postTmwOrdersDawg(requestParameters: PostTmwOrdersDawgRequest): Promise<OrdersByDateRange> {
         const response = await this.postTmwOrdersDawgRaw(requestParameters);
         return await response.value();
     }

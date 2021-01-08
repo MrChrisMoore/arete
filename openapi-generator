@@ -5,7 +5,7 @@
 [main] INFO  o.o.c.l.AbstractTypeScriptClientCodegen - Note: To enable file post-processing, 'enablePostProcessFile' must be set to `true` (--enable-post-process-file for CLI).
 [main] INFO  o.o.codegen.DefaultGenerator - Model Model1 not generated since it's a free-form object
 [main] INFO  o.o.codegen.DefaultGenerator - Model DataResponse not generated since it's an alias to array (without property) and `generateAliasAsModel` is set to false (default)
-[main] INFO  o.o.codegen.DefaultGenerator - Model tmw_codes not generated since it's an alias to array (without property) and `generateAliasAsModel` is set to false (default)
+[main] INFO  o.o.codegen.DefaultGenerator - Model ImageInfoResponse not generated since it's an alias to array (without property) and `generateAliasAsModel` is set to false (default)
 [main] INFO  o.o.codegen.AbstractGenerator - writing file C:\Users\chris\Desktop\Dev\arete backup\arete\.\src\api\models\AddUserModel.ts
 [main] INFO  o.o.codegen.AbstractGenerator - writing file C:\Users\chris\Desktop\Dev\arete backup\arete\.\src\api\models\Company.ts
 [main] INFO  o.o.codegen.AbstractGenerator - writing file C:\Users\chris\Desktop\Dev\arete backup\arete\.\src\api\models\LoginModel.ts
@@ -13,8 +13,8 @@
 [main] INFO  o.o.codegen.AbstractGenerator - writing file C:\Users\chris\Desktop\Dev\arete backup\arete\.\src\api\models\Model2.ts
 [main] INFO  o.o.codegen.AbstractGenerator - writing file C:\Users\chris\Desktop\Dev\arete backup\arete\.\src\api\models\Model3.ts
 [main] INFO  o.o.codegen.AbstractGenerator - writing file C:\Users\chris\Desktop\Dev\arete backup\arete\.\src\api\models\Model4.ts
-[main] INFO  o.o.codegen.AbstractGenerator - writing file C:\Users\chris\Desktop\Dev\arete backup\arete\.\src\api\models\Model5.ts
 [main] INFO  o.o.codegen.AbstractGenerator - writing file C:\Users\chris\Desktop\Dev\arete backup\arete\.\src\api\models\NotFoundResponse.ts
+[main] INFO  o.o.codegen.AbstractGenerator - writing file C:\Users\chris\Desktop\Dev\arete backup\arete\.\src\api\models\OrdersByDateRange.ts
 [main] INFO  o.o.codegen.AbstractGenerator - writing file C:\Users\chris\Desktop\Dev\arete backup\arete\.\src\api\models\PasswordResetModel.ts
 [main] INFO  o.o.codegen.AbstractGenerator - writing file C:\Users\chris\Desktop\Dev\arete backup\arete\.\src\api\models\PickupRange.ts
 [main] INFO  o.o.codegen.AbstractGenerator - writing file C:\Users\chris\Desktop\Dev\arete backup\arete\.\src\api\models\UserJson.ts
