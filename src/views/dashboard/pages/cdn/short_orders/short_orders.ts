@@ -123,7 +123,7 @@ Net Weight
   { hide: false, headerName: 'Allocated Qty', field: 'ALLOC_ORD_QTY' }]
   async mounted() {
     this.gridApi = this.gridOptions.api;
-    this.gridOptions.onRowClicked
+   
     await this.GetOrders();
   }
   onDatesChanged(val) {

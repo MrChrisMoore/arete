@@ -6,6 +6,7 @@
   >
     <template v-slot:heading>
       <apexchart
+        :id="domid"        
         :width="width"
         :type="type"
         :height="height"
@@ -30,6 +31,7 @@ export default {
   inheritAttrs: false,
 
   props: {
+    domid:{type:String},
     options: {
       type: Object,
     },
@@ -48,6 +50,8 @@ export default {
       default: "auto",
     },
   },
+
+
 };
 </script>
 

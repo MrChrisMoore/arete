@@ -24,6 +24,7 @@
     </v-icon>
 
     <span
+     v-if="subText2"
       :class="subTextColorValue ? subTextColorValue : 'grey--text'"
       class="caption font-weight-light"
       v-text="subText"
@@ -124,6 +125,7 @@ export default {
       // the callback will be called immediately after the start of the observation
       immediate: true,
       handler(val, oldVal) {
+        if (!val) return
         if(val.indexOf('$0.00') > -1) return
         if (val.indexOf("Decrease") > -1 && this.decreaseIsBad) {
           this.subTextColorValue = "red--text";

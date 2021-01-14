@@ -58,6 +58,12 @@ export interface UserJson {
     company: Company;
     /**
      * 
+     * @type {boolean}
+     * @memberof UserJson
+     */
+    showDisclaimer: boolean;
+    /**
+     * 
      * @type {object}
      * @memberof UserJson
      */
@@ -115,6 +121,7 @@ export function UserJsonFromJSONTyped(json: any, ignoreDiscriminator: boolean): 
         'username': !exists(json, 'username') ? undefined : json['username'],
         'permissionLevel': !exists(json, 'permissionLevel') ? undefined : json['permissionLevel'],
         'company': CompanyFromJSON(json['company']),
+        'showDisclaimer': json['showDisclaimer'],
         'uiSettings': !exists(json, 'ui_settings') ? undefined : json['ui_settings'],
         'sub': !exists(json, 'sub') ? undefined : json['sub'],
         'needsNewPassword': !exists(json, 'needsNewPassword') ? undefined : json['needsNewPassword'],
@@ -139,6 +146,7 @@ export function UserJsonToJSON(value?: UserJson | null): any {
         'username': value.username,
         'permissionLevel': value.permissionLevel,
         'company': CompanyToJSON(value.company),
+        'showDisclaimer': value.showDisclaimer,
         'ui_settings': value.uiSettings,
         'sub': value.sub,
         'needsNewPassword': value.needsNewPassword,

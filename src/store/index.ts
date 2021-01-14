@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import {loader} from './modules/loader'
+import {loader} from './modules/loader';
+import {disclaimer} from './modules/beta.disclaimer'
+
 Vue.use(Vuex)
 
 export default new Vuex.Store({
@@ -8,6 +10,7 @@ export default new Vuex.Store({
     barColor: 'rgba(0, 0, 0, .8), rgba(0, 0, 0, .8)',
     themeDark:false,
     drawer: null,
+    showDisclaimer:false 
   },
   mutations: {
     
@@ -18,9 +21,10 @@ export default new Vuex.Store({
     SET_THEMEDARK (state, payload) {      
       state.themeDark = payload
     },
+
   },
   actions: {
 
   },
-  modules:{loader}
+  modules:{loader, disclaimer}
 })

@@ -1,25 +1,39 @@
 <section id="on-time-analytics" class="page">
+  <v-navigation-drawer fixed temporary v-model="drawer" right>
+    <v-list style="height:100%;" class="d-flex flex-column justify-space-around" justify="space-around">
+      <v-list-item v-for="item in drawerItems" :key="item.title" @click='filter(item.filter)' :class="item.class">
+        <v-list-item-icon style="align-self: center;">
+          <v-icon>{{ item.icon }}</v-icon>
+        </v-list-item-icon>
+
+        <v-list-item-content>
+          <v-list-item-title>{{ item.title }}</v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+    </v-list>
+  </v-navigation-drawer>
   <v-container fluid>
     <v-slide-x-transition>
       <v-row justify="space-between" class="d-none d-md-flex">
         <v-col cols="4">
-          <!-- <v-row justify="end"> -->
-          <!-- <v-col cols="4">           -->
+
           <v-chip class="ml-1" label color='primary' @click="setDateFilter('YTD')">
             YTD
           </v-chip>
-          <!-- </v-col> -->
-          <!-- <v-col cols="4">   -->
+          <v-chip class="ml-1" label color='info' @click="setDateFilter('30')">
+            30 Days
+          </v-chip>
+          <v-chip class="ml-1" label color='error' @click="setDateFilter('60')">
+            60 Days
+          </v-chip>
           <v-chip class="ml-1" label color='accent' @click="setDateFilter('90')">
             90 Days
           </v-chip>
-          <!-- </v-col> -->
-          <!-- <v-col cols="4">   -->
+
           <v-chip label class="ml-1" color='warning' @click="setDateFilter('180')">
             180 Days
           </v-chip>
-          <!-- </v-col> -->
-          <!-- </v-row> -->
+
         </v-col>
         <v-col cols="4">
           <v-menu ref="menu" v-model="menu" :close-on-content-click="false" transition="scale-transition" offset-y
@@ -43,37 +57,68 @@
 
     <v-row v-if="!loading" justify="space-around" wrap>
       <v-col v-for="(kpi, index) in allKpis" cols="12" md="4" lg="3" class="pa-1" :key="index">
-        <transition name="fade" mode="out-in" duratrion="1000" appear>
-          <base-material-stats-card :style="'--i:' + index" :color="getColor(kpi)" :icon="getIcon(kpi)"
-            :decreaseIsBad="decreaseBad(kpi)" :title="kpi | toUpperCase" :value="kpiValue(kpi)"
-            :sub-text='kpiComparisonValue(kpi)' :sub-text2="kpiValue(kpi, 'Min')" :sub-text3="kpiValue(kpi, 'Average')"
-            :sub-text4="kpiValue(kpi,'Max')">
+
+
+        <transition name="fade" mode="out-in" appear>
+          <base-material-stats-card v-if="['cpm','cpc','cpp','cpa'].indexOf(kpi) === -1" :style="'--i:' + index"
+            :color="getColor(kpi)" :icon="getIcon(kpi)" :decreaseIsBad="decreaseBad(kpi)" :title="kpi | toUpperCase"
+            :value="kpiValue(kpi)" :sub-text='kpiComparisonValue(kpi)' :sub-text2="kpiValue(kpi, 'Min')"
+            :sub-text3="kpiValue(kpi, 'Average')" :sub-text4="kpiValue(kpi,'Max')">
+          </base-material-stats-card>
+          <!-- <base-material-stats-card v-else :style="'--i:' + index" :color="getColor(kpi)" :icon="getIcon(kpi)"
+          :decreaseIsBad="decreaseBad(kpi)" :title="kpi | toUpperCase" :value="kpiValue(kpi)"
+          :sub-text='kpiComparisonValue(kpi)' :sub-text2="kpiValue(kpi, 'Min')" :sub-text3="kpiValue(kpi, 'Average')"
+          :sub-text4="kpiValue(kpi,'Max')">
+        </base-material-stats-card> -->
+        </transition>
+        <transition v-if="kpi === 'cpm'" name="fade" mode="out-in" :duratrion="2000" appear>
+          <base-material-stats-card :style="'--i:' + index" color="red" icon="fas fa-road" title="Cost Per Mile"
+            :value="costPer('Mile')" :sub-text="costPerCompare('Mile')" sub-text2="." sub-text3="." sub-text4=".">
+          </base-material-stats-card>
+        </transition>
+        <transition v-if="kpi === 'cpp'" name="fade" mode="out-in" duratrion="2000" appear>
+
+          <base-material-stats-card :style="'--i:' + index" color="red" icon="fas fa-weight" title="Cost Per Pound"
+            :value="costPer('Pound')" :sub-text="costPerCompare('Pound')" sub-text2="." sub-text3="." sub-text4=".">
+
+          </base-material-stats-card>
+        </transition>
+        <transition v-if="kpi === 'cpc'" name="fade" mode="out-in" duratrion="2000" appear>
+
+          <base-material-stats-card :style="'--i:' + index" color="red" icon="fas fa-suitcase" title="Cost Per Case"
+            :value="costPer('Case')" :sub-text="costPerCompare('Case')" sub-text2="." sub-text3="." sub-text4=".">
+          </base-material-stats-card>
+        </transition>
+        <transition v-if="kpi === 'cpa'" name="fade" mode="out-in" duratrion="2000" appear>
+
+          <base-material-stats-card :style="'--i:' + index" color="red" icon="fas fa-pallet" title="Cost Per Pallet"
+            :value="costPer('Pallet')" :sub-text="costPerCompare('Pallet')" sub-text2="." sub-text3="." sub-text4=".">
           </base-material-stats-card>
         </transition>
       </v-col>
-      <v-col cols="12" md="4" lg="3" class="pa-1" >
+      <!-- <v-col cols="12" md="4" lg="3" class="pa-1" >
         <base-material-stats-card  color="red" icon="fas fa-road"
              title="Cost Per Mile" :value="costPer('Mile')">
           </base-material-stats-card>
-      </v-col>
-      <v-col cols="12" md="4" lg="3" class="pa-1" >
-        <base-material-stats-card  color="red" icon="fas fa-weight"
+      </v-col> -->
+      <!-- <v-col cols="12" md="4" lg="3" class="pa-1" > -->
+      <!-- <base-material-stats-card  color="red" icon="fas fa-weight"
              title="Cost Per Pound" :value="costPer('Pound')">
-          </base-material-stats-card>
-      </v-col>
-      <v-col cols="12" md="4" lg="3" class="pa-1" >
-        <base-material-stats-card  color="red" icon="fas fa-suitcase"
+          </base-material-stats-card> -->
+      <!-- </v-col> -->
+      <!-- <v-col cols="12" md="4" lg="3" class="pa-1" > -->
+      <!-- <base-material-stats-card  color="red" icon="fas fa-suitcase"
              title="Cost Per Case" :value="costPer('Case')">
-          </base-material-stats-card>
-      </v-col>
-      <v-col cols="12" md="4" lg="3" class="pa-1" >
-        <base-material-stats-card  color="red" icon="fas fa-pallet"
+          </base-material-stats-card> -->
+      <!-- </v-col> -->
+      <!-- <v-col cols="12" md="4" lg="3" class="pa-1" > -->
+      <!-- <base-material-stats-card  color="red" icon="fas fa-pallet"
              title="Cost Per Pallet" :value="costPer('Pallet')">
-          </base-material-stats-card>
-      </v-col>
+          </base-material-stats-card> -->
+      <!-- </v-col> -->
     </v-row>
-    <base-material-apex-chart-card class="d-none d-md-block"  v-if="!loading" :options="costChartOptions"
-      :series="costSeries" height="450" type="line">
+    <base-material-apex-chart-card class="d-none d-md-block" v-if="!loading && costSeries" domid="costChart"
+      :options="costChartOptions" :series="costSeries" height="450" type="line">
       <!-- <h4 class="card-title font-weight-light mt-2 ml-2"></h4> -->
       <div class="d-flex  ">
         <p class=" font-weight-light ml-2 mt-1 align-self-start">{{new Date(dates[0]).toDateString()}} to
@@ -88,30 +133,29 @@
         <span class="caption grey--text font-weight-light">updated 10 minutes ago</span>
       </template> -->
     </base-material-apex-chart-card>
-    <!-- </v-slide-y-transition> -->
-    <!-- <v-row row wrap>
-      <v-col cols="12">       
-      </v-col>
-      <v-col cols="12">
-        <v-card>
-          <v-card-text>
-            <div id='costChart'></div>
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row> -->
+
     <!-- <v-row>
       <v-col cols="12">
         <v-card>
-        <v-card-text>
-         
-          <div id= 'dtdChart'  ></div>
-         
-
+        <v-card-text>         
+          <div id= 'dtdChart'  ></div>        
         </v-card-text>
       </v-card>
       </v-col>
     </v-row> -->
+    <!-- <v-scale-transition origin="bottom center" duration="20000"> -->
+      <transition name="fade" mode="in-out" appear>
+    <v-btn fab small v-show="!fabHidden" @click="drawer = !drawer" color="info" fixed bottom right>
+      <v-icon v-if="drawer">
+        mdi-close
+      </v-icon>
+      <v-icon v-else>
+        mdi-filter
+      </v-icon>
+    </v-btn>
+  </transition>
+  <!-- </v-scale-transition> -->
+    <!--    
     <v-speed-dial
     elevation="2"
     v-model="fab"
@@ -119,47 +163,45 @@
     color="primary"
     class="mr-7"
     bottom
+    direction="top"
     right  >
   
   <template v-slot:activator>
     <v-btn
       v-model="fab"
-      color="primary"
-      dark
+      color="primary"      
       fab
     >
       <v-icon v-if="fab">
         mdi-close
       </v-icon>
       <v-icon v-else>
-        mdi-plus
+        mdi-filter
       </v-icon>
     </v-btn>
   </template>
-  <v-btn
-    
-    dark
+
+  <v-btn  
     small
     class="mr-10"
     color="accent"
   >
-  <v-icon left>mdi-filter</v-icon>
+  <v-icon left>mdi-filter-plus</v-icon>
     Filter Consignee
   </v-btn>
-
   <v-btn
   class="mr-10" 
   small    
   color="red"
 >
-<v-icon left>mdi-delete</v-icon>
- Remove Filter
-   
+<v-icon left>mdi-filter-remove</v-icon>
+ Remove Filter   
   </v-btn>
-</v-speed-dial>
-  <!-- <v-icon>mdi-plus</v-icon></v-speedial> -->
 
-  <!-- <v-icon>mdi-plus</v-icon></v-speedial> -->
+
+
+</v-speed-dial> -->
+
     <v-snackbar v-model="snackbar" timeout="10000" absolute left shaped top color="warning">
       {{ snackText }}
 
@@ -169,5 +211,7 @@
         </v-btn>
       </template>
     </v-snackbar>
+
+
   </v-container>
 </section>

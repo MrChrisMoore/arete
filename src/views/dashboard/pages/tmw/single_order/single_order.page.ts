@@ -157,6 +157,7 @@ modules =[SideBarModule,MenuModule, ClientSideRowModelModule,ColumnsToolPanelMod
     //OIpage.spiderfier = new OverlappingMarkerSpiderfier(OIpage.map, {});
 
     SOpage.geoCoder.geocode({ region: 'us', address: 'United States' }, (result, status) => {
+    
       SOpage.map.setCenter(result[0].geometry.location);
       SOpage.map.fitBounds(result[0].geometry.viewport);
       this.addMarker();
@@ -173,10 +174,14 @@ modules =[SideBarModule,MenuModule, ClientSideRowModelModule,ColumnsToolPanelMod
       SOpage.loadMap();
       return;
     }
+    let bounds = new google.maps.LatLngBounds();
     SOpage.geoCoder.geocode({ region: 'US', address: `${SOpage.TMWOrder['CONSIGNEE ZIP']}` }, (results, status1) => {
       if (results) {
         results.forEach((res) => {
-          new google.maps.Marker({ position: res.geometry.location, map: SOpage.map, icon: 'http://maps.google.com/mapfiles/kml/pushpin/red-pushpin.png' })
+          bounds.extend(res.geometry.location);
+          new google.maps.Marker({ position: res.geometry.location, map: SOpage.map, icon: 'http://maps.google.com/mapfiles/kml/pushpin/red-pushpin.png' });
+          SOpage.map.fitBounds(bounds);
+
         })
         // let markers = results.map(x => {
         //   if (x && x.geometry && x.geometry.location) {
@@ -192,7 +197,9 @@ modules =[SideBarModule,MenuModule, ClientSideRowModelModule,ColumnsToolPanelMod
     SOpage.geoCoder.geocode({ region: 'US', address: `${SOpage.TMWOrder['ORIGIN CITY']},${SOpage.TMWOrder['ORIGIN STATE']}` }, (results, status1) => {
       if (results) {
         results.forEach((res) => {
-          new google.maps.Marker({ position: res.geometry.location, map: SOpage.map, icon: 'http://maps.google.com/mapfiles/kml/pushpin/wht-pushpin.png' })
+          bounds.extend(res.geometry.location);
+          new google.maps.Marker({ position: res.geometry.location, map: SOpage.map, icon: 'http://maps.google.com/mapfiles/kml/pushpin/wht-pushpin.png' });
+          SOpage.map.fitBounds(bounds);
         })
         // let markers = results.map(x => {
         //   if (x && x.geometry && x.geometry.location) {

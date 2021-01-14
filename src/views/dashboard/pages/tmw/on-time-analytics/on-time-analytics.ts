@@ -2,24 +2,36 @@
 import { PostTmwOrdersDawgRequest } from '@/api/apis/TmwApi';
 import Vue from 'vue';
 import Component from 'vue-class-component';
-import { VContainer, VSlideXTransition, VChip,VSpeedDial } from 'vuetify/lib';
+import { VContainer, VSlideXTransition, VChip,VScaleTransition, VFabTransition, VSpeedDial, VNavigationDrawer, VList, VListItem, VListItemIcon, VListItemAvatar, VListItemSubtitle } from 'vuetify/lib';
 import { ApexOptions } from 'apexcharts';
 import { Watch } from 'vue-property-decorator';
 import { OrdersByDateRange } from '@/api/models';
-import { object } from 'joi';
+
 
 @Component({
   components: {
     VContainer,
     VSlideXTransition,
     VChip,
-    VSpeedDial
+    VSpeedDial,
+    VNavigationDrawer, VList, VListItem, VListItemIcon, VListItemAvatar, VListItemSubtitle,VFabTransition
   },
   name: 'on-time-analytics-',
 })
 export default class OnTimeAnalytics extends Vue {
+  drawerItems = [
+    { title: 'Filter Consignee', icon: 'mdi-filter-plus', class:'' },
+    { title: 'Remove Filter', icon: 'mdi-filter-remove', class:''},
+    { title: '30 Days', icon: 'mdi-filter-plus', filter: '30', class:'d-md-none'},
+    { title: '60 Days', icon: 'mdi-filter-plus', filter: '60',class:'d-md-none' },
+    { title: '90 Days', icon: 'mdi-filter-plus', filter: '90', class:'d-md-none'},
+    { title: '180 Days', icon: 'mdi-filter-plus', filter: '180', class:'d-md-none'},
+    { title: 'YTD', icon: 'mdi-filter-plus', filter: 'YTD', class:'d-md-none'},
+  ];
+  fabHidden = true;
+  drawer = false;
   dates = [];
-  fab=false;
+  fab = false;
   compareDates = [];
   menu = false
   loading: boolean = true;
@@ -32,12 +44,38 @@ export default class OnTimeAnalytics extends Vue {
   dtdChart: ApexCharts;
   costChart: ApexCharts;
   costSeries = null;
-  dtdSeries = null;  
+  dtdSeries = null;
   unitTypes = {
     weight: 'pound',
     distance: 'mile',
   }
-  allKpis = ['loads', ...this.$currencyFields, ...this.$numericFields]
+  allKpis = ['loads', ...this.$currencyFields, ...this.$numericFields, 'cpm', 'cpc', 'cpp', 'cpa'];
+  icons = {
+    loads: ['fas fa-truck', 'warning'],
+    totalcharges: ['fas fa-dollar-sign', 'success'],
+    distance: ['fas fa-road', 'black'],
+    pallet: ['fas fa-pallet', 'yellow'],
+    weight: ['fas fa-weight', 'secondary'],
+    cases: ['fas fa-suitcase', 'purple'],
+    fuel: ['fas fa-gas-pump', 'grey'],
+    linehaul: ['fas fa-truck', 'teal'],
+    lumper: ['fas fa-people-carry', 'red'],
+    lumperadmin: ['fas fa-clipboard', 'indigo'],
+    misc: ['fas fa-tags', 'pink'],
+    nyc: ['mdi-food-apple', 'red'],
+    afterhours: ['fas fa-hourglass', 'grey darken-1'],
+    detention: ['fas fa-stopwatch', 'grey lighten-1'],
+    // cpm:['fas fa-road','red'],
+    // cpp:['fas fa-weight','red'], 
+    // cpa:['fas fa-pallet','red'],
+    // cpc:['fas fa-suitcase','red']
+  }
+  kpiValues = {};
+  kpiComparisonValues = {}
+  res: OrdersByDateRange = null;
+  totalCost = 0;
+  totalCostCompare = 0;
+  currencyCode: string = null;
 
   dtdChartOptions: ApexOptions = {
     theme: { mode: this.themeDark ? 'dark' : 'light' },
@@ -92,8 +130,8 @@ export default class OnTimeAnalytics extends Vue {
     theme: { mode: this.themeDark ? 'dark' : 'light' },
     chart: {
 
-      type: 'line',
-      stacked: false,
+      type: 'bubble',
+      stacked: true,
       height: 450,
       zoom: {
         type: 'xy',
@@ -135,7 +173,18 @@ export default class OnTimeAnalytics extends Vue {
     // },
     xaxis: {
       type: 'category',
+      tickAmount: 10,
       labels: { show: false },
+      // type: 'datetime',
+      // tickAmount: 10,
+      // labels: {
+      //   datetimeFormatter: {
+      //     year: 'yyyy',
+      //     month: 'MMM \'yy',
+      //     day: 'dd MMM',
+      //     hour: 'HH:mm'
+      //   }
+      // }
     }
     // xaxis: {
     //   categories: [...this.items.map((val) => { return val['PICKUP'] !== '2020-03-23' ? new Intl.DateTimeFormat(window.navigator.language).format(new Date(val['PICKUP'])): null }).filter(x => x)],
@@ -174,24 +223,39 @@ export default class OnTimeAnalytics extends Vue {
 
   }
 
+  filter(val) {
+    this.setDateFilter(val);
+    this.drawer = false;
+  }
+
   setDateFilter(val) {
     // let month = new Date().getMonth() +1;
     // let year = new Date().getFullYear();
     // let day = new Date().getDate();
-    let startDate =new Date();
+    let startDate = new Date();
     let start = '';
-    let end = `${new Date().getFullYear()}-${new Date().getMonth() +1}-${new Date().getDate()}`
+    let end = `${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDate()}`
     switch (val) {
+      case '30':
+        startDate = new Date(new Date().setDate(new Date().getDate() - 30));
+        start = `${startDate.getFullYear()}-${startDate.getMonth() + 1}-${startDate.getDate()}`
+        break;
+      case '60':
+        startDate = new Date(new Date().setDate(new Date().getDate() - 60));
+        start = `${startDate.getFullYear()}-${startDate.getMonth() + 1}-${startDate.getDate()}`
+        break;
       case '90':
         startDate = new Date(new Date().setDate(new Date().getDate() - 90));
-        start = `${startDate.getFullYear()}-${startDate.getMonth()+1}-${startDate.getDate()}`
+        start = `${startDate.getFullYear()}-${startDate.getMonth() + 1}-${startDate.getDate()}`
         break;
       case '180':
         startDate = new Date(new Date().setDate(new Date().getDate() - 180))
-        start = `${startDate.getFullYear()}-${startDate.getMonth()+1}-${startDate.getDate()}`
+        start = `${startDate.getFullYear()}-${startDate.getMonth() + 1}-${startDate.getDate()}`
+        break;
+      case 'YTD':
+        start = `${new Date().getFullYear()}-1-1`
         break;
       default:
-        start = `${new Date().getFullYear()}-1-1`
         break;
     }
     this.dates = [start, end];
@@ -202,9 +266,10 @@ export default class OnTimeAnalytics extends Vue {
 
   onDatesChanged(val) {
     if (val && val.length && val.length === 2) {
+      
       this.GetOrders();
     }
-  }  
+  }
 
   mounted() {
     this.GetOrders();
@@ -216,23 +281,6 @@ export default class OnTimeAnalytics extends Vue {
     if (this.costChart) this.costChart.updateOptions({ theme: { mode: val ? 'dark' : 'light' } }, true);
   }
 
-  icons = {
-    loads: ['fas fa-truck', 'warning'],
-    totalcharges: ['fas fa-dollar-sign', 'success'],
-    distance: ['fas fa-road', 'black'],
-    pallet: ['fas fa-pallet', 'yellow'],
-    weight: ['fas fa-weight', 'secondary'],
-    cases: ['fas fa-suitcase', 'purple'],
-    fuel: ['fas fa-gas-pump', 'grey'],
-    linehaul: ['fas fa-truck', 'teal'],
-    lumper: ['fas fa-people-carry', 'red'],
-    lumperadmin: ['fas fa-clipboard', 'indigo'],
-    misc: ['fas fa-tags', 'pink'],
-    nyc: ['mdi-food-apple', 'red'],
-    afterhours: ['fas fa-hourglass', 'grey darken-1'],
-    detention: ['fas fa-stopwatch', 'grey lighten-1']
-  }
-
   getIcon(str) {
     let icon = this.icons[str.replace(/\s/g, '')];
     return icon ? icon[0] : '';
@@ -240,7 +288,6 @@ export default class OnTimeAnalytics extends Vue {
 
   getColor(str) {
     let color = this.icons[str.replace(/\s/g, '')];
-
     return color ? color[1] : '';
   }
 
@@ -264,7 +311,11 @@ export default class OnTimeAnalytics extends Vue {
       case 'Average':
         prefix = 'Avg:'
     }
-    return ` ${prefix} ${this.getAggregateValueAsString(str, style, type, 2, this.unitTypes[str])}`;
+
+    let retVal = ` ${prefix} ${this.getAggregateValueAsString(str, style, type, 2, this.unitTypes[str])}`;
+ 
+
+    return retVal;
 
   }
 
@@ -280,8 +331,10 @@ export default class OnTimeAnalytics extends Vue {
     if (this.unitTypes[str]) {
       style = 'unit'
     }
+    // if(str === 'loads') {debugger}
     let oldValue = this.getAggregateValue(str, 'Total', true);
-    let newValue = this.getAggregateValue(str, 'Total');
+
+    let newValue = this.kpiValues[str]['Total']// this.getAggregateValue(str, 'Total');
     let diff = oldValue - newValue;
     let perC = diff / oldValue;
     Math.abs(perC).toLocaleString(navigator.language, { style: 'percent' });
@@ -292,10 +345,11 @@ export default class OnTimeAnalytics extends Vue {
 
   }
 
-  res: OrdersByDateRange = null;
   private async GetOrders() {
     let ota = this;
     let user = JSON.parse(localStorage.getItem('user'));
+    this.fabHidden = true;
+    this.loading = true;
     let params: PostTmwOrdersDawgRequest = {
       body: {
         tmwCodes: user.tmwCodes,
@@ -320,8 +374,11 @@ export default class OnTimeAnalytics extends Vue {
       }
 
       if (ota.items.length) {
-        ota.createCharts();
         ota.loading = false;
+        ota.createCharts();
+        setTimeout(() => {
+          this.fabHidden =false;
+        }, 1e3);
 
         // [...ota.numericFields,...ota.currencyFields].forEach((val)=>{
         //   ['Total','Min','Max','Average'].forEach((op:any)=>{
@@ -360,17 +417,23 @@ export default class OnTimeAnalytics extends Vue {
     //     this.dtdChart.hideSeries('Information')
     //   }
     // }
-    if (!this.costChart) {
-      this.setCostSeries();
-      this.costChartOptions.series = this.costSeries;
-      this.costChart = new ApexCharts(document.querySelector("#costChart"), this.costChartOptions);
-      this.costChart.render();
-      //  this.costChart.updateSeries(this.dtdSeries, true)
-    } else {
-      this.setCostSeries();
-      this.costChart.updateSeries(this.costSeries);
-      this.costChart.updateOptions({ height: this.items.length * 5 })
-    }
+
+    this.setCostSeries();
+    this.costChartOptions.series = this.costSeries;
+
+    // if (!this.costChart) {
+
+    //  // console.log(document.querySelector("#costChart"));
+
+    // //  this.costChart = new ApexCharts(document.querySelector("#costChart"), this.costChartOptions);
+
+    //   // this.costChart.render();
+    //   //  this.costChart.updateSeries(this.dtdSeries, true)
+    // } else {
+    //   this.setCostSeries();
+    //   this.costChart.updateSeries(this.costSeries);
+    //   this.costChart.updateOptions({ height: this.items.length * 5 })
+    // }
 
   }
 
@@ -402,23 +465,24 @@ export default class OnTimeAnalytics extends Vue {
     this.costSeries = [
       {
         name: `${this.res.pickupRange.start} to ${this.res.pickupRange.end}`,
+        type: 'column',
         data: [
           ...this.items.map((val) => {
-            return val['ARRCONS'] ?
-              {                
-                x: val['CONSIGNEE NAME'],
+            return val['TOTAL CHARGES'] ?
+              {
+                x: val['PICKUP'],
                 y: parseInt(val['TOTAL CHARGES'])
               }
-              : null         
+              : null
           }).filter(x => x)]
       },
       {
         name: `${this.res.compareRange.start} to ${this.res.compareRange.end}`,
         data: [
           ...this.res.compareResult.map((val) => {
-            return val['ARRCONS'] ?
+            return val['TOTAL CHARGES'] ?
               {
-                x: val['CONSIGNEE NAME'],//new Date(val['ARRCONS']).toLocaleDateString(),
+                x: val['PICKUP'],//new Date(val['ARRCONS']).toLocaleDateString(),
                 y: parseInt(val['TOTAL CHARGES'])
               }
               : null
@@ -467,17 +531,29 @@ export default class OnTimeAnalytics extends Vue {
 
       switch (aggregateType) {
         case 'Total':
-          if (field === 'loads') return this.items.length.toString();
-          return this.sum(field).toLocaleString(window.navigator.language, numberFormatOptions)
+          let total = field === 'loads' ? this.items.length : this.sum(field);
+          // if (field === 'loads') return total.toString();
+          this.storeKpiValue(field, aggregateType, total);
+          //     this.kpiValues[field] = {'Total':total};          
+          return field === 'loads' ? total.toString() : total.toLocaleString(window.navigator.language, numberFormatOptions)
 
         case 'Max':
-          return Math.max(...this.getFieldValuesAsArray(field)).toLocaleString(window.navigator.language, numberFormatOptions);
+          let max = Math.max(...this.getFieldValuesAsArray(field))
+          // this.kpiValues[field] = {'Max':max};
+          this.storeKpiValue(field, aggregateType, max);
+          return max.toLocaleString(window.navigator.language, numberFormatOptions);
 
         case 'Min':
-          return Math.min(...this.getNonZeroFieldValuesAsArray(field)).toLocaleString(window.navigator.language, numberFormatOptions);
+          let min = Math.min(...this.getNonZeroFieldValuesAsArray(field));
+          // this.kpiValues[field] = {'Min':min}
+          this.storeKpiValue(field, aggregateType, min)
+          return min.toLocaleString(window.navigator.language, numberFormatOptions);
 
         case 'Average':
-          return (this.sum(field) / this.items.length).toLocaleString(window.navigator.language, numberFormatOptions)
+          let average = this.sum(field) / this.items.length;
+          // this.kpiValues[field] = {'Average':average}
+          this.storeKpiValue(field, aggregateType, average)
+          return average.toLocaleString(window.navigator.language, numberFormatOptions)
 
         default:
           break;
@@ -488,33 +564,56 @@ export default class OnTimeAnalytics extends Vue {
     return 'Error'
   }
 
-  getAggregateValue(field: string, aggregateType: 'Total' | 'Min' | 'Max' | 'Average', comparison = false) {
-    // let numberFormatOptions: Intl.NumberFormatOptions | any = { minimumFractionDigits: precision, maximumFractionDigits: precision, style: style || 'decimal' }
-    // if (style === 'currency') {
-    //   numberFormatOptions.currency = this.getCurrencyCode();
-    // }
+  storeKpiValue(field, aggregateType, value, comparison?) {
+    if (!comparison) {
 
-    // if (style === 'unit' && unit) {
-    //   numberFormatOptions.unit = unit;
-    // }
+      if (!this.kpiValues[field]) {
+        this.kpiValues[field] = { [aggregateType]: value }
+      } else {
+        this.kpiValues[field][aggregateType] = value
+      }
+    } else {
+
+      if (!this.kpiComparisonValues[field]) {
+        this.kpiComparisonValues[field] = { [aggregateType]: value }
+      } else {
+        this.kpiComparisonValues[field][aggregateType] = value
+      }
+    }
+
+  }
+
+  getAggregateValue(field: string, aggregateType: 'Total' | 'Min' | 'Max' | 'Average', comparison = false) {
+
     try {
 
       switch (aggregateType) {
         case 'Total':
+          let total = 0;
           if (field === 'loads') {
-            return comparison ? this.res.compareResult.length : this.items.length
+            total = comparison ? this.res.compareResult.length : this.items.length
+          }else{
+
+            total = this.sum(field, comparison)
           }
-          return this.sum(field, comparison)
+          if (comparison) this.storeKpiValue(field, aggregateType, total, comparison);
+          return total
 
         case 'Max':
-          return Math.max(...this.getFieldValuesAsArray(field, comparison))
+          let max = Math.max(...this.getFieldValuesAsArray(field, comparison))
+          if (comparison) this.storeKpiValue(field, aggregateType, max, comparison);
+          return max;
 
         case 'Min':
-          return Math.min(...this.getNonZeroFieldValuesAsArray(field, comparison))
+          let min = Math.min(...this.getNonZeroFieldValuesAsArray(field, comparison));
+          if (comparison) this.storeKpiValue(field, aggregateType, min, comparison)
+          return min
 
         case 'Average':
-          let len = comparison ? this.res.compareResult.length : this.items.length
-          return (this.sum(field, comparison) / len)
+          let len = comparison ? this.res.compareResult.length : this.items.length;
+          let average = (this.sum(field, comparison) / len);
+          if (comparison) this.storeKpiValue(field, aggregateType, average, comparison)
+          return average
 
         default:
           break;
@@ -525,38 +624,7 @@ export default class OnTimeAnalytics extends Vue {
     }
     //return 'Error'
   }
-  // getComparisonAggregateValue(field: string, aggregateType: 'Total' | 'Min' | 'Max' | 'Average') {
-  //   // let numberFormatOptions: Intl.NumberFormatOptions | any = { minimumFractionDigits: precision, maximumFractionDigits: precision, style: style || 'decimal' }
-  //   // if (style === 'currency') {
-  //   //   numberFormatOptions.currency = this.getCurrencyCode();
-  //   // }
 
-  //   // if (style === 'unit' && unit) {
-  //   //   numberFormatOptions.unit = unit;
-  //   // }
-  //   try {
-
-  //     switch (aggregateType) {
-  //       case 'Total':
-  //         return this.sum(field, true)
-  //         break;
-  //       case 'Max':
-  //         return Math.max(...this.getFieldValuesAsArray(field, true))
-
-  //       case 'Min':
-  //         return Math.min(...this.getNonZeroFieldValuesAsArray(field, true))
-
-  //       case 'Average':
-  //         return (this.sum(field) / this.res.compareResult.length)
-
-  //       default:
-  //         break;
-  //     }
-  //   } catch (error) {
-  //     console.error(`An error occured while calculating ${aggregateType} for  ${field}`);
-  //   }
-  //   return 'Error'
-  // }
   sum(key, comparison = false): number {
     if (comparison) {
       return (this.res.compareResult as any[]).reduce((a, b) => a + (b[key.toUpperCase()] || 0), 0);
@@ -564,35 +632,58 @@ export default class OnTimeAnalytics extends Vue {
     return this.items.reduce((a, b) => a + (b[key.toUpperCase()] || 0), 0);
   }
 
-  totalCost=0;
-  costPer(val){
-    if(this.totalCost === 0){
+  costPerCompare(val) {
+    if (this.totalCostCompare === 0) {
+      this.totalCostCompare = this.sum('total charges', true);
+    }
+    let cp = 0;
+    switch (val) {
+      case 'Mile':
+        cp = this.totalCostCompare / this.sum('Distance', true)
+        break;
+      case 'Case':
+        cp = this.totalCostCompare / this.sum('Cases', true)
+        break;
+      case 'Pound':
+        cp = this.totalCostCompare / this.sum('Weight', true)
+        break;
+      case 'Pallet':
+        cp = this.totalCostCompare / this.sum('Pallet', true)
+        break;
+    }
+    let numberFormatOptions: Intl.NumberFormatOptions | any = { minimumFractionDigits: 2, maximumFractionDigits: 2, style: 'currency', currency: this.getCurrencyCode() }
+
+    return `Compared To ${cp.toLocaleString(window.navigator.language, numberFormatOptions)}`
+  }
+
+  costPer(val) {
+    if (this.totalCost === 0) {
       this.totalCost = this.sum('total charges');
     }
-    let cp = 0; 
+    let cp = 0;
     switch (val) {
-      case 'Mile': 
-      cp = this.totalCost / this.sum('Distance')       
+      case 'Mile':
+        cp = this.totalCost / this.sum('Distance')
+        // this.kpiValues['Distance']['CostPerMile'] = cp;
         break;
-        case 'Case':  
-        cp = this.totalCost / this.sum('Cases')      
+      case 'Case':
+        cp = this.totalCost / this.sum('Cases')
         break;
-        case 'Pound':        
+      case 'Pound':
         cp = this.totalCost / this.sum('Weight')
         break;
-        case 'Pallet':        
+      case 'Pallet':
         cp = this.totalCost / this.sum('Pallet')
         break;
-      
+
     }
 
-    let numberFormatOptions: Intl.NumberFormatOptions | any = { minimumFractionDigits: 2, maximumFractionDigits: 2, style: 'currency', currency:this.getCurrencyCode() }
-  
+    let numberFormatOptions: Intl.NumberFormatOptions | any = { minimumFractionDigits: 2, maximumFractionDigits: 2, style: 'currency', currency: this.getCurrencyCode() }
+
     return cp.toLocaleString(window.navigator.language, numberFormatOptions)
 
   }
-  
-  currencyCode: string = null;
+
   private getCurrencyCode(): string {
     if (!this.currencyCode) {
       try {

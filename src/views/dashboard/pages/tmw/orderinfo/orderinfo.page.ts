@@ -1,18 +1,18 @@
 import { PostTmwOrderIdRequest, PostTmwOrdersDawgRequest } from '@/api';
 
 import Vue from 'vue';
-import { VCard, VImg, VCardActions, VCardText, VContainer, VCardTitle, VSwitch, VDataTable, VChip, VList, VListItemTitle, VListGroup, VListItem, VListItemIcon, VListItemGroup,VSlideXTransition } from 'vuetify/lib';
+import { VCard, VImg, VCardActions, VCardText, VContainer, VCardTitle, VSwitch, VDataTable, VChip, VList, VListItemTitle, VListGroup, VListItem, VListItemIcon, VListItemGroup, VSlideXTransition } from 'vuetify/lib';
 import Component from 'vue-class-component';
 import { Watch } from 'vue-property-decorator';
 // import { DataTableHeader } from 'vuetify';
 import { Resize } from 'vuetify/lib/directives';
 // import 'ag-grid-enterprise';
 // import { AgGridVue } from 'ag-grid-vue';
-import { SelectionChangedEvent,PaginationChangedEvent,GridReadyEvent,GridOptions,GridApi,SideBarModule,MenuModule, ClientSideRowModelModule, ColumnsToolPanelModule, FiltersToolPanelModule, RowGroupingModule, StatusBarModule,RangeSelectionModule, ColDef,  ExcelExportParams, ExcelExportModule } from '@ag-grid-enterprise/all-modules'
-import {AgGridVue} from '@ag-grid-community/vue';
+import { SelectionChangedEvent, PaginationChangedEvent, GridReadyEvent, GridOptions, GridApi, SideBarModule, MenuModule, ClientSideRowModelModule, ColumnsToolPanelModule, FiltersToolPanelModule, RowGroupingModule, StatusBarModule, RangeSelectionModule, ColDef, ExcelExportParams, ExcelExportModule } from '@ag-grid-enterprise/all-modules'
+import { AgGridVue } from '@ag-grid-community/vue';
 // import { ColDef,  GridOptions, GridReadyEvent, CsvExportParams, PaginationChangedEvent, SelectionChangedEvent } from 'ag-grid-community';
 import MarkerClusterer from '@google/markerclusterer';
-import {OverlappingMarkerSpiderfier} from 'ts-overlapping-marker-spiderfier';
+import { OverlappingMarkerSpiderfier } from 'ts-overlapping-marker-spiderfier';
 import SingleOrderPage from '../single_order/index.vue'
 // import {Client} from "@googlemaps/google-maps-services-js";
 const MAPS_API_KEY = process.env.VUE_APP_MAPS_API_KEY;
@@ -60,7 +60,7 @@ function gmapsInit() {
 
 @Component({
   components: {
-    SingleOrderPage,VCard, VContainer, VImg, VCardActions, VCardText, VCardTitle, VSwitch, VDataTable, VChip, AgGridVue, VList, VListItemTitle, VListGroup, VListItem, VListItemIcon, VListItemGroup,VSlideXTransition
+    SingleOrderPage, VCard, VContainer, VImg, VCardActions, VCardText, VCardTitle, VSwitch, VDataTable, VChip, AgGridVue, VList, VListItemTitle, VListGroup, VListItem, VListItemIcon, VListItemGroup, VSlideXTransition
   },
   name: 'tmw-order-info',
   //directives: { Resize }
@@ -70,7 +70,7 @@ export default class OrderinfoPage extends Vue {
   sideBar = {
     toolPanels: ['columns', 'filters'],
     // hiddenByDefault:true
-};
+  };
   statusBar = {
     statusPanels: [
       {
@@ -81,8 +81,8 @@ export default class OrderinfoPage extends Vue {
       },
     ],
   };
-  modules =[SideBarModule,MenuModule, ClientSideRowModelModule,ColumnsToolPanelModule,ExcelExportModule, FiltersToolPanelModule,RangeSelectionModule, RowGroupingModule,StatusBarModule]
- 
+  modules = [SideBarModule, MenuModule, ClientSideRowModelModule, ColumnsToolPanelModule, ExcelExportModule, FiltersToolPanelModule, RangeSelectionModule, RowGroupingModule, StatusBarModule]
+
   //frameworkComponents = { customStatsToolPanel: CustomStatsToolPanel };
   /* Test Card Section   */
   bottom = false
@@ -163,7 +163,7 @@ export default class OrderinfoPage extends Vue {
   sortBy = 'FB#';
   columnDefs: ColDef[] = [];
   rowData = null;
-
+  menu = false
   gridOptions: GridOptions = {};
   gridApi: GridApi = null;
   defaultColDef = {
@@ -186,16 +186,16 @@ export default class OrderinfoPage extends Vue {
   // dateTimeFields = ['delivery appt', 'arrcons', 'depcons', 'arrship', 'depship'];
   // numericFields =['weight', 'cs', 'pallet', 'lead time', 'distance'];
   // currencyFields =['misc', 'total charges', 'lumper admin', 'nyc', 'lumper', 'linehaul', 'fuel','detention','afterhours'];
-  initiallyVisible = ['fb#','consignee name', 'arrcons', 'depship', 'weight', 'distance'];
+  initiallyVisible = ['fb#', 'consignee name', 'arrcons', 'depship', 'weight', 'distance'];
   geoCoder: google.maps.Geocoder;
   // getMainMenuItems(params) {
   //   return params.defaultItems
   // }
   map: google.maps.Map<HTMLElement>;
- 
+  dates = [];
 
   onBtExport() {
-    let orderInfo= this;
+    let orderInfo = this;
     let exportParams: ExcelExportParams = {
       fileName: 'test',
       processCellCallback: function (params) {
@@ -218,7 +218,7 @@ export default class OrderinfoPage extends Vue {
   onFirstDataRendered(params: GridReadyEvent) {
     this.sizeEm();
     // this.getItemsOnPage();
-   // this.addMarker();
+    // this.addMarker();
   }
 
   sizeEm() {
@@ -232,16 +232,54 @@ export default class OrderinfoPage extends Vue {
   }
 
   async mounted() {
-    this.gridApi = this.gridOptions.api;
-    // this.gridOptions.onRowClicked
+    this.gridApi = this.gridOptions.api;    
     await this.GetOrders();
-  //  this.loadMap();
-  }
-  // @Watch('pickupStart')
-  // onPickupChanged(){
-  //   this.GetOrders();
 
-  // }
+  }
+ 
+
+  get dateRangeText() {
+    return this.dates.join(' ~ ')
+  }
+  onDatesChanged(val) {
+    if (val && val.length && val.length === 2) {
+      this.GetOrders();
+    }
+  }
+  setDateFilter(val) {
+    // let month = new Date().getMonth() +1;
+    // let year = new Date().getFullYear();
+    // let day = new Date().getDate();
+    let startDate = new Date();
+    let start = '';
+    let end = `${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDate()}`
+    switch (val) {
+      case '30':
+        startDate = new Date(new Date().setDate(new Date().getDate() - 30));
+        start = `${startDate.getFullYear()}-${startDate.getMonth()+1}-${startDate.getDate()}`
+        break;
+      case '60':
+        startDate = new Date(new Date().setDate(new Date().getDate() - 60));
+        start = `${startDate.getFullYear()}-${startDate.getMonth()+1}-${startDate.getDate()}`
+        break;
+      case '90':
+        startDate = new Date(new Date().setDate(new Date().getDate() - 90));
+        start = `${startDate.getFullYear()}-${startDate.getMonth()+1}-${startDate.getDate()}`
+        break;
+      case '180':
+        startDate = new Date(new Date().setDate(new Date().getDate() - 180))
+        start = `${startDate.getFullYear()}-${startDate.getMonth()+1}-${startDate.getDate()}`
+        break;
+      default:
+        start = `${new Date().getFullYear()}-1-1`
+        break;
+    }
+    this.dates = [start, end];
+    this.GetOrders();
+
+
+  }
+
   @Watch('cards')
   onCardsChanged(val) {
     if (!val) return;
@@ -264,96 +302,80 @@ export default class OrderinfoPage extends Vue {
   private async GetOrders() {
     let user = JSON.parse(localStorage.getItem('user'));
     let params: PostTmwOrdersDawgRequest = {
-      body: { tmwCodes: user.tmwCodes }
+      body: { tmwCodes: user.tmwCodes, pickupRange: this.dates, compare:false },
+
     }
 
     let response = await this.$tmwApi.postTmwOrdersDawg(params);
     if (response /* && response.length */) {
 
-
-      Object.keys(response.rangeResult[0]).map((v) => {
-        let colDef: ColDef = {
-          headerName: v,
-          field: v,
-          hide:true
-        }
-
-        if (this.$numericFields.indexOf(v.toLowerCase()) !== -1) {
-          colDef.type = 'numericColumn'
-        }
-
-        if (this.$currencyFields.indexOf(v.toLowerCase()) !== -1) {
-          colDef.valueFormatter = (params) => {
-            if(!params.value) return;
-            let data:number = params.value || params.data[v] ;
-            return data.toLocaleString(window.navigator.language, { minimumFractionDigits: 2, maximumFractionDigits: 2, style: 'currency', currency: 'USD' })
-            //return data ? `$${data}` : ''
+      if (!this.dates.length) {
+        this.dates = [response.pickupRange.start, response.pickupRange.end];
+      }
+      if (this.columnDefs.length === 0) {
+        Object.keys(response.rangeResult[0]).map((v) => {
+          let colDef: ColDef = {
+            headerName: v,
+            field: v,
+            hide: true
           }
-          colDef.type = 'numericColumn'
-        }
 
-        if (this.$dateFields.indexOf(v.toLowerCase()) !== -1) {
-          colDef.valueFormatter = (params) => {
-            if(!params.value) return;
-            let data = params.value || params.data[v] ;
-            if (this.$dateTimeFields.indexOf(v.toLowerCase()) !== -1 && data) {
-              let date = new Date(data);
+          if (this.$numericFields.indexOf(v.toLowerCase()) !== -1) {
+            colDef.type = 'numericColumn'
+          }
 
-              return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`
+          if (this.$currencyFields.indexOf(v.toLowerCase()) !== -1) {
+            colDef.valueFormatter = (params) => {
+              if (!params.value) return;
+              let data: number = params.value || params.data[v];
+              return data.toLocaleString(window.navigator.language, { minimumFractionDigits: 2, maximumFractionDigits: 2, style: 'currency', currency: 'USD' })
+              //return data ? `$${data}` : ''
             }
-            return data ? new Date(data).toLocaleDateString() : '';
+            colDef.type = 'numericColumn'
           }
-          colDef.filter = 'agDateColumnFilter'
-        }
 
-        if(this.initiallyVisible.indexOf(v.toLowerCase()) > -1){
-          colDef.hide =false;
-        }
-        this.columnDefs.push(colDef);
+          if (this.$dateFields.indexOf(v.toLowerCase()) !== -1) {
+            colDef.valueFormatter = (params) => {
+              if (!params.value) return;
+              let data = params.value || params.data[v];
+              if (this.$dateTimeFields.indexOf(v.toLowerCase()) !== -1 && data) {
+                let date = new Date(data);
 
-        // let width = v.length * 3;
+                return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`
+              }
+              return data ? new Date(data).toLocaleDateString() : '';
+            }
+            colDef.filter = 'agDateColumnFilter'
+          }
 
-        // let header: DataTableHeader = {
-        //   sortable: true,
-        //   text: v,
-        //   value: v,
-        //   width: width,
-        //   groupable: true,
-        //   filterable: true,
-        //   divider: true
-        // };
-        // this.keys.push(v);
-        // this.headers.push(header);
+          if (this.initiallyVisible.indexOf(v.toLowerCase()) > -1) {
+            colDef.hide = false;
+          }
+          this.columnDefs.push(colDef);
 
-      });
-// this.sideBar ={
-//   toolPanels: [
-//     {
-//       id: 'columns',
-//       labelDefault: 'Columns',
-//       labelKey: 'columnDefs',
-//       iconKey: 'columns',
-//       toolPanel: 'agColumnsToolPanel',
-//     },
-//     {
-//       id: 'filters',
-//       labelDefault: 'Filters',
-//       labelKey: 'filters',
-//       iconKey: 'filter',
-//       toolPanel: 'agFiltersToolPanel',
-//     },
-//  ,
-//   ],
-//   defaultToolPanel: 'columns',
-// };
-      // this.items = response.rangeResult;
+          // let width = v.length * 3;
+
+          // let header: DataTableHeader = {
+          //   sortable: true,
+          //   text: v,
+          //   value: v,
+          //   width: width,
+          //   groupable: true,
+          //   filterable: true,
+          //   divider: true
+          // };
+          // this.keys.push(v);
+          // this.headers.push(header);
+
+        });
+      }
       this.rowData = response.rangeResult;
       this.loading = false;
     }
   }
 
 
-spiderfier:OverlappingMarkerSpiderfier;
+  spiderfier: OverlappingMarkerSpiderfier;
   async loadMap() {
     let OIpage = this;
 
@@ -365,7 +387,7 @@ spiderfier:OverlappingMarkerSpiderfier;
     OIpage.geoCoder.geocode({ region: 'us', address: 'United States' }, (result, status) => {
       OIpage.map.setCenter(result[0].geometry.location);
       OIpage.map.fitBounds(result[0].geometry.viewport);
-     // this.addMarker();
+      // this.addMarker();
 
     });
 
@@ -404,7 +426,7 @@ spiderfier:OverlappingMarkerSpiderfier;
                   icon: 'http://maps.google.com/mapfiles/kml/pushpin/red-pushpin.png'
                 });
                 val['_CONSIGNEE_MARKER'] = ConsignMarker;
-                OIpage.spiderfier.addMarker(ConsignMarker,(event)=>{
+                OIpage.spiderfier.addMarker(ConsignMarker, (event) => {
                   debugger
                 });
                 ConsignMarker.addListener('click', () => {
@@ -432,7 +454,7 @@ spiderfier:OverlappingMarkerSpiderfier;
                   icon: 'http://maps.google.com/mapfiles/kml/pushpin/wht-pushpin.png'
                 });
                 val['_ORIGIN_MARKER'] = OriginMarker;
-                OIpage.spiderfier.addMarker(OriginMarker,(event)=>{
+                OIpage.spiderfier.addMarker(OriginMarker, (event) => {
                   debugger
                 });
                 OriginMarker.addListener('click', () => {
@@ -444,11 +466,11 @@ spiderfier:OverlappingMarkerSpiderfier;
           }, 500 * counter);
         }
       }
-      OIpage.spiderfier.addListener('format', function(marker, status) {
+      OIpage.spiderfier.addListener('format', function (marker, status) {
         var iconURL = status == OverlappingMarkerSpiderfier.markerStatus.SPIDERFIED ? 'http://maps.google.com/mapfiles/kml/pushpin/wht-pushpin.png' :
           status == OverlappingMarkerSpiderfier.markerStatus.SPIDERFIABLE ? 'http://maps.google.com/mapfiles/kml/pushpin/wht-pushpin.png' :
-          status == OverlappingMarkerSpiderfier.markerStatus.UNSPIDERFIABLE ? 'http://maps.google.com/mapfiles/kml/pushpin/wht-pushpin.png' :
-          null;
+            status == OverlappingMarkerSpiderfier.markerStatus.UNSPIDERFIABLE ? 'http://maps.google.com/mapfiles/kml/pushpin/wht-pushpin.png' :
+              null;
         marker.setIcon({
           url: iconURL,
           scaledSize: new google.maps.Size(23, 32) // makes SVG icons work in IE
@@ -516,23 +538,23 @@ spiderfier:OverlappingMarkerSpiderfier;
     }
   }
   viewSingleOrder = false;
-  singleOrderInfo:any = null;
- // selectedOrderInfo:any =null;
- // additionalOrderInfo:any = null;
-  onSelectionChanged(event:SelectionChangedEvent){
+  singleOrderInfo: any = null;
+  // selectedOrderInfo:any =null;
+  // additionalOrderInfo:any = null;
+  onSelectionChanged(event: SelectionChangedEvent) {
     let OIpage = this;
     let selectedRows = event.api.getSelectedRows();
     OIpage.singleOrderInfo = selectedRows[0];
-    
-    let params: PostTmwOrderIdRequest ={id:selectedRows[0]['FB#']}
-    OIpage.$tmwApi.postTmwOrderId(params).then((response)=>{
+
+    let params: PostTmwOrderIdRequest = { id: selectedRows[0]['FB#'] }
+    OIpage.$tmwApi.postTmwOrderId(params).then((response) => {
       //  OIpage.additionalOrderInfo =
-        ['BOL','CURRENT_STATUS','STAGE','SUB_TYPE','TRIP_NUMBER','TYPE','WHS_NO','BILL_DATE','DETAIL_LINE_ID'].forEach(v =>{
-         return OIpage.singleOrderInfo[v] = response[0][v]
-       });
-       
-       OIpage.viewSingleOrder =true;
-     })
+      ['BOL', 'CURRENT_STATUS', 'STAGE', 'SUB_TYPE', 'TRIP_NUMBER', 'TYPE', 'WHS_NO', 'BILL_DATE', 'DETAIL_LINE_ID'].forEach(v => {
+        return OIpage.singleOrderInfo[v] = response[0][v]
+      });
+
+      OIpage.viewSingleOrder = true;
+    })
 
     // const directionsService = new google.maps.DirectionsService();
     // const directionsRenderer = new google.maps.DirectionsRenderer();

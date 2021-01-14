@@ -3,6 +3,7 @@ import Component from 'vue-class-component';
 import { SelectionChangedEvent, PaginationChangedEvent, GridReadyEvent, GridOptions, GridApi, SideBarModule, MenuModule, ClientSideRowModelModule, ColumnsToolPanelModule, FiltersToolPanelModule, RowGroupingModule, StatusBarModule, RangeSelectionModule, ColDef, ExcelExportParams, ExcelExportModule } from '@ag-grid-enterprise/all-modules'
 import { AgGridVue } from '@ag-grid-community/vue';
 import { GetCdnOrdersReportsShippedFacilityStatusClientidStartdateEnddateRequest, CdnApi, UserJson } from '@/api';
+import { Watch } from 'vue-property-decorator';
 @Component({
   components: {
     AgGridVue
@@ -110,9 +111,43 @@ export default class ShippedOrdersPage extends Vue {
 
   async mounted() {
     this.gridApi = this.gridOptions.api;
-    this.gridOptions.onRowClicked
+    this.setInitialDates();
     await this.GetOrders();
   }
+
+  setInitialDates(){
+    let startDate = new Date(new Date().setDate(new Date().getDate() - 7));
+    let start = `${startDate.getFullYear()}-${startDate.getMonth()+1}-${startDate.getDate()}`;
+    let end = `${new Date().getFullYear()}-${new Date().getMonth() +1}-${new Date().getDate()}`
+    this.dates = [start, end];
+  }
+
+
+
+  setDateFilter(val) {
+    
+    let startDate =new Date();
+    let start = '';
+    let end = `${new Date().getFullYear()}-${new Date().getMonth() +1}-${new Date().getDate()}`
+    switch (val) {
+      case '90':
+        startDate = new Date(new Date().setDate(new Date().getDate() - 90));
+        start = `${startDate.getFullYear()}-${startDate.getMonth()+1}-${startDate.getDate()}`
+        break;
+      case '180':
+        startDate = new Date(new Date().setDate(new Date().getDate() - 180))
+        start = `${startDate.getFullYear()}-${startDate.getMonth()+1}-${startDate.getDate()}`
+        break;
+      default:
+        start = `${new Date().getFullYear()}-1-1`
+        break;
+    }
+    this.dates = [start, end];
+    this.GetOrders();
+
+
+  }
+
   onDatesChanged(val) {
     if (val && val.length && val.length === 2) {
       this.GetOrders();
@@ -122,7 +157,7 @@ export default class ShippedOrdersPage extends Vue {
     let user: UserJson = JSON.parse(localStorage.getItem('user'));
     //'01','SHIP','100219','2020-12-01','2020-12-31', 1,null,null
     let params: GetCdnOrdersReportsShippedFacilityStatusClientidStartdateEnddateRequest = {
-      facility: 1, status: 'SHIP', clientid: parseInt(user.company.cADENCEID), startdate: '2020-12-01', enddate: '2020-12-31'
+      facility: 1, status: 'SHIP', clientid: parseInt(user.company.cADENCEID), startdate: this.dates[0], enddate: this.dates[1]
     }
 
     let response = await this.$cdnApi.getCdnOrdersReportsShippedFacilityStatusClientidStartdateEnddate(params);

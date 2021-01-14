@@ -31,6 +31,12 @@ export interface Model4 {
      * @memberof Model4
      */
     pickupRange?: Array<string>;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof Model4
+     */
+    compare?: boolean;
 }
 
 export function Model4FromJSON(json: any): Model4 {
@@ -45,6 +51,7 @@ export function Model4FromJSONTyped(json: any, ignoreDiscriminator: boolean): Mo
         
         'tmwCodes': !exists(json, 'tmwCodes') ? undefined : json['tmwCodes'],
         'pickupRange': !exists(json, 'pickupRange') ? undefined : json['pickupRange'],
+        'compare': !exists(json, 'compare') ? undefined : json['compare'],
     };
 }
 
@@ -59,6 +66,7 @@ export function Model4ToJSON(value?: Model4 | null): any {
         
         'tmwCodes': value.tmwCodes,
         'pickupRange': value.pickupRange,
+        'compare': value.compare,
     };
 }
 

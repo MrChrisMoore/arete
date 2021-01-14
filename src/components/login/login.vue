@@ -67,12 +67,12 @@ export default class Login extends Vue {
   message="Incorrect username or password.";
   valid = true;
   nameRules =[(v)=> {
-    debugger
+    
     return (!!v && this.valid) || 'Incorrect username or password'
     }
     ]
   passwordRules =[(v)=> { 
-    debugger
+    
     return (!!v && this.valid) || 'Incorrect username or password'
   }
   ]
@@ -109,6 +109,10 @@ export default class Login extends Vue {
       if (authResponse) {
         localStorage.token = authResponse.token;
         localStorage.user = JSON.stringify(authResponse.userJson);
+        if(authResponse.userJson.showDisclaimer){
+          debugger
+          this.$store.commit('disclaimer/show',true)
+        }
         if (!authResponse.userJson.verified) {
           this.$router.push("/verify");
         } else {
