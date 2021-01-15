@@ -77,7 +77,7 @@ export default class SingleOrderPage extends Vue {
     filter: true,
     menuTabs: ['filterMenuTab', 'generalMenuTab', 'columnsMenuTab'],
   };
-  gridOptions: GridOptions = {/* onDisplayedColumnsChanged:this.onDisplayedColumnsChanged, */ onColumnVisible:this.onColumnVisible};
+  gridOptions: GridOptions = {/* onDisplayedColumnsChanged:this.onDisplayedColumnsChanged, */ onColumnVisible:this.onColumnVisible, enableCharts: true};
   hidden=[];
   onColumnVisible(e){
    this.hidden.push(e.columns[0].colId);
@@ -89,13 +89,31 @@ export default class SingleOrderPage extends Vue {
     toolPanels: ['columns', 'filters'],
     // hiddenByDefault:true
 };
-modules =[SideBarModule,MenuModule, ClientSideRowModelModule,ColumnsToolPanelModule,ExcelExportModule, FiltersToolPanelModule,RangeSelectionModule, RowGroupingModule,StatusBarModule]
+modules =[SideBarModule,MenuModule, ClientSideRowModelModule,ColumnsToolPanelModule,ExcelExportModule, FiltersToolPanelModule,RangeSelectionModule, RowGroupingModule,StatusBarModule];
+// QUESTION: Should i show the warehouse tab and display a message saying that there are no records or not show the tab???
+
+// get tabs(){
+//   let tabs =[
+//     { tab: 'Shipping', content: this.TMWOrder },
+//     { tab: 'Stats', content: this.getOrderStats() },    
+//     { tab: 'Documents', content: 'Document Links' }
+//   ];
+// if(this.TMWOrder['WHS_NO']){
+  
+//   tabs = [ { tab: 'Shipping', content: this.TMWOrder },
+//   { tab: 'Stats', content: this.getOrderStats() },
+//   { tab: 'Warehouse', content: 'Loading' },
+//   { tab: 'Documents', content: 'Document Links' }]
+// }
+// return tabs;
+// }
   tabs = [
     { tab: 'Shipping', content: this.TMWOrder },
     { tab: 'Stats', content: this.getOrderStats() },
     { tab: 'Warehouse', content: 'Loading' },
     { tab: 'Documents', content: 'Document Links' }
   ];
+  hasWHS_NO = this.TMWOrder['WHS_NO']
   get themeClass() {
     return this.$vuetify.theme.dark ? 'ag-theme-alpine-dark' : 'ag-theme-alpine'
   }
@@ -143,7 +161,7 @@ modules =[SideBarModule,MenuModule, ClientSideRowModelModule,ColumnsToolPanelMod
     this.getDocList();
   }
   shouldI(tab) {
-    if (tab === 'Warehouse') {
+    if (tab === 'Warehouse' && this.TMWOrder.WHS_NO) {
       this.getOrderHeader(this.TMWOrder.WHS_NO)
     }
   }

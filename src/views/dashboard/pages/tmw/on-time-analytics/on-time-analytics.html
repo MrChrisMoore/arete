@@ -56,43 +56,47 @@
     </v-slide-x-transition>
 
     <v-row v-if="!loading" justify="space-around" wrap>
-      <v-col v-for="(kpi, index) in allKpis" cols="12" md="4" lg="3" class="pa-1" :key="index">
+      <v-col v-for="(kpi, index) in allKpis" cols="12" md="5" lg="3" sm="6" class="pa-1" :key="index">
 
 
         <transition name="fade" mode="out-in" appear>
-          <base-material-stats-card v-if="['cpm','cpc','cpp','cpa'].indexOf(kpi) === -1" :style="'--i:' + index"
+          <div @click.stop="setChartField(kpi)" style="cursor: pointer;">
+
+            <base-material-stats-card v-if="['cpm','cpc','cpp','cpa'].indexOf(kpi) === -1" :style="'--i:' + index"
+            
             :color="getColor(kpi)" :icon="getIcon(kpi)" :decreaseIsBad="decreaseBad(kpi)" :title="kpi | toUpperCase"
             :value="kpiValue(kpi)" :sub-text='kpiComparisonValue(kpi)' :sub-text2="kpiValue(kpi, 'Min')"
             :sub-text3="kpiValue(kpi, 'Average')" :sub-text4="kpiValue(kpi,'Max')">
           </base-material-stats-card>
+        </div>
           <!-- <base-material-stats-card v-else :style="'--i:' + index" :color="getColor(kpi)" :icon="getIcon(kpi)"
           :decreaseIsBad="decreaseBad(kpi)" :title="kpi | toUpperCase" :value="kpiValue(kpi)"
           :sub-text='kpiComparisonValue(kpi)' :sub-text2="kpiValue(kpi, 'Min')" :sub-text3="kpiValue(kpi, 'Average')"
           :sub-text4="kpiValue(kpi,'Max')">
         </base-material-stats-card> -->
         </transition>
-        <transition v-if="kpi === 'cpm'" name="fade" mode="out-in" :duratrion="2000" appear>
-          <base-material-stats-card :style="'--i:' + index" color="red" icon="fas fa-road" title="Cost Per Mile"
-            :value="costPer('Mile')" :sub-text="costPerCompare('Mile')" sub-text2="." sub-text3="." sub-text4=".">
+        <transition v-if="kpi === 'cpm'" name="fade" mode="out-in" appear>
+          <base-material-stats-card  :style="'--i:' + index" color="red" icon="fas fa-road" title="Cost Per Mile"
+            :value="costPer('Mile')" :sub-text="costPerCompare('Mile')" >
           </base-material-stats-card>
         </transition>
-        <transition v-if="kpi === 'cpp'" name="fade" mode="out-in" duratrion="2000" appear>
+        <transition v-if="kpi === 'cpp'" name="fade" mode="out-in"  appear>
 
           <base-material-stats-card :style="'--i:' + index" color="red" icon="fas fa-weight" title="Cost Per Pound"
-            :value="costPer('Pound')" :sub-text="costPerCompare('Pound')" sub-text2="." sub-text3="." sub-text4=".">
+            :value="costPer('Pound')" :sub-text="costPerCompare('Pound')" >
 
           </base-material-stats-card>
         </transition>
-        <transition v-if="kpi === 'cpc'" name="fade" mode="out-in" duratrion="2000" appear>
+        <transition v-if="kpi === 'cpc'" name="fade" mode="out-in"  appear>
 
           <base-material-stats-card :style="'--i:' + index" color="red" icon="fas fa-suitcase" title="Cost Per Case"
-            :value="costPer('Case')" :sub-text="costPerCompare('Case')" sub-text2="." sub-text3="." sub-text4=".">
+            :value="costPer('Case')" :sub-text="costPerCompare('Case')" >
           </base-material-stats-card>
         </transition>
-        <transition v-if="kpi === 'cpa'" name="fade" mode="out-in" duratrion="2000" appear>
+        <transition v-if="kpi === 'cpa'" name="fade" mode="out-in"  appear>
 
           <base-material-stats-card :style="'--i:' + index" color="red" icon="fas fa-pallet" title="Cost Per Pallet"
-            :value="costPer('Pallet')" :sub-text="costPerCompare('Pallet')" sub-text2="." sub-text3="." sub-text4=".">
+            :value="costPer('Pallet')" :sub-text="costPerCompare('Pallet')" >
           </base-material-stats-card>
         </transition>
       </v-col>
@@ -117,7 +121,7 @@
           </base-material-stats-card> -->
       <!-- </v-col> -->
     </v-row>
-    <base-material-apex-chart-card class="d-none d-md-block" v-if="!loading && costSeries" domid="costChart"
+    <base-material-apex-chart-card class="d-none d-md-block" v-if="!loading && costSeries" 
       :options="costChartOptions" :series="costSeries" height="450" type="line">
       <!-- <h4 class="card-title font-weight-light mt-2 ml-2"></h4> -->
       <div class="d-flex  ">
@@ -145,7 +149,7 @@
     </v-row> -->
     <!-- <v-scale-transition origin="bottom center" duration="20000"> -->
       <transition name="fade" mode="in-out" appear>
-    <v-btn fab small v-show="!fabHidden" @click="drawer = !drawer" color="info" fixed bottom right>
+    <v-btn fab small v-show="!fabHidden" @click="filterSheet = !filterSheet" color="info" fixed bottom right>
       <v-icon v-if="drawer">
         mdi-close
       </v-icon>
@@ -201,6 +205,58 @@
 
 
 </v-speed-dial> -->
+
+<v-bottom-sheet
+v-if="!loading"
+v-model="filterSheet"
+  hide-overlay
+  
+>
+<v-sheet class="text-center">
+<v-container fluid>
+<v-row class="justify-end">
+  <v-col
+  cols="12"
+  sm="6"
+>
+  <v-autocomplete
+    :items="[{name:'Consignee', field:'CONSIGNEE NAME'},{name:'Freight Bill Number', field:'FB#'},{name:'Trip Number', field:'TRIP'}, {name:'Claim Number', field:'CONSIGNEE NAME'}]"
+    label="Field"
+    v-model="filterField"
+    item-text="name"
+    item-value="field"
+    
+  ></v-autocomplete>
+</v-col>
+  <v-col
+    cols="12"
+    sm="6"
+  >
+    <v-autocomplete
+      v-model="filterValue"
+      :items="getFilterList(filterField)"
+      :label="filterField"      
+      multiple
+    ></v-autocomplete>
+  </v-col>
+ 
+  
+
+ 
+ 
+ 
+</v-row>
+
+<v-btn   @click="filterItems()">Apply</v-btn>
+<v-btn   @click="filterItems(true)">Reset</v-btn>
+</v-container>
+<!-- <v-col v-for="(item, i) in ['Pre-Transit','In-Transit','Post-Transit']">
+  <v-chip label>{{item}}</v-chip>
+</v-col> -->
+
+
+</v-sheet>
+</v-bottom-sheet>
 
     <v-snackbar v-model="snackbar" timeout="10000" absolute left shaped top color="warning">
       {{ snackText }}

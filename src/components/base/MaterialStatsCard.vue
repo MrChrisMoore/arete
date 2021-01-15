@@ -4,6 +4,7 @@
     class="v-card--material-stats"
     v-bind="$attrs"
     v-on="$listeners"
+   
   >
     <template v-slot:after-heading>
       <div class="ml-auto text-right">
@@ -24,7 +25,7 @@
     </v-icon>
 
     <span
-     v-if="subText2"
+     v-if="subText"
       :class="subTextColorValue ? subTextColorValue : 'grey--text'"
       class="caption font-weight-light"
       v-text="subText"
@@ -125,8 +126,9 @@ export default {
       // the callback will be called immediately after the start of the observation
       immediate: true,
       handler(val, oldVal) {
-        if (!val) return
-        if(val.indexOf('$0.00') > -1) return
+        if (!val) return;
+        debugger
+        if(val.indexOf('$0.00') > -1) return;
         if (val.indexOf("Decrease") > -1 && this.decreaseIsBad) {
           this.subTextColorValue = "red--text";
           this.subIconValue = 'mdi mdi-alert';
@@ -148,6 +150,7 @@ export default {
             }
           }
         }
+        
       },
     },
     // subText(val){

@@ -8,7 +8,15 @@
      transition-delay: calc(.08s * var(--i));
 }
 
-
+.apexcharts-tooltip.apexcharts-theme-light{
+    //border: none;
+    background: #fff;
+    padding: .2em;
+}
+.apexcharts-tooltip.apexcharts-theme-light{
+    font-size: larger;
+    color:darkorange;
+}
 // @for $i from 1 through 14 {
 //     .fade-enter-active:nth-of-type(#{$i}) {
 //      // animation: 3s intro infinite;

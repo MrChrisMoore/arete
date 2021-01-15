@@ -131,6 +131,7 @@
                   <v-col cols="6">{{item.content.costPerPallet | toCurrency}}</v-col>
                 </v-row>
                 <v-row v-if="item.tab === 'Warehouse'">
+                  <v-col v-if="hasWHS_NO" cols="12"> 
                   <v-col v-if='loading' cols="12">  
                    
                   <v-skeleton-loader
@@ -141,11 +142,17 @@
                 ></v-skeleton-loader>
                   </v-col>
                   <v-col v-else cols="12">   
-                    <ag-grid-vue  rowSelection='single'  @selection-changed="onSelectionChanged" style="height:500px" :class="themeClass" :columnDefs="columnDefs" :rowData="item.content"
+                    <ag-grid-vue  rowSelection='single'    @selection-changed="onSelectionChanged" style="height:500px" :class="themeClass" :columnDefs="columnDefs" :rowData="item.content"
                     :defaultColDef="defaultColDef" :pagination="true"  :sideBar="sideBar" :modules="modules"  :gridOptions="gridOptions"
                        :enableRangeSelection="true">
                   </ag-grid-vue>  
                     
+                  </v-col>
+                  </v-col>
+                  <v-col v-else cols="12">
+                    <h4>
+                      Record Not Found
+                    </h4>
                   </v-col>
                 </v-row>
                 <v-row v-if="item.tab === 'Documents'" class=" flex-column">
@@ -161,7 +168,7 @@
                       </v-list-item>
                     </v-list>
                     <h4 v-else>
-                      No Documents found
+                      No Documents Found
                     </h4>
                                     
                     <!-- <iframe :src="docurl" width="100%" height="700px"></iframe>  -->

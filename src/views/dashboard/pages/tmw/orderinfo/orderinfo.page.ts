@@ -8,7 +8,7 @@ import { Watch } from 'vue-property-decorator';
 import { Resize } from 'vuetify/lib/directives';
 // import 'ag-grid-enterprise';
 // import { AgGridVue } from 'ag-grid-vue';
-import { SelectionChangedEvent, PaginationChangedEvent, GridReadyEvent, GridOptions, GridApi, SideBarModule, MenuModule, ClientSideRowModelModule, ColumnsToolPanelModule, FiltersToolPanelModule, RowGroupingModule, StatusBarModule, RangeSelectionModule, ColDef, ExcelExportParams, ExcelExportModule } from '@ag-grid-enterprise/all-modules'
+import { SelectionChangedEvent, PaginationChangedEvent,GridChartsModule, GridReadyEvent, GridOptions, GridApi, SideBarModule, MenuModule, ClientSideRowModelModule, ColumnsToolPanelModule, FiltersToolPanelModule, RowGroupingModule, StatusBarModule, RangeSelectionModule, ColDef, ExcelExportParams, ExcelExportModule } from '@ag-grid-enterprise/all-modules'
 import { AgGridVue } from '@ag-grid-community/vue';
 // import { ColDef,  GridOptions, GridReadyEvent, CsvExportParams, PaginationChangedEvent, SelectionChangedEvent } from 'ag-grid-community';
 import MarkerClusterer from '@google/markerclusterer';
@@ -81,7 +81,7 @@ export default class OrderinfoPage extends Vue {
       },
     ],
   };
-  modules = [SideBarModule, MenuModule, ClientSideRowModelModule, ColumnsToolPanelModule, ExcelExportModule, FiltersToolPanelModule, RangeSelectionModule, RowGroupingModule, StatusBarModule]
+  modules = [SideBarModule,GridChartsModule, MenuModule, ClientSideRowModelModule, ColumnsToolPanelModule, ExcelExportModule, FiltersToolPanelModule, RangeSelectionModule, RowGroupingModule, StatusBarModule]
 
   //frameworkComponents = { customStatsToolPanel: CustomStatsToolPanel };
   /* Test Card Section   */
@@ -164,7 +164,7 @@ export default class OrderinfoPage extends Vue {
   columnDefs: ColDef[] = [];
   rowData = null;
   menu = false
-  gridOptions: GridOptions = {};
+  gridOptions: GridOptions = {enableCharts:true};
   gridApi: GridApi = null;
   defaultColDef = {
     // sortable: true,
@@ -230,6 +230,11 @@ export default class OrderinfoPage extends Vue {
     });
     this.gridOptions.columnApi.autoSizeColumns(allColumnIds, false);
   }
+
+  // getContextMenuItems(){
+
+  //   return
+  // }
 
   async mounted() {
     this.gridApi = this.gridOptions.api;    

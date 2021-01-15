@@ -222,13 +222,25 @@ export default class UserProfile extends Vue {
   headingText: string = "Review your profile";
   headingSubtitle: string = "";
   companyDisabled=true;
-  get permLevels() {
-    return ["SUPER", "ADMIN", "USER"].filter((v, k) => {
-      return this.user.permissionLevel === "SUPER" && v === "SUPER"
-        ? v
-        : v !== "SUPER" && v;
-    });
+   get permLevels() {
+  switch (this.user.permissionLevel) {
+    case 'ADMIN':
+      return ['USER'];      
+      case 'SUPER':
+      return ['USER','ADMIN','SUPER']
+      break;
+  
+    default:
+      break;
   }
+  }
+  // get permLevels() {
+  //   return ["SUPER", "ADMIN", "USER"].filter((v, k) => {
+  //     return this.user.permissionLevel === "SUPER" && v === "SUPER"
+  //       ? v
+  //       : v !== "SUPER" && v;
+  //   });
+  // }
   hasErrorActive = false;
   canAdd = false;
   snackbar = false;
@@ -280,8 +292,9 @@ export default class UserProfile extends Vue {
     this.headingSubtitle =
       "Please fill in the required information to add a user";
     this.companies = await this.$translationApi.getTranslationsCompanies();
+    debugger
      if(this.companies){
-       let foundCompany = this.companies.filter((v) =>{return v['CADENCE ID'] === this.user.company.cADENCEID});
+       let foundCompany = this.companies.filter((v) =>{return v['WP CRM ID'] === this.user.company.wPCRMID && v['COMPANY NAME'] === this.user.company.cOMPANYNAME});
        if(foundCompany && foundCompany.length ===1)        this.newUser.company = foundCompany[0];
       }
        if(this.user.permissionLevel === "SUPER") this.companyDisabled = false;
